@@ -42,3 +42,54 @@ After test selection, the script statically expands parameterized tests when pos
 
 
 我们提供的是一个使用test_patch作为输入的issue based feature localizatoin technique。
+
+Update: the current `scripts/generate_sr_scripts.py` no longer constructs `script_A` and `script_B` as two independently selected test sets. It now uses an inclusion-style contrast: `C` is a nearby unmodified control set selected from the same touched test file, preferring the same test class and nearby line numbers, `F` is the patch-relevant feature set recovered from tests that directly overlap changed `test_patch` lines (with nearest-test fallback only when no overlap exists), `script_B = C`, and `script_A = C + F`. The rendered `script_A` therefore executes the same baseline workflows as `script_B` first, and then executes the extra feature-relevant workflows, making `A-B` a closer approximation to “feature-side excess execution” than the earlier side-by-side design.
+
+This change does not fundamentally change what `A_B_Reliability` is meant to measure, but the implementation must be careful not to let the new inclusion structure inflate the label. In the current script, reliability is still judged from the quality of the feature-side workflows `F` and the control-side workflows `C` separately: whether there is a direct test-body anchor, whether both sides are non-empty, whether either side still contains unresolved placeholders, whether either side relies on simplified fixture stubs, whether `test_patch` touches non-`.py` test assets, and whether the patch is pure direct test-body change. In other words, `A_B_Reliability` still summarizes how confidently we recovered a meaningful feature-vs-control contrast from `test_patch`; it is not upgraded merely because `script_A` now contains `script_B` as a prefix.
+
+
+我们提供的是一个使用patch和test_patch作为输入的issue based feature localizatoin technique。
+
+0. 不可用  - 23
+1. “有直接 test-body 锚点，而且 A/B 都能生成非空”。 - 160
+2. 第一条基础上再要求“生成出来的 A/B 里不要有 unresolved 占位 workflow”。 - 33
+3. 要求满足我之前那组更苛刻的 high 条件（注意high 条件的“没用非 .py 测试资产做推断”这一条改成“test_patch 不触及非 .py 测试资产”。 - 308
+4. 要求 patch 非常干净，只改直接 test body，不带任何额外 non-test 变动。 - 68
+
+high 条件：
+A 的 test 直接和 test_patch 改动行重叠，不是最近-test回退
+代码上对应 select_feature_test_definitions (line 1077) 里先取 overlapping，只有没有命中时才回退到最近 test。
+影响：这是最影响“语义有效性”的一条。
+满足时，A 更可能真的覆盖 feature 相关路径。
+不满足时，A 也许还能跑，但 A-B 的差异很可能变弱、变歪，甚至主要反映了“附近的别的测试”而不是目标 feature。
+对后续 SR/trace diff 来说，这是最关键的一条，不满足时更容易出现假阴性和假阳性。
+
+没用非 .py 测试资产做推断
+我这次统计里用的是更强的代理条件：test_patch 不触及非 .py 测试资产。
+影响：这条对“脚本能不能生成”影响不大，对“实验是否纯净”影响中等。
+如果 patch 还改了 .txt/.json/.rst/... 测试资产，A/B 仍然通常能跑，因为你会在 apply patch 后统一执行。
+问题在于：A/B 运行环境里同时带着这些改动，trace 差异里可能混进测试数据/测试资源变化带来的噪声。
+所以这条更像“降低环境侧噪声”，不是基础可执行性条件。
+
+没有 unresolved 参数/占位 workflow
+对应 expand_keyword_arg_options (line 643)、expand_test_definition (line 1151)、render_script_text (line 1420)。
+影响：这是最直接的“脚本完整性”条件。
+满足时，A/B 中每个 workflow 都至少被具体化成了一个真实调用。
+不满足时，有些 workflow 其实是 no-op，占了预算但不执行目标路径。
+这会让 A/B 的有效覆盖数下降，也会让 A 和 B 的对照变得不对称。
+对后续实验来说，这条主要影响样本量和稳定性。
+
+没用 fixture stub，比如 _sr_tmpdir()、_sr_monkeypatch()
+stub 定义在 RUNTIME_FIXTURE_EXPR (line 64) 和运行时 helper render_script_text (line 1340)。
+影响：这条主要影响“测试语义保真度”。
+满足时，workflow 更接近原始测试真正依赖的 setup。
+不满足时，脚本仍然常常可用，而且对你这种“近似即可”的目标未必是致命问题。
+但 stub 毕竟是简化实现，可能少掉 fixture 的副作用、清理逻辑、路径布局或 monkeypatch 语义。
+所以后续如果某些 A/B 行为异常，先怀疑这条很合理。
+
+A/B 都非空
+对应 build_invocations_from_tests (line 1182) 和 render_script_text (line 1451)。
+影响：这是最基本的实验可定义性条件。
+A 为空时，根本没有 feature-side workflow。
+B 为空时，没有 baseline/control。
+这种情况下即使没有 unresolved，也很难做有意义的 SR 对比。

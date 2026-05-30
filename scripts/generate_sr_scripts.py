@@ -22,7 +22,8 @@ from unidiff.errors import UnidiffParseError
 DEFAULT_INPUT_FILE = "swebench_feature_with_truth.jsonl"
 DEFAULT_OUTPUT_FILE = "swebench_feature_with_truth_sr_scripts.jsonl"
 DEFAULT_CACHE_DIR = ".gt_source_cache"
-DEFAULT_TEST_BUDGET = 8
+DEFAULT_TEST_BUDGET = 12
+BASELINE_BUDGET_DIVISOR = 3
 DOWNLOAD_TIMEOUT_SECONDS = 30
 DIRECT_TEST_BODY_FILE_CLASSES = {
     "py_test_body_only",
@@ -168,8 +169,8 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=(
             "Generate software-reconnaissance A/B scripts from SWE-bench test_patch fields. "
-            "A uses patch-modified tests, and B uses nearby unmodified tests from the same "
-            "test file or module."
+            "A combines nearby control workflows with patch-relevant feature workflows, "
+            "and B uses the control workflows only."
         )
     )
     parser.add_argument(
@@ -194,7 +195,10 @@ def parse_args() -> argparse.Namespace:
         "--budget",
         type=int,
         default=DEFAULT_TEST_BUDGET,
-        help=f"Maximum number of workflows in each of script_A/script_B. Default: {DEFAULT_TEST_BUDGET}",
+        help=(
+            "Maximum number of workflows in each of script_A/script_B. "
+            f"Default: {DEFAULT_TEST_BUDGET}"
+        ),
     )
     parser.add_argument(
         "--limit",
@@ -1290,25 +1294,50 @@ def build_module_sources(
                 module_name_from_file_path(module_info.file_path),
                 build_module_source_text(module_info, selected_targets),
             )
-        )
+            )
     return module_sources
+
+
+def merge_selected_targets_by_file(
+    *target_maps: dict[str, set[tuple[tuple[str, ...], str]]],
+) -> dict[str, set[tuple[tuple[str, ...], str]]]:
+    merged: dict[str, set[tuple[tuple[str, ...], str]]] = defaultdict(set)
+    for target_map in target_maps:
+        for file_path, targets in target_map.items():
+            merged[file_path].update(targets)
+    return dict(merged)
+
+
+def compute_feature_workflow_budget(
+    total_budget: int,
+    *,
+    has_feature_tests: bool,
+    has_baseline_tests: bool,
+) -> int:
+    if total_budget <= 0 or not has_feature_tests:
+        return 0
+    if not has_baseline_tests or total_budget == 1:
+        return total_budget
+
+    reserved_for_baseline = max(1, total_budget // BASELINE_BUDGET_DIVISOR)
+    return max(1, total_budget - reserved_for_baseline)
 
 
 def determine_reliability_level(
     *,
     file_classes: list[str],
     selected_feature_tests: list[TestDefinition],
-    script_a_invocations: list[ExpandedInvocation],
-    script_b_invocations: list[ExpandedInvocation],
+    feature_invocations: list[ExpandedInvocation],
+    baseline_invocations: list[ExpandedInvocation],
     module_by_path: dict[str, ModuleSourceInfo],
 ) -> str:
     has_direct_test_body_anchor = any(file_class in DIRECT_TEST_BODY_FILE_CLASSES for file_class in file_classes)
     test_patch_touches_non_py_assets = any(file_class == "non_py" for file_class in file_classes)
-    both_nonempty = bool(script_a_invocations) and bool(script_b_invocations)
-    no_unresolved = all(invocation.note is None for invocation in [*script_a_invocations, *script_b_invocations])
+    both_nonempty = bool(feature_invocations) and bool(baseline_invocations)
+    no_unresolved = all(invocation.note is None for invocation in [*feature_invocations, *baseline_invocations])
     uses_fixture_stub = any(
         expr in RUNTIME_FIXTURE_EXPR.values()
-        for invocation in [*script_a_invocations, *script_b_invocations]
+        for invocation in [*feature_invocations, *baseline_invocations]
         for _, expr in invocation.keyword_arg_exprs
     )
     selected_feature_tests_direct = bool(selected_feature_tests) and all(
@@ -1607,14 +1636,34 @@ def generate_sr_scripts_for_row(
     selected_feature_tests = select_feature_test_definitions(module_infos, budget)
     selected_baseline_tests = select_baseline_test_definitions(module_infos, selected_feature_tests, budget)
 
-    script_a_invocations, script_a_targets = build_invocations_from_tests(selected_feature_tests, module_infos, budget)
-    script_b_invocations, script_b_targets = build_invocations_from_tests(selected_baseline_tests, module_infos, budget)
+    feature_budget = compute_feature_workflow_budget(
+        budget,
+        has_feature_tests=bool(selected_feature_tests),
+        has_baseline_tests=bool(selected_baseline_tests),
+    )
+    feature_invocations, feature_targets = build_invocations_from_tests(
+        selected_feature_tests,
+        module_infos,
+        feature_budget,
+    )
+
+    baseline_budget = budget if not feature_invocations else max(0, budget - len(feature_invocations))
+    baseline_invocations, baseline_targets = build_invocations_from_tests(
+        selected_baseline_tests,
+        module_infos,
+        baseline_budget,
+    )
+
+    script_a_invocations = [*baseline_invocations, *feature_invocations]
+    script_b_invocations = baseline_invocations
+    script_a_targets = merge_selected_targets_by_file(baseline_targets, feature_targets)
+    script_b_targets = baseline_targets
     module_by_path = {module_info.file_path: module_info for module_info in module_infos}
     reliability_level = determine_reliability_level(
         file_classes=file_classes,
         selected_feature_tests=selected_feature_tests,
-        script_a_invocations=script_a_invocations,
-        script_b_invocations=script_b_invocations,
+        feature_invocations=feature_invocations,
+        baseline_invocations=baseline_invocations,
         module_by_path=module_by_path,
     )
 
@@ -1634,7 +1683,7 @@ def generate_sr_scripts_for_row(
         "script_b_workflows": len(script_b_invocations),
         "script_a_unresolved": sum(1 for invocation in script_a_invocations if invocation.note is not None),
         "script_b_unresolved": sum(1 for invocation in script_b_invocations if invocation.note is not None),
-        "script_a_selected_tests": len(selected_feature_tests),
+        "script_a_selected_tests": len(selected_feature_tests) + len(selected_baseline_tests),
         "script_b_selected_tests": len(selected_baseline_tests),
         "A_B_Reliability": reliability_level,
     }
