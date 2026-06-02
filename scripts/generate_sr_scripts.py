@@ -73,14 +73,11 @@ RUNTIME_FIXTURE_EXPR = {
     "tmpdir": "_sr_tmpdir()",
     "tmpdir_factory": "_sr_tmpdir_factory()",
 }
-RELIABILITY_LEVEL_0 = "0. 未达到第1级：缺少直接 test-body 锚点或 A/B 为空"
-RELIABILITY_LEVEL_1 = "1. 有直接 test-body 锚点，而且 A/B 都能生成非空"
-RELIABILITY_LEVEL_2 = "2. 在第1级基础上，生成出来的 A/B 里没有 unresolved 占位 workflow"
-RELIABILITY_LEVEL_3 = (
-    "3. 满足 high 条件：A 的 test 直接命中 test-body，test_patch 不触及非 .py 测试资产，"
-    "A/B 无 unresolved、无 fixture stub、且均非空"
-)
-RELIABILITY_LEVEL_4 = "4. patch 非常干净，只改直接 test body，不带任何额外 non-test 变动"
+RELIABILITY_LEVEL_0 = "0. No usable A/B contrast"
+RELIABILITY_LEVEL_1 = "1. Direct test-body anchor; non-empty A/B"
+RELIABILITY_LEVEL_2 = "2. Level 1 + no unresolved workflows"
+RELIABILITY_LEVEL_3 = "3. High-confidence A/B contrast"
+RELIABILITY_LEVEL_4 = "4. Clean direct-test-body-only contrast"
 RELIABILITY_LEVELS = (
     RELIABILITY_LEVEL_0,
     RELIABILITY_LEVEL_1,
