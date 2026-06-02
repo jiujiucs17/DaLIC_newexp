@@ -2,6 +2,7 @@
 dataset/.gt_source_cache
 scripts/__pycache__
 tools
+tmp
 .vscode
 .pycache
 dalic-newexp
