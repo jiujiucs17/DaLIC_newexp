@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import io
 import json
+import os
 import shlex
 import shutil
 import tarfile
@@ -26,6 +27,7 @@ DEFAULT_INPUT_FILE = "swebench_feature_with_truth_sr_scripts.jsonl"
 DEFAULT_OUTPUT_DIR = "ab_runs"
 DEFAULT_RUN_ID = "ab_trace"
 DEFAULT_TIMEOUT_SECONDS = 1800
+DEFAULT_NAMESPACE = "swebench"
 DEFAULT_CONTAINER_SCRIPT_DIR = PurePosixPath("/tmp/ab_scripts")
 DEFAULT_CONTAINER_SUPPORT_DIR = PurePosixPath("/tmp/ab_support")
 DEFAULT_CONTAINER_TRACE_ROOT = PurePosixPath("/tmp/ab_traces")
@@ -45,6 +47,13 @@ def get_repo_root() -> Path:
         if (candidate / "dataset").is_dir() and (candidate / "scripts").is_dir():
             return candidate
     raise RuntimeError("Could not locate repo root from script path.")
+
+
+def resolve_path_from_repo_root(path: Path, repo_root: Path) -> Path:
+    candidate = path.expanduser()
+    if not candidate.is_absolute():
+        candidate = repo_root / candidate
+    return candidate.resolve()
 
 
 def parse_args() -> argparse.Namespace:
@@ -105,8 +114,8 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--namespace",
-        default="swebench",
-        help="Image namespace passed to make_test_spec. Default: swebench",
+        default=DEFAULT_NAMESPACE,
+        help=f"Image namespace passed to make_test_spec. Default: {DEFAULT_NAMESPACE}",
     )
     parser.add_argument(
         "--env-image-tag",
@@ -188,18 +197,20 @@ def parse_args() -> argparse.Namespace:
         help=f"Default trace filename exposed via $TRACE_OUTPUT. Default: {DEFAULT_TRACE_FILENAME}",
     )
     args = parser.parse_args()
+    args.repo_root = repo_root
     validate_args(args)
     return args
 
 
 def validate_args(args: argparse.Namespace) -> None:
-    args.jsonl = args.jsonl.expanduser().resolve()
-    args.output_dir = args.output_dir.expanduser().resolve()
+    args.repo_root = args.repo_root.resolve()
+    args.jsonl = resolve_path_from_repo_root(args.jsonl, args.repo_root)
+    args.output_dir = resolve_path_from_repo_root(args.output_dir, args.repo_root)
     if args.trace_preamble_file is not None:
-        args.trace_preamble_file = args.trace_preamble_file.expanduser().resolve()
+        args.trace_preamble_file = resolve_path_from_repo_root(args.trace_preamble_file, args.repo_root)
     if args.trace_epilogue_file is not None:
-        args.trace_epilogue_file = args.trace_epilogue_file.expanduser().resolve()
-    args.support_path = [path.expanduser().resolve() for path in args.support_path]
+        args.trace_epilogue_file = resolve_path_from_repo_root(args.trace_epilogue_file, args.repo_root)
+    args.support_path = [resolve_path_from_repo_root(path, args.repo_root) for path in args.support_path]
 
     if not args.jsonl.exists():
         raise ValueError(f"JSONL file does not exist: {args.jsonl}")
@@ -207,6 +218,8 @@ def validate_args(args: argparse.Namespace) -> None:
         raise ValueError("--jsonl must point to a .jsonl file.")
     if args.timeout <= 0:
         raise ValueError("--timeout must be positive.")
+    if not str(args.namespace).strip():
+        raise ValueError("--namespace must be non-empty.")
     if args.trace_preamble_file is not None and not args.trace_preamble_file.exists():
         raise ValueError(f"Trace preamble file does not exist: {args.trace_preamble_file}")
     if args.trace_epilogue_file is not None and not args.trace_epilogue_file.exists():
@@ -465,7 +478,7 @@ def run_script_kind(
 
     test_spec = make_test_spec(
         row,
-        namespace=args.namespace,
+        namespace=str(args.namespace),
         env_image_tag=args.env_image_tag,
         instance_image_tag=args.instance_image_tag,
     )
@@ -554,6 +567,7 @@ def run_script_kind(
 
 def main() -> None:
     args = parse_args()
+    os.chdir(args.repo_root)
     args.output_dir.mkdir(parents=True, exist_ok=True)
 
     row = load_instance_row(args.jsonl, args.instance_id)
