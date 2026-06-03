@@ -1,0 +1,27 @@
+{
+  "instance_id": "pytest-dev__pytest-8422",
+  "status": "completed",
+  "results": [
+    {
+      "instance_id": "pytest-dev__pytest-8422",
+      "script_kind": "A",
+      "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/pytest-dev__pytest-8422/A.py",
+      "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/pytest-dev__pytest-8422/A/stdout.txt",
+      "container_id": "ceb8481d8138147427f0d9d938019c2f8d5912f8a4210c657be7f472072c7011",
+      "runtime_seconds": 0.39440242200362263,
+      "exit_code": 1,
+      "timed_out": false
+    },
+    {
+      "instance_id": "pytest-dev__pytest-8422",
+      "script_kind": "B",
+      "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/pytest-dev__pytest-8422/B.py",
+      "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/pytest-dev__pytest-8422/B/stdout.txt",
+      "container_id": "3a772be75fe705649666a58795bd9d5c7bbccf1ff23eddb7744dae19ccc8bcd9",
+      "runtime_seconds": 0.37707921900437213,
+      "exit_code": 1,
+      "timed_out": false
+    }
+  ],
+  "docker_image_size_bytes": 249600000000
+}

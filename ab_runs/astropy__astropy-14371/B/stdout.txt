@@ -1,0 +1,2 @@
+WARNING: AstropyDeprecationWarning: The matrix_product function is deprecated and may be removed in a future version.
+        Use @ instead. [astropy.coordinates.tests.test_matrix_utilities]

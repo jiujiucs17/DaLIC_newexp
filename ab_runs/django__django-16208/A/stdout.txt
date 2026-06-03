@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/tmp/A.py", line 166, in <module>
+    _SR_MODULE_NS_0 = _sr_load_module(_SR_MODULE_SOURCE_0, "tests/backends/base/test_base.py", "tests.backends.base.test_base")
+  File "/tmp/A.py", line 18, in _sr_load_module
+    exec(compile(source, filename, 'exec'), module.__dict__)
+  File "tests/backends/base/test_base.py", line 6, in <module>
+    SimpleTestCase,
+ModuleNotFoundError: No module named 'tests'

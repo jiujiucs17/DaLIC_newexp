@@ -1,0 +1,10 @@
+{
+  "instance_id": "pylint-dev__pylint-4858",
+  "script_kind": "B",
+  "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/pylint-dev__pylint-4858/B.py",
+  "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/pylint-dev__pylint-4858/B/stdout.txt",
+  "container_id": "2cacd90dc865aaf96a2ebdf4306ec36528c074114d2aa111b93c4391af584e5c",
+  "runtime_seconds": 0.8188981779967435,
+  "exit_code": 0,
+  "timed_out": false
+}

@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/tmp/B.py", line 166, in <module>
+    _SR_MODULE_NS_0 = _sr_load_module(_SR_MODULE_SOURCE_0, "tests/basic/tests.py", "tests.basic.tests")
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/B.py", line 18, in _sr_load_module
+    exec(compile(source, filename, 'exec'), module.__dict__)
+  File "tests/basic/tests.py", line 11, in <module>
+    SimpleTestCase,
+^^^^^^^^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'tests'

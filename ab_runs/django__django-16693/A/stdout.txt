@@ -1,0 +1,37 @@
+Traceback (most recent call last):
+  File "/tmp/A.py", line 231, in <module>
+    main()
+  File "/tmp/A.py", line 217, in main
+    workflow_0000()
+  File "/tmp/A.py", line 170, in workflow_0000
+    return _sr_run_method(_SR_MODULE_NS_0, "RequestContextTests", "test_modify_context_and_render", tuple([]))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/A.py", line 159, in _sr_run_method
+    return _sr_maybe_await(method(**kwargs))
+                           ^^^^^^^^^^^^^^^^
+  File "tests/template_tests/test_context.py", line 84, in test_modify_context_and_render
+    {"False": False, "None": None, "True": True},
+       ^^^^^^^^^^^^^^^^^^^^^
+  File "/testbed/django/template/base.py", line 147, in __init__
+    engine = Engine.get_default()
+             ^^^^^^^^^^^^^^^^^^^^
+  File "/testbed/django/template/engine.py", line 107, in get_default
+    for engine in engines.all():
+                  ^^^^^^^^^^^^^
+  File "/testbed/django/template/utils.py", line 94, in all
+    return [self[alias] for alias in self]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/testbed/django/template/utils.py", line 91, in __iter__
+    return iter(self.templates)
+                ^^^^^^^^^^^^^^
+  File "/testbed/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ^^^^^^^^^^^^^^^^^^^
+  File "/testbed/django/template/utils.py", line 28, in templates
+    self._templates = settings.TEMPLATES
+                      ^^^^^^^^^^^^^^^^^^
+  File "/testbed/django/conf/__init__.py", line 84, in __getattr__
+    self._setup(name)
+  File "/testbed/django/conf/__init__.py", line 64, in _setup
+    raise ImproperlyConfigured(
+django.core.exceptions.ImproperlyConfigured: Requested setting TEMPLATES, but settings are not configured. You must either define the environment variable DJANGO_SETTINGS_MODULE or call settings.configure() before accessing settings.

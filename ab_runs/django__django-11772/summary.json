@@ -1,0 +1,27 @@
+{
+  "instance_id": "django__django-11772",
+  "status": "completed",
+  "results": [
+    {
+      "instance_id": "django__django-11772",
+      "script_kind": "A",
+      "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/django__django-11772/A.py",
+      "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/django__django-11772/A/stdout.txt",
+      "container_id": "33eda4f53585eb2a24f5c316b5a593c08b343ca7a21d666859478317acd0bbf5",
+      "runtime_seconds": 0.22352981799849658,
+      "exit_code": 1,
+      "timed_out": false
+    },
+    {
+      "instance_id": "django__django-11772",
+      "script_kind": "B",
+      "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/django__django-11772/B.py",
+      "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/django__django-11772/B/stdout.txt",
+      "container_id": "870da58c20cb5275be8af042b99402ee05eed469027b71f890b239d127002be8",
+      "runtime_seconds": 0.23118218399758916,
+      "exit_code": 1,
+      "timed_out": false
+    }
+  ],
+  "docker_image_size_bytes": 45620000000
+}

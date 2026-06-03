@@ -1,0 +1,27 @@
+{
+  "instance_id": "matplotlib__matplotlib-23266",
+  "status": "completed",
+  "results": [
+    {
+      "instance_id": "matplotlib__matplotlib-23266",
+      "script_kind": "A",
+      "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/matplotlib__matplotlib-23266/A.py",
+      "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/matplotlib__matplotlib-23266/A/stdout.txt",
+      "container_id": "ec3c256ac76fdda7dd54ad2aee38643baba6ee3e2951ddf2bb2c5b847fd29850",
+      "runtime_seconds": 2.6958948400060763,
+      "exit_code": 0,
+      "timed_out": false
+    },
+    {
+      "instance_id": "matplotlib__matplotlib-23266",
+      "script_kind": "B",
+      "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/matplotlib__matplotlib-23266/B.py",
+      "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/matplotlib__matplotlib-23266/B/stdout.txt",
+      "container_id": "8e16b329db3bde01f3a061b3fc89ae86a6ca466252afd99b3776a18ba3b61552",
+      "runtime_seconds": 2.2673320329995477,
+      "exit_code": 0,
+      "timed_out": false
+    }
+  ],
+  "docker_image_size_bytes": 186600000000
+}

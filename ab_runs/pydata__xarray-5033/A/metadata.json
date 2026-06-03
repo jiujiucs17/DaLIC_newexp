@@ -1,0 +1,10 @@
+{
+  "instance_id": "pydata__xarray-5033",
+  "script_kind": "A",
+  "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/pydata__xarray-5033/A.py",
+  "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/pydata__xarray-5033/A/stdout.txt",
+  "container_id": "3b417ea6521acbdc1171808d239d1cf00e411530fe80f3751a92a9ae53e8b3a0",
+  "runtime_seconds": 2.0593177690025186,
+  "exit_code": 0,
+  "timed_out": false
+}

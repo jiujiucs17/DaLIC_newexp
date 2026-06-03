@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/tmp/B.py", line 166, in <module>
+    _SR_MODULE_NS_0 = _sr_load_module(_SR_MODULE_SOURCE_0, "tests/db_functions/datetime/test_now.py", "tests.db_functions.datetime.test_now")
+  File "/tmp/B.py", line 18, in _sr_load_module
+    exec(compile(source, filename, 'exec'), module.__dict__)
+  File "tests/db_functions/datetime/test_now.py", line 7, in <module>
+    from django.utils import timezone
+ModuleNotFoundError: No module named 'tests'

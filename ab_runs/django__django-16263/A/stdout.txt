@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/tmp/A.py", line 166, in <module>
+    _SR_MODULE_NS_0 = _sr_load_module(_SR_MODULE_SOURCE_0, "tests/aggregation/tests.py", "tests.aggregation.tests")
+  File "/tmp/A.py", line 18, in _sr_load_module
+    exec(compile(source, filename, 'exec'), module.__dict__)
+  File "tests/aggregation/tests.py", line 14, in <module>
+    DecimalField,
+ModuleNotFoundError: No module named 'tests'

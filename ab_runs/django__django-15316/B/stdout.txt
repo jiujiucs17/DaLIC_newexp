@@ -1,0 +1,20 @@
+Traceback (most recent call last):
+  File "/tmp/B.py", line 166, in <module>
+    _SR_MODULE_NS_0 = _sr_load_module(_SR_MODULE_SOURCE_0, "tests/admin_docs/test_views.py", "tests.admin_docs.test_views")
+  File "/tmp/B.py", line 18, in _sr_load_module
+    exec(compile(source, filename, 'exec'), module.__dict__)
+  File "tests/admin_docs/test_views.py", line 7, in <module>
+    from django.contrib.admindocs.views import get_return_data_type, simplify_regex
+  File "/testbed/django/contrib/sites/models.py", line 78, in <module>
+    class Site(models.Model):
+  File "/testbed/django/db/models/base.py", line 108, in __new__
+    app_config = apps.get_containing_app_config(module)
+  File "/testbed/django/apps/registry.py", line 253, in get_containing_app_config
+    self.check_apps_ready()
+  File "/testbed/django/apps/registry.py", line 135, in check_apps_ready
+    settings.INSTALLED_APPS
+  File "/testbed/django/conf/__init__.py", line 89, in __getattr__
+    self._setup(name)
+  File "/testbed/django/conf/__init__.py", line 70, in _setup
+    raise ImproperlyConfigured(
+django.core.exceptions.ImproperlyConfigured: Requested setting INSTALLED_APPS, but settings are not configured. You must either define the environment variable DJANGO_SETTINGS_MODULE or call settings.configure() before accessing settings.

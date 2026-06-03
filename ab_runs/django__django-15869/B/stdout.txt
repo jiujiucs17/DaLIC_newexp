@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/tmp/B.py", line 166, in <module>
+    _SR_MODULE_NS_0 = _sr_load_module(_SR_MODULE_SOURCE_0, "tests/template_tests/filter_tests/test_length_is.py", "tests.template_tests.filter_tests.test_length_is")
+  File "/tmp/B.py", line 18, in _sr_load_module
+    exec(compile(source, filename, 'exec'), module.__dict__)
+  File "tests/template_tests/filter_tests/test_length_is.py", line 4, in <module>
+    
+ModuleNotFoundError: No module named 'tests'

@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/tmp/A.py", line 166, in <module>
+    _SR_MODULE_NS_0 = _sr_load_module(_SR_MODULE_SOURCE_0, "tests/model_forms/tests.py", "tests.model_forms.tests")
+  File "/tmp/A.py", line 18, in _sr_load_module
+    exec(compile(source, filename, 'exec'), module.__dict__)
+  File "tests/model_forms/tests.py", line 14, in <module>
+    from django.db import connection, models
+ModuleNotFoundError: No module named 'tests'

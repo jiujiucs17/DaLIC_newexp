@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/tmp/B.py", line 221, in <module>
+    main()
+  File "/tmp/B.py", line 218, in main
+    workflow_0009()
+  File "/tmp/B.py", line 206, in workflow_0009
+    return _sr_run_method(_SR_MODULE_NS_0, "TestApprox", "test_numpy_array", tuple([]))
+  File "/tmp/B.py", line 159, in _sr_run_method
+    return _sr_maybe_await(method(**kwargs))
+  File "testing/python/approx.py", line 71, in test_numpy_array
+    assert repr(approx(3 + 4 * 1j)) == "(3+4j) ± 5.0e-06 ∠ ±180°"
+  File "/testbed/src/_pytest/outcomes.py", line 217, in importorskip
+    raise Skipped(reason, allow_module_level=True) from None
+Skipped: could not import 'numpy': No module named 'numpy'

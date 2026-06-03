@@ -1,0 +1,10 @@
+{
+  "instance_id": "astropy__astropy-14042",
+  "script_kind": "A",
+  "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/astropy__astropy-14042/A.py",
+  "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/astropy__astropy-14042/A/stdout.txt",
+  "container_id": "1bcb51675275437862b75a9555bb2a3b4d030efac1a5574053ed637f862acf5f",
+  "runtime_seconds": 0.591711770000984,
+  "exit_code": 0,
+  "timed_out": false
+}

@@ -1,0 +1,33 @@
+Traceback (most recent call last):
+  File "/testbed/django/utils/connection.py", line 58, in __getitem__
+    return getattr(self._connections, alias)
+  File "/opt/miniconda3/envs/testbed/lib/python3.8/site-packages/asgiref/local.py", line 118, in __getattr__
+    return getattr(storage, key)
+AttributeError: '_thread._local' object has no attribute 'default'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/tmp/A.py", line 166, in <module>
+    _SR_MODULE_NS_0 = _sr_load_module(_SR_MODULE_SOURCE_0, "tests/backends/postgresql/tests.py", "tests.backends.postgresql.tests")
+  File "/tmp/A.py", line 18, in _sr_load_module
+    exec(compile(source, filename, 'exec'), module.__dict__)
+  File "tests/backends/postgresql/tests.py", line 9, in <module>
+    
+  File "/testbed/django/utils/connection.py", line 15, in __getattr__
+    return getattr(self._connections[self._alias], item)
+  File "/testbed/django/utils/connection.py", line 60, in __getitem__
+    if alias not in self.settings:
+  File "/testbed/django/utils/functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/testbed/django/utils/connection.py", line 45, in settings
+    self._settings = self.configure_settings(self._settings)
+  File "/testbed/django/db/utils.py", line 144, in configure_settings
+    databases = super().configure_settings(databases)
+  File "/testbed/django/utils/connection.py", line 50, in configure_settings
+    settings = getattr(django_settings, self.settings_name)
+  File "/testbed/django/conf/__init__.py", line 67, in __getattr__
+    self._setup(name)
+  File "/testbed/django/conf/__init__.py", line 48, in _setup
+    raise ImproperlyConfigured(
+django.core.exceptions.ImproperlyConfigured: Requested setting DATABASES, but settings are not configured. You must either define the environment variable DJANGO_SETTINGS_MODULE or call settings.configure() before accessing settings.

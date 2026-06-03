@@ -1,0 +1,10 @@
+{
+  "instance_id": "matplotlib__matplotlib-24111",
+  "script_kind": "A",
+  "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/matplotlib__matplotlib-24111/A.py",
+  "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/matplotlib__matplotlib-24111/A/stdout.txt",
+  "container_id": "3a1ccb50009c0fdce08021c7ec91559901ad34453285ec170cb20854f36dadee",
+  "runtime_seconds": 2.118971183001122,
+  "exit_code": 1,
+  "timed_out": false
+}

@@ -1,0 +1,4 @@
+/testbed/sklearn/gaussian_process/kernels.py:430: ConvergenceWarning: The optimal value found for dimension 0 of parameter constant_value is close to the specified upper bound 100000.0. Increasing the bound and calling fit again may find a better value.
+  warnings.warn(
+/testbed/sklearn/gaussian_process/_gpr.py:476: UserWarning: Predicted variances smaller than 0. Setting those variances to 0.
+  warnings.warn(

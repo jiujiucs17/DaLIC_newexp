@@ -1,0 +1,10 @@
+{
+  "instance_id": "sympy__sympy-12307",
+  "script_kind": "A",
+  "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/sympy__sympy-12307/A.py",
+  "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/sympy__sympy-12307/A/stdout.txt",
+  "container_id": "efa7c6c55831603b14b8631e33108020594e2f3b55779aa89c848f90c86dfc7f",
+  "runtime_seconds": 0.934650460992998,
+  "exit_code": 0,
+  "timed_out": false
+}

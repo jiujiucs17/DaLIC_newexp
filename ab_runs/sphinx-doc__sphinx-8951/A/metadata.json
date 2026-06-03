@@ -1,0 +1,10 @@
+{
+  "instance_id": "sphinx-doc__sphinx-8951",
+  "script_kind": "A",
+  "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/sphinx-doc__sphinx-8951/A.py",
+  "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/sphinx-doc__sphinx-8951/A/stdout.txt",
+  "container_id": "607d6aef7399cb2f61778d15f03fee1630aa118cdbfc05d9b2563df74fa5b568",
+  "runtime_seconds": 1.552840042997559,
+  "exit_code": 0,
+  "timed_out": false
+}

@@ -1,0 +1,10 @@
+{
+  "instance_id": "django__django-12771",
+  "script_kind": "B",
+  "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/django__django-12771/B.py",
+  "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/django__django-12771/B/stdout.txt",
+  "container_id": "1d5df012ecc7d29abf19ba0464ec8b72f5fdbc478bc4f151d42c056e99d950fc",
+  "runtime_seconds": 0.2353970250042039,
+  "exit_code": 1,
+  "timed_out": false
+}

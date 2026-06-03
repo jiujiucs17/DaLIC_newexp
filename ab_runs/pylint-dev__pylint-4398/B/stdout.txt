@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "/tmp/B.py", line 166, in <module>
+    _SR_MODULE_NS_0 = _sr_load_module(_SR_MODULE_SOURCE_0, "tests/test_self.py", "tests.test_self")
+  File "/tmp/B.py", line 18, in _sr_load_module
+    exec(compile(source, filename, 'exec'), module.__dict__)
+  File "tests/test_self.py", line 141
+    if output is not None:
+    ^
+IndentationError: expected an indented block

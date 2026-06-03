@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/tmp/A.py", line 231, in <module>
+    main()
+  File "/tmp/A.py", line 218, in main
+    workflow_0001()
+  File "/tmp/A.py", line 174, in workflow_0001
+    return _sr_run_function(_SR_MODULE_NS_0, "test_pylab_integration", tuple([]))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/A.py", line 142, in _sr_run_function
+    return _sr_maybe_await(namespace[function_name](**kwargs))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "lib/matplotlib/tests/test_pyplot.py", line 75, in test_pylab_integration
+    
+  File "/testbed/lib/matplotlib/_api/__init__.py", line 224, in __getattr__
+    raise AttributeError(
+AttributeError: module 'matplotlib' has no attribute 'testing'

@@ -1,0 +1,27 @@
+{
+  "instance_id": "astropy__astropy-8715",
+  "status": "completed",
+  "results": [
+    {
+      "instance_id": "astropy__astropy-8715",
+      "script_kind": "A",
+      "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/astropy__astropy-8715/A.py",
+      "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/astropy__astropy-8715/A/stdout.txt",
+      "container_id": "1c97227154912b0044372ce6fe74f348fb72d55f975d691df223c8bdc7fb8e80",
+      "runtime_seconds": 0.7663785889999417,
+      "exit_code": 1,
+      "timed_out": false
+    },
+    {
+      "instance_id": "astropy__astropy-8715",
+      "script_kind": "B",
+      "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/astropy__astropy-8715/B.py",
+      "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/astropy__astropy-8715/B/stdout.txt",
+      "container_id": "e6fab87449b51e17f0b8693b0c455c494668c74f3bbe23968eb2635cc0603d2a",
+      "runtime_seconds": 0.7707710610011418,
+      "exit_code": 1,
+      "timed_out": false
+    }
+  ],
+  "docker_image_size_bytes": 14530000000
+}

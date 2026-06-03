@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/tmp/A.py", line 166, in <module>
+    _SR_MODULE_NS_0 = _sr_load_module(_SR_MODULE_SOURCE_0, "tests/utils_tests/test_autoreload.py", "tests.utils_tests.test_autoreload")
+  File "/tmp/A.py", line 18, in _sr_load_module
+    exec(compile(source, filename, 'exec'), module.__dict__)
+  File "tests/utils_tests/test_autoreload.py", line 26, in <module>
+    from django.utils import autoreload
+ModuleNotFoundError: No module named 'tests'

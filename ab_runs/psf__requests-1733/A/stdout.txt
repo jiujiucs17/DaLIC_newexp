@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "/tmp/A.py", line 231, in <module>
+    main()
+  File "/tmp/A.py", line 228, in main
+    workflow_0011()
+  File "/tmp/A.py", line 214, in workflow_0011
+    return _sr_run_method(_SR_MODULE_NS_0, "RequestsTestCase", "test_request_and_response_are_pickleable", tuple([]))
+  File "/tmp/A.py", line 159, in _sr_run_method
+    return _sr_maybe_await(method(**kwargs))
+  File "test_requests.py", line 69, in test_request_and_response_are_pickleable
+  File "/opt/miniconda3/envs/testbed/lib/python3.9/socket.py", line 273, in __getstate__
+    raise TypeError(f"cannot pickle {self.__class__.__name__!r} object")
+TypeError: cannot pickle 'socket' object

@@ -1,0 +1,20 @@
+Traceback (most recent call last):
+  File "/tmp/B.py", line 216, in <module>
+    main()
+  File "/tmp/B.py", line 205, in main
+    workflow_0000()
+  File "/tmp/B.py", line 170, in workflow_0000
+    return _sr_run_method(_SR_MODULE_NS_0, "SecureProxySslHeaderTest", "test_set_with_xheader_right", tuple([]))
+  File "/tmp/B.py", line 159, in _sr_run_method
+    return _sr_maybe_await(method(**kwargs))
+  File "tests/settings_tests/tests.py", line 48, in test_set_with_xheader_right
+    }
+  File "/testbed/django/http/request.py", line 62, in __init__
+    self.GET = QueryDict(mutable=True)
+  File "/testbed/django/http/request.py", line 471, in __init__
+    self.encoding = encoding or settings.DEFAULT_CHARSET
+  File "/testbed/django/conf/__init__.py", line 92, in __getattr__
+    self._setup(name)
+  File "/testbed/django/conf/__init__.py", line 72, in _setup
+    raise ImproperlyConfigured(
+django.core.exceptions.ImproperlyConfigured: Requested setting DEFAULT_CHARSET, but settings are not configured. You must either define the environment variable DJANGO_SETTINGS_MODULE or call settings.configure() before accessing settings.

@@ -1,0 +1,27 @@
+{
+  "instance_id": "psf__requests-1733",
+  "status": "completed",
+  "results": [
+    {
+      "instance_id": "psf__requests-1733",
+      "script_kind": "A",
+      "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/psf__requests-1733/A.py",
+      "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/psf__requests-1733/A/stdout.txt",
+      "container_id": "2dcefc1551269659caae69ff313a4f3fc7ce162aa21118a37f4fec9f60f9b58b",
+      "runtime_seconds": 2.603103863999422,
+      "exit_code": 1,
+      "timed_out": false
+    },
+    {
+      "instance_id": "psf__requests-1733",
+      "script_kind": "B",
+      "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/psf__requests-1733/B.py",
+      "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/psf__requests-1733/B/stdout.txt",
+      "container_id": "5dda48c55754c4ad056ee2c622c1b49d166f7906262b4e90f0f000503877702f",
+      "runtime_seconds": 1.7825300719996449,
+      "exit_code": 0,
+      "timed_out": false
+    }
+  ],
+  "docker_image_size_bytes": 226300000000
+}

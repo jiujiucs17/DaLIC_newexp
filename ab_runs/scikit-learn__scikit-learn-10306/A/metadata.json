@@ -1,0 +1,10 @@
+{
+  "instance_id": "scikit-learn__scikit-learn-10306",
+  "script_kind": "A",
+  "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/scikit-learn__scikit-learn-10306/A.py",
+  "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/scikit-learn__scikit-learn-10306/A/stdout.txt",
+  "container_id": "e9c019adf1bf0d2d0bf7778fd219128f2d96bd73494bcb2954d54108bcbfd36d",
+  "runtime_seconds": 0.22315313600120135,
+  "exit_code": 1,
+  "timed_out": false
+}

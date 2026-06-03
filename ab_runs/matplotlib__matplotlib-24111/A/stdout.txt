@@ -1,0 +1,17 @@
+lib/matplotlib/tests/test_colors.py:107: UserWarning: Overwriting the cmap 'viridis' that was already in the registry.
+  match=r"matplotlib\.colormaps\.register\(name\)"
+Traceback (most recent call last):
+  File "/tmp/A.py", line 231, in <module>
+    main()
+  File "/tmp/A.py", line 221, in main
+    workflow_0004()
+  File "/tmp/A.py", line 186, in workflow_0004
+    return _sr_run_function(_SR_MODULE_NS_0, "test_colormap_equals", tuple([]))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/A.py", line 142, in _sr_run_function
+    return _sr_maybe_await(namespace[function_name](**kwargs))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "lib/matplotlib/tests/test_colors.py", line 144, in test_colormap_equals
+    cm.register_cmap(name, mpl.colormaps[name], override_builtin=True)
+               ^^^^^^^^^^^^
+AttributeError: 'ListedColormap' object has no attribute '_lut'

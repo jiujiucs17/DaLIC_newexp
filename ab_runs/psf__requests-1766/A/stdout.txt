@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/tmp/A.py", line 231, in <module>
+    main()
+  File "/tmp/A.py", line 223, in main
+    workflow_0006()
+  File "/tmp/A.py", line 194, in workflow_0006
+    return _sr_run_method(_SR_MODULE_NS_0, "RequestsTestCase", "test_conflicting_post_params", tuple([]))
+  File "/tmp/A.py", line 159, in _sr_run_method
+    return _sr_maybe_await(method(**kwargs))
+  File "test_requests.py", line 105, in test_conflicting_post_params
+    def test_HTTP_200_OK_GET_ALTERNATIVE(self):
+  File "/opt/miniconda3/envs/testbed/lib/python3.9/site-packages/_pytest/python_api.py", line 950, in raises
+    raise TypeError(f"{func!r} object (type: {type(func)}) must be callable")
+TypeError: 'requests.post(url, data=\'[{"some": "data"}]\', files={\'some\': f})' object (type: <class 'str'>) must be callable

@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/tmp/A.py", line 166, in <module>
+    _SR_MODULE_NS_0 = _sr_load_module(_SR_MODULE_SOURCE_0, "tests/expressions/tests.py", "tests.expressions.tests")
+  File "/tmp/A.py", line 18, in _sr_load_module
+    exec(compile(source, filename, 'exec'), module.__dict__)
+  File "tests/expressions/tests.py", line 19, in <module>
+    from django.db.models.expressions import (
+ModuleNotFoundError: No module named 'tests'

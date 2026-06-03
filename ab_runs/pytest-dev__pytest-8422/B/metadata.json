@@ -1,0 +1,10 @@
+{
+  "instance_id": "pytest-dev__pytest-8422",
+  "script_kind": "B",
+  "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/pytest-dev__pytest-8422/B.py",
+  "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/pytest-dev__pytest-8422/B/stdout.txt",
+  "container_id": "3a772be75fe705649666a58795bd9d5c7bbccf1ff23eddb7744dae19ccc8bcd9",
+  "runtime_seconds": 0.37707921900437213,
+  "exit_code": 1,
+  "timed_out": false
+}

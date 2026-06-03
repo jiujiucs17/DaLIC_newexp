@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/tmp/B.py", line 166, in <module>
+    _SR_MODULE_NS_0 = _sr_load_module(_SR_MODULE_SOURCE_0, "tests/generic_views/test_edit.py", "tests.generic_views.test_edit")
+  File "/tmp/B.py", line 18, in _sr_load_module
+    exec(compile(source, filename, 'exec'), module.__dict__)
+  File "tests/generic_views/test_edit.py", line 8, in <module>
+    
+ModuleNotFoundError: No module named 'tests'

@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/tmp/A.py", line 166, in <module>
+    _SR_MODULE_NS_0 = _sr_load_module(_SR_MODULE_SOURCE_0, "tests/constraints/tests.py", "tests.constraints.tests")
+  File "/tmp/A.py", line 18, in _sr_load_module
+    exec(compile(source, filename, 'exec'), module.__dict__)
+  File "tests/constraints/tests.py", line 7, in <module>
+    from django.test import SimpleTestCase, TestCase, skipUnlessDBFeature
+ModuleNotFoundError: No module named 'tests'

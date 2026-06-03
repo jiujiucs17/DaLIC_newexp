@@ -1,0 +1,8 @@
+/testbed/sympy/solvers/diophantine.py:3185: SyntaxWarning: "is" with a literal. Did you mean "=="?
+  if feasible is 1:  # it's prime and k == 2
+/testbed/sympy/plotting/plot.py:645: SyntaxWarning: "is" with a literal. Did you mean "=="?
+  if self.xscale is 'log':
+/testbed/sympy/plotting/plot.py:674: SyntaxWarning: "is" with a literal. Did you mean "=="?
+  if self.xscale is 'log':
+/testbed/sympy/plotting/plot.py:681: SyntaxWarning: "is" with a literal. Did you mean "=="?
+  if self.xscale is 'log':

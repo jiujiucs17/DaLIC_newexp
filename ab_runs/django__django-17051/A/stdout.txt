@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/tmp/A.py", line 166, in <module>
+    _SR_MODULE_NS_0 = _sr_load_module(_SR_MODULE_SOURCE_0, "tests/bulk_create/tests.py", "tests.bulk_create.tests")
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/A.py", line 18, in _sr_load_module
+    exec(compile(source, filename, 'exec'), module.__dict__)
+  File "tests/bulk_create/tests.py", line 8, in <module>
+    OperationalError,
+^^^^^^^^^^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'tests'

@@ -1,0 +1,12 @@
+{
+  "instance_id": "pytest-dev__pytest-5495",
+  "script_kind": "A",
+  "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/pytest-dev__pytest-5495/A.py",
+  "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/pytest-dev__pytest-5495/A/stdout.txt",
+  "container_id": null,
+  "runtime_seconds": null,
+  "exit_code": null,
+  "timed_out": false,
+  "failed_step": "2.1",
+  "error": "SyntaxError: invalid syntax (A.py, line 198)"
+}

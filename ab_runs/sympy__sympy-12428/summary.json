@@ -1,0 +1,27 @@
+{
+  "instance_id": "sympy__sympy-12428",
+  "status": "completed",
+  "results": [
+    {
+      "instance_id": "sympy__sympy-12428",
+      "script_kind": "A",
+      "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/sympy__sympy-12428/A.py",
+      "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/sympy__sympy-12428/A/stdout.txt",
+      "container_id": "414a445714f8f6fdc63e021c36abcfa73d55aa5a9be196cf462c3dc506e9bb3b",
+      "runtime_seconds": 0.9181952990038553,
+      "exit_code": 0,
+      "timed_out": false
+    },
+    {
+      "instance_id": "sympy__sympy-12428",
+      "script_kind": "B",
+      "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/sympy__sympy-12428/B.py",
+      "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/sympy__sympy-12428/B/stdout.txt",
+      "container_id": "3686f2d3949b46d4aff1f9afd36b6455a3cbe2f94751df19c110bcb4f45f3ae7",
+      "runtime_seconds": 0.8966853960009757,
+      "exit_code": 0,
+      "timed_out": false
+    }
+  ],
+  "docker_image_size_bytes": 291400000000
+}

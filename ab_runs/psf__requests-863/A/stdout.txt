@@ -1,0 +1,34 @@
+Traceback (most recent call last):
+  File "/tmp/A.py", line 231, in <module>
+    main()
+  File "/tmp/A.py", line 218, in main
+    workflow_0001()
+  File "/tmp/A.py", line 174, in workflow_0001
+    return _sr_run_method(_SR_MODULE_NS_0, "RequestsTestSuite", "test_session_persistent_cookies", tuple([]))
+  File "/tmp/A.py", line 159, in _sr_run_method
+    return _sr_maybe_await(method(**kwargs))
+  File "tests/test_requests.py", line 128, in test_session_persistent_cookies
+    r = get(httpbin('get') + '?test=true', params={'q': 'test'}, headers=heads)
+  File "/opt/miniconda3/envs/testbed/lib/python3.9/site-packages/requests/api.py", line 65, in get
+    return request('get', url, **kwargs)
+  File "/opt/miniconda3/envs/testbed/lib/python3.9/site-packages/requests/safe_mode.py", line 39, in wrapped
+    return function(method, url, **kwargs)
+  File "/opt/miniconda3/envs/testbed/lib/python3.9/site-packages/requests/api.py", line 51, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "/opt/miniconda3/envs/testbed/lib/python3.9/site-packages/requests/sessions.py", line 241, in request
+    r.send(prefetch=prefetch)
+  File "/opt/miniconda3/envs/testbed/lib/python3.9/site-packages/requests/models.py", line 603, in send
+    cookie_header = get_cookie_header(self.cookies, self)
+  File "/opt/miniconda3/envs/testbed/lib/python3.9/site-packages/requests/cookies.py", line 109, in get_cookie_header
+    jar.add_cookie_header(r)
+  File "/opt/miniconda3/envs/testbed/lib/python3.9/http/cookiejar.py", line 1365, in add_cookie_header
+    cookies = self._cookies_for_request(request)
+  File "/opt/miniconda3/envs/testbed/lib/python3.9/http/cookiejar.py", line 1291, in _cookies_for_request
+    cookies.extend(self._cookies_for_domain(domain, request))
+  File "/opt/miniconda3/envs/testbed/lib/python3.9/http/cookiejar.py", line 1280, in _cookies_for_domain
+    if not self._policy.return_ok(cookie, request):
+  File "/opt/miniconda3/envs/testbed/lib/python3.9/http/cookiejar.py", line 1102, in return_ok
+    if not fn(cookie, request):
+  File "/opt/miniconda3/envs/testbed/lib/python3.9/http/cookiejar.py", line 1116, in return_ok_verifiability
+    if request.unverifiable and is_third_party(request):
+AttributeError: 'MockRequest' object has no attribute 'unverifiable'

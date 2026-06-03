@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/tmp/A.py", line 166, in <module>
+    _SR_MODULE_NS_0 = _sr_load_module(_SR_MODULE_SOURCE_0, "tests/inspectdb/tests.py", "tests.inspectdb.tests")
+  File "/tmp/A.py", line 18, in _sr_load_module
+    exec(compile(source, filename, 'exec'), module.__dict__)
+  File "tests/inspectdb/tests.py", line 9, in <module>
+    from django.test import TestCase, TransactionTestCase, skipUnlessDBFeature
+ModuleNotFoundError: No module named 'tests'

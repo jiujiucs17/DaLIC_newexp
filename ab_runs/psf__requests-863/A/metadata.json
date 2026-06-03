@@ -1,0 +1,10 @@
+{
+  "instance_id": "psf__requests-863",
+  "script_kind": "A",
+  "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/psf__requests-863/A.py",
+  "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/psf__requests-863/A/stdout.txt",
+  "container_id": "a50a7736cfd03daa5b786196f47dc998840269c205eda814e3d89e11e2c0b5ad",
+  "runtime_seconds": 0.6852894629992079,
+  "exit_code": 1,
+  "timed_out": false
+}

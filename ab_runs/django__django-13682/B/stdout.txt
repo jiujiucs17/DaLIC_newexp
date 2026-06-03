@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "/tmp/B.py", line 216, in <module>
+    main()
+  File "/tmp/B.py", line 205, in main
+    workflow_0000()
+  File "/tmp/B.py", line 170, in workflow_0000
+    return _sr_run_method(_SR_MODULE_NS_0, "CheckUrlConfigTests", "test_check_unique_namespaces", tuple([]))
+  File "/tmp/B.py", line 159, in _sr_run_method
+    return _sr_maybe_await(method(**kwargs))
+  File "tests/check_framework/test_urls.py", line 42, in test_check_unique_namespaces
+    def test_contains_tuple_not_url_instance(self):
+  File "/testbed/django/core/checks/urls.py", line 35, in check_url_namespaces_unique
+    if not getattr(settings, 'ROOT_URLCONF', None):
+  File "/testbed/django/conf/__init__.py", line 69, in __getattr__
+    self._setup(name)
+  File "/testbed/django/conf/__init__.py", line 50, in _setup
+    raise ImproperlyConfigured(
+django.core.exceptions.ImproperlyConfigured: Requested setting ROOT_URLCONF, but settings are not configured. You must either define the environment variable DJANGO_SETTINGS_MODULE or call settings.configure() before accessing settings.

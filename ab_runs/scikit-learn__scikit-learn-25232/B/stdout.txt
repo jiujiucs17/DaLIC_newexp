@@ -1,0 +1,2 @@
+/testbed/sklearn/impute/_iterative.py:798: ConvergenceWarning: [IterativeImputer] Early stopping criterion not reached.
+  warnings.warn(

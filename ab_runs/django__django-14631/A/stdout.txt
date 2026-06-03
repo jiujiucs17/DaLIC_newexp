@@ -1,0 +1,22 @@
+Traceback (most recent call last):
+  File "/tmp/A.py", line 231, in <module>
+    main()
+  File "/tmp/A.py", line 217, in main
+    workflow_0000()
+  File "/tmp/A.py", line 170, in workflow_0000
+    return _sr_run_method(_SR_MODULE_NS_0, "FormsTestCase", "test_datetime_changed_data_callable_with_microseconds", tuple([]))
+  File "/tmp/A.py", line 159, in _sr_run_method
+    return _sr_maybe_await(method(**kwargs))
+  File "tests/forms_tests/tests/test_forms.py", line 150, in test_datetime_changed_data_callable_with_microseconds
+    <li><ul class="errorlist"><li>This field is required.</li></ul>
+  File "/testbed/django/forms/forms.py", line 76, in __init__
+    self.label_suffix = label_suffix if label_suffix is not None else _(':')
+  File "/testbed/django/utils/translation/__init__.py", line 74, in gettext
+    return _trans.gettext(message)
+  File "/testbed/django/utils/translation/__init__.py", line 50, in __getattr__
+    if settings.USE_I18N:
+  File "/testbed/django/conf/__init__.py", line 69, in __getattr__
+    self._setup(name)
+  File "/testbed/django/conf/__init__.py", line 50, in _setup
+    raise ImproperlyConfigured(
+django.core.exceptions.ImproperlyConfigured: Requested setting USE_I18N, but settings are not configured. You must either define the environment variable DJANGO_SETTINGS_MODULE or call settings.configure() before accessing settings.

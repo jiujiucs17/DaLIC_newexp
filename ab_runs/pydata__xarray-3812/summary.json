@@ -1,0 +1,27 @@
+{
+  "instance_id": "pydata__xarray-3812",
+  "status": "completed",
+  "results": [
+    {
+      "instance_id": "pydata__xarray-3812",
+      "script_kind": "A",
+      "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/pydata__xarray-3812/A.py",
+      "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/pydata__xarray-3812/A/stdout.txt",
+      "container_id": "00e8a43f4959b86de90e24f7692c46f7de2e3f6f0f58650ace3be955c4fccaea",
+      "runtime_seconds": 2.00666178100073,
+      "exit_code": 0,
+      "timed_out": false
+    },
+    {
+      "instance_id": "pydata__xarray-3812",
+      "script_kind": "B",
+      "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/pydata__xarray-3812/B.py",
+      "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/pydata__xarray-3812/B/stdout.txt",
+      "container_id": "de09791c9849d611bdb68f6140c5244e3cad23305c0083c38415dd1c74e96ff4",
+      "runtime_seconds": 1.9855281079944689,
+      "exit_code": 0,
+      "timed_out": false
+    }
+  ],
+  "docker_image_size_bytes": 233000000000
+}

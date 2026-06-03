@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/tmp/B.py", line 166, in <module>
+    _SR_MODULE_NS_0 = _sr_load_module(_SR_MODULE_SOURCE_0, "tests/staticfiles_tests/test_checks.py", "tests.staticfiles_tests.test_checks")
+  File "/tmp/B.py", line 18, in _sr_load_module
+    exec(compile(source, filename, 'exec'), module.__dict__)
+  File "tests/staticfiles_tests/test_checks.py", line 8, in <module>
+    from django.test import override_settings
+ModuleNotFoundError: No module named 'tests'

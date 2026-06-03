@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/tmp/A.py", line 231, in <module>
+    main()
+  File "/tmp/A.py", line 226, in main
+    workflow_0009()
+  File "/tmp/A.py", line 206, in workflow_0009
+    return _sr_run_method(_SR_MODULE_NS_0, "TestApprox", "test_numpy_array", tuple([]))
+  File "/tmp/A.py", line 159, in _sr_run_method
+    return _sr_maybe_await(method(**kwargs))
+  File "testing/python/approx.py", line 79, in test_numpy_array
+    (5.0, "approx(5.0 ± 5.0e-06)"),
+  File "/testbed/src/_pytest/outcomes.py", line 217, in importorskip
+    raise Skipped(reason, allow_module_level=True) from None
+Skipped: could not import 'numpy': No module named 'numpy'

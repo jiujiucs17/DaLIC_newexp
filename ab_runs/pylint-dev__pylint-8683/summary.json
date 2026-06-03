@@ -1,0 +1,27 @@
+{
+  "instance_id": "pylint-dev__pylint-8683",
+  "status": "completed",
+  "results": [
+    {
+      "instance_id": "pylint-dev__pylint-8683",
+      "script_kind": "A",
+      "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/pylint-dev__pylint-8683/A.py",
+      "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/pylint-dev__pylint-8683/A/stdout.txt",
+      "container_id": "3ec158a3f5f60b2f126d73c25cd88e19faec48825110f4d64858cfd056d049ed",
+      "runtime_seconds": 0.7705067690039868,
+      "exit_code": 1,
+      "timed_out": false
+    },
+    {
+      "instance_id": "pylint-dev__pylint-8683",
+      "script_kind": "B",
+      "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/pylint-dev__pylint-8683/B.py",
+      "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/pylint-dev__pylint-8683/B/stdout.txt",
+      "container_id": "4e63b03cb1325056cc5ee3c25a688f41370ec1417d44b1978c4fe84b94e245ae",
+      "runtime_seconds": 0.7528277980018174,
+      "exit_code": 1,
+      "timed_out": false
+    }
+  ],
+  "docker_image_size_bytes": 248300000000
+}

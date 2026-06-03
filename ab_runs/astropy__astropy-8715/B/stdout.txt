@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "/tmp/B.py", line 191, in <module>
+    main()
+  File "/tmp/B.py", line 185, in main
+    workflow_0000()
+  File "/tmp/B.py", line 170, in workflow_0000
+    return _sr_run_function(_SR_MODULE_NS_0, "test_invalid_arraysize", tuple([]))
+  File "/tmp/B.py", line 142, in _sr_run_function
+    return _sr_maybe_await(namespace[function_name](**kwargs))
+  File "astropy/io/votable/tests/converter_test.py", line 12, in test_invalid_arraysize
+    from astropy.io.votable import converters
+  File "/testbed/astropy/io/votable/tree.py", line 1222, in __init__
+    self.arraysize = arraysize
+  File "/testbed/astropy/io/votable/tree.py", line 1420, in arraysize
+    vo_raise(E13, arraysize, self._config, self._pos)
+  File "/testbed/astropy/io/votable/exceptions.py", line 102, in vo_raise
+    raise exception_class(args, config, pos)
+astropy.io.votable.exceptions.E13: ?:?:?: E13: Invalid arraysize attribute 'foo'

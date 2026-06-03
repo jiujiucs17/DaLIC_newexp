@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/tmp/A.py", line 231, in <module>
+    main()
+  File "/tmp/A.py", line 217, in main
+    workflow_0000()
+  File "/tmp/A.py", line 170, in workflow_0000
+    return _sr_run_method(_SR_MODULE_NS_0, "IsOverriddenTest", "test_settings_repr", tuple([]))
+  File "/tmp/A.py", line 159, in _sr_run_method
+    return _sr_maybe_await(method(**kwargs))
+  File "tests/settings_tests/tests.py", line 70, in test_settings_repr
+    self.assertEqual(FullyDecoratedTranTestCase.__name__, 'FullyDecoratedTranTestCase')
+  File "/testbed/django/conf/__init__.py", line 141, in __init__
+    mod = importlib.import_module(self.SETTINGS_MODULE)
+  File "/opt/miniconda3/envs/testbed/lib/python3.8/importlib/__init__.py", line 118, in import_module
+    if name.startswith('.'):
+AttributeError: 'NoneType' object has no attribute 'startswith'
