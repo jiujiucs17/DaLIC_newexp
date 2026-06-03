@@ -1,4 +1,14 @@
-  File "/tmp/A.py", line 1
-    from __future__ import annotations
-    ^
-SyntaxError: future feature annotations is not defined
+/testbed/sklearn/compose/_column_transformer.py:424: DeprecationWarning: Given feature/column names or counts do not match the ones for the data given during fit. This will fail from v0.24.
+  DeprecationWarning)
+/testbed/sklearn/compose/_column_transformer.py:424: DeprecationWarning: Given feature/column names or counts do not match the ones for the data given during fit. This will fail from v0.24.
+  DeprecationWarning)
+/testbed/sklearn/compose/_column_transformer.py:424: DeprecationWarning: Given feature/column names or counts do not match the ones for the data given during fit. This will fail from v0.24.
+  DeprecationWarning)
+/testbed/sklearn/compose/_column_transformer.py:424: DeprecationWarning: Given feature/column names or counts do not match the ones for the data given during fit. This will fail from v0.24.
+  DeprecationWarning)
+/testbed/sklearn/compose/_column_transformer.py:424: DeprecationWarning: Given feature/column names or counts do not match the ones for the data given during fit. This will fail from v0.24.
+  DeprecationWarning)
+/testbed/sklearn/compose/_column_transformer.py:424: DeprecationWarning: Given feature/column names or counts do not match the ones for the data given during fit. This will fail from v0.24.
+  DeprecationWarning)
+/testbed/sklearn/compose/_column_transformer.py:424: DeprecationWarning: Given feature/column names or counts do not match the ones for the data given during fit. This will fail from v0.24.
+  DeprecationWarning)

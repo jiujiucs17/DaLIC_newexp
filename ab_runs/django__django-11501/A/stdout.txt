@@ -1,4 +1,16 @@
-  File "/tmp/A.py", line 1
-    from __future__ import annotations
-    ^
-SyntaxError: future feature annotations is not defined
+Traceback (most recent call last):
+  File "/tmp/A.py", line 171, in <module>
+    _SR_MODULE_NS_0 = _sr_load_module(_SR_MODULE_SOURCE_0, "tests/auth_tests/test_management.py", "tests.auth_tests.test_management")
+  File "/tmp/A.py", line 16, in _sr_load_module
+    exec(compile(source, filename, 'exec'), module.__dict__)
+  File "tests/auth_tests/test_management.py", line 11, in <module>
+    from django.contrib.auth.management import (
+  File "/testbed/django/contrib/auth/management/commands/changepassword.py", line 9, in <module>
+    UserModel = get_user_model()
+  File "/testbed/django/contrib/auth/__init__.py", line 156, in get_user_model
+    return django_apps.get_model(settings.AUTH_USER_MODEL, require_ready=False)
+  File "/testbed/django/conf/__init__.py", line 76, in __getattr__
+    self._setup(name)
+  File "/testbed/django/conf/__init__.py", line 61, in _setup
+    % (desc, ENVIRONMENT_VARIABLE))
+django.core.exceptions.ImproperlyConfigured: Requested setting AUTH_USER_MODEL, but settings are not configured. You must either define the environment variable DJANGO_SETTINGS_MODULE or call settings.configure() before accessing settings.

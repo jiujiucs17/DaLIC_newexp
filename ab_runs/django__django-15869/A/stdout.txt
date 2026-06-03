@@ -1,8 +1,12 @@
 Traceback (most recent call last):
-  File "/tmp/A.py", line 166, in <module>
-    _SR_MODULE_NS_0 = _sr_load_module(_SR_MODULE_SOURCE_0, "tests/template_tests/filter_tests/test_length_is.py", "tests.template_tests.filter_tests.test_length_is")
-  File "/tmp/A.py", line 18, in _sr_load_module
-    exec(compile(source, filename, 'exec'), module.__dict__)
-  File "tests/template_tests/filter_tests/test_length_is.py", line 4, in <module>
+  File "/tmp/A.py", line 236, in <module>
+    main()
+  File "/tmp/A.py", line 224, in main
+    workflow_0002()
+  File "/tmp/A.py", line 183, in workflow_0002
+    return _sr_run_method(_SR_MODULE_NS_0, "LengthIsTests", "test_length_is11", tuple([]))
+  File "/tmp/A.py", line 164, in _sr_run_method
+    return _sr_maybe_await(method(**kwargs))
+  File "tests/template_tests/filter_tests/test_length_is.py", line 34, in test_length_is11
     
-ModuleNotFoundError: No module named 'tests'
+AttributeError: 'LengthIsTests' object has no attribute 'engine'

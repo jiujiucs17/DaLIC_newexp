@@ -1,8 +1,8 @@
 Traceback (most recent call last):
-  File "/tmp/A.py", line 166, in <module>
+  File "/tmp/A.py", line 171, in <module>
     _SR_MODULE_NS_0 = _sr_load_module(_SR_MODULE_SOURCE_0, "tests/staticfiles_tests/test_storage.py", "tests.staticfiles_tests.test_storage")
-  File "/tmp/A.py", line 18, in _sr_load_module
+  File "/tmp/A.py", line 16, in _sr_load_module
     exec(compile(source, filename, 'exec'), module.__dict__)
-  File "tests/staticfiles_tests/test_storage.py", line 15, in <module>
-    )
-ModuleNotFoundError: No module named 'tests'
+  File "tests/staticfiles_tests/test_storage.py", line 23, in <module>
+    def hashed_file_path(test, path):
+NameError: name 'TestHashedFiles' is not defined

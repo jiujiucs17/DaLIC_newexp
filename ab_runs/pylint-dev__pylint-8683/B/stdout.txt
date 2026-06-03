@@ -10,13 +10,13 @@ Remainder of file ignored
 1
 2
 Traceback (most recent call last):
-  File "/tmp/B.py", line 226, in <module>
+  File "/tmp/B.py", line 231, in <module>
     main()
-  File "/tmp/B.py", line 220, in main
+  File "/tmp/B.py", line 225, in main
     workflow_0007()
-  File "/tmp/B.py", line 198, in workflow_0007
+  File "/tmp/B.py", line 203, in workflow_0007
     return _sr_run_method(_SR_MODULE_NS_0, "TestCheckParallel", "test_sequential_checkers_work", tuple([]))
-  File "/tmp/B.py", line 159, in _sr_run_method
+  File "/tmp/B.py", line 164, in _sr_run_method
     return _sr_maybe_await(method(**kwargs))
   File "tests/test_check_parallel.py", line 199, in test_sequential_checkers_work
   File "/testbed/pylint/lint/parallel.py", line 142, in check_parallel

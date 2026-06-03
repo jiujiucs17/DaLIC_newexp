@@ -1,4 +1,22 @@
-  File "/tmp/B.py", line 1
-    from __future__ import annotations
-    ^
-SyntaxError: future feature annotations is not defined
+Traceback (most recent call last):
+  File "/tmp/B.py", line 171, in <module>
+    _SR_MODULE_NS_0 = _sr_load_module(_SR_MODULE_SOURCE_0, "tests/admin_scripts/tests.py", "tests.admin_scripts.tests")
+  File "/tmp/B.py", line 16, in _sr_load_module
+    exec(compile(source, filename, 'exec'), module.__dict__)
+  File "tests/admin_scripts/tests.py", line 23, in <module>
+    BaseCommand, CommandError, call_command, color,
+  File "/testbed/django/db/migrations/recorder.py", line 9, in <module>
+    class MigrationRecorder:
+  File "/testbed/django/db/migrations/recorder.py", line 22, in MigrationRecorder
+    class Migration(models.Model):
+  File "/testbed/django/db/migrations/recorder.py", line 23, in Migration
+    app = models.CharField(max_length=255)
+  File "/testbed/django/db/models/fields/__init__.py", line 1037, in __init__
+    super().__init__(*args, **kwargs)
+  File "/testbed/django/db/models/fields/__init__.py", line 161, in __init__
+    self.db_tablespace = db_tablespace or settings.DEFAULT_INDEX_TABLESPACE
+  File "/testbed/django/conf/__init__.py", line 56, in __getattr__
+    self._setup(name)
+  File "/testbed/django/conf/__init__.py", line 41, in _setup
+    % (desc, ENVIRONMENT_VARIABLE))
+django.core.exceptions.ImproperlyConfigured: Requested setting DEFAULT_INDEX_TABLESPACE, but settings are not configured. You must either define the environment variable DJANGO_SETTINGS_MODULE or call settings.configure() before accessing settings.

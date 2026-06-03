@@ -3,8 +3,10 @@
   "script_kind": "B",
   "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/django__django-17051/B.py",
   "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/django__django-17051/B/stdout.txt",
-  "container_id": "3607d76afe8e2984c73904e4c6a7f48d8c556b52c1a47b0f8b0aebc5cbcb51ff",
-  "runtime_seconds": 0.6646468979961355,
+  "container_id": "311a5b4c2b423e1aa765287baee935d20dd9e5d63c5aa8bb5fc5a378f601b7bb",
+  "runtime_seconds": 0.6698010570107726,
   "exit_code": 1,
+  "execution_stage": "run",
+  "failure_category": "script_runtime_error",
   "timed_out": false
 }

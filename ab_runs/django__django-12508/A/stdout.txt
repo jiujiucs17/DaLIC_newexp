@@ -1,4 +1,22 @@
-  File "/tmp/A.py", line 1
-    from __future__ import annotations
-    ^
-SyntaxError: future feature annotations is not defined
+Traceback (most recent call last):
+  File "/tmp/A.py", line 174, in <module>
+    _SR_MODULE_NS_1 = _sr_load_module(_SR_MODULE_SOURCE_1, "tests/dbshell/test_oracle.py", "tests.dbshell.test_oracle")
+  File "/tmp/A.py", line 16, in _sr_load_module
+    exec(compile(source, filename, 'exec'), module.__dict__)
+  File "tests/dbshell/test_oracle.py", line 7, in <module>
+    
+  File "/testbed/django/db/__init__.py", line 28, in __getattr__
+    return getattr(connections[DEFAULT_DB_ALIAS], item)
+  File "/testbed/django/db/utils.py", line 211, in __getitem__
+    self.ensure_defaults(alias)
+  File "/testbed/django/db/utils.py", line 172, in ensure_defaults
+    conn = self.databases[alias]
+  File "/testbed/django/utils/functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/testbed/django/db/utils.py", line 153, in databases
+    self._databases = settings.DATABASES
+  File "/testbed/django/conf/__init__.py", line 77, in __getattr__
+    self._setup(name)
+  File "/testbed/django/conf/__init__.py", line 62, in _setup
+    % (desc, ENVIRONMENT_VARIABLE))
+django.core.exceptions.ImproperlyConfigured: Requested setting DATABASES, but settings are not configured. You must either define the environment variable DJANGO_SETTINGS_MODULE or call settings.configure() before accessing settings.

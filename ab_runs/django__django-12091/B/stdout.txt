@@ -1,4 +1,14 @@
-  File "/tmp/B.py", line 1
-    from __future__ import annotations
-    ^
-SyntaxError: future feature annotations is not defined
+Traceback (most recent call last):
+  File "/tmp/B.py", line 201, in <module>
+    main()
+  File "/tmp/B.py", line 194, in main
+    workflow_0000()
+  File "/tmp/B.py", line 175, in workflow_0000
+    return _sr_run_method(_SR_MODULE_NS_0, "ExceptionReporterFilterTests", "test_request_meta_filtering", tuple([]))
+  File "/tmp/B.py", line 161, in _sr_run_method
+    _sr_call_optional(instance, 'setUp')
+  File "/tmp/B.py", line 135, in _sr_call_optional
+    value(*args)
+  File "/testbed/django/test/utils.py", line 791, in setUp
+    self.old_stream = self.logger.handlers[0].stream
+IndexError: list index out of range

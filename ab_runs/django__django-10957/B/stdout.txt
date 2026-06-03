@@ -1,4 +1,9 @@
-  File "/tmp/B.py", line 1
-    from __future__ import annotations
+Traceback (most recent call last):
+  File "/tmp/B.py", line 171, in <module>
+    _SR_MODULE_NS_0 = _sr_load_module(_SR_MODULE_SOURCE_0, "tests/i18n/tests.py", "tests.i18n.tests")
+  File "/tmp/B.py", line 16, in _sr_load_module
+    exec(compile(source, filename, 'exec'), module.__dict__)
+  File "tests/i18n/tests.py", line 74
+    @translation.override(None)
     ^
-SyntaxError: future feature annotations is not defined
+IndentationError: expected an indented block

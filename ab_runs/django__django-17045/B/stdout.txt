@@ -1,12 +1,12 @@
 Traceback (most recent call last):
-  File "/tmp/B.py", line 221, in <module>
+  File "/tmp/B.py", line 226, in <module>
     main()
-  File "/tmp/B.py", line 210, in main
+  File "/tmp/B.py", line 215, in main
     workflow_0001()
-  File "/tmp/B.py", line 174, in workflow_0001
+  File "/tmp/B.py", line 179, in workflow_0001
     return _sr_run_method(_SR_MODULE_NS_0, "CheckUrlConfigTests", "test_check_unique_namespaces", tuple([]))
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/tmp/B.py", line 159, in _sr_run_method
+  File "/tmp/B.py", line 164, in _sr_run_method
     return _sr_maybe_await(method(**kwargs))
                            ^^^^^^^^^^^^^^^^
   File "tests/check_framework/test_urls.py", line 42, in test_check_unique_namespaces

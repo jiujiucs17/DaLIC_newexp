@@ -1,4 +1,20 @@
-  File "/tmp/A.py", line 1
-    from __future__ import annotations
-    ^
-SyntaxError: future feature annotations is not defined
+Traceback (most recent call last):
+  File "/tmp/A.py", line 174, in <module>
+    _SR_MODULE_NS_1 = _sr_load_module(_SR_MODULE_SOURCE_1, "tests/queries/test_query.py", "tests.queries.test_query")
+  File "/tmp/A.py", line 16, in _sr_load_module
+    exec(compile(source, filename, 'exec'), module.__dict__)
+  File "tests/queries/test_query.py", line 12, in <module>
+    from django.test.utils import register_lookup
+  File "/testbed/tests/queries/models.py", line 8, in <module>
+    class DumbCategory(models.Model):
+  File "/testbed/django/db/models/base.py", line 108, in __new__
+    app_config = apps.get_containing_app_config(module)
+  File "/testbed/django/apps/registry.py", line 253, in get_containing_app_config
+    self.check_apps_ready()
+  File "/testbed/django/apps/registry.py", line 135, in check_apps_ready
+    settings.INSTALLED_APPS
+  File "/testbed/django/conf/__init__.py", line 83, in __getattr__
+    self._setup(name)
+  File "/testbed/django/conf/__init__.py", line 68, in _setup
+    % (desc, ENVIRONMENT_VARIABLE))
+django.core.exceptions.ImproperlyConfigured: Requested setting INSTALLED_APPS, but settings are not configured. You must either define the environment variable DJANGO_SETTINGS_MODULE or call settings.configure() before accessing settings.

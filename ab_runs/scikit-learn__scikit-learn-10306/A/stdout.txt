@@ -1,4 +1,2 @@
-  File "/tmp/A.py", line 1
-    from __future__ import annotations
-    ^
-SyntaxError: future feature annotations is not defined
+/opt/miniconda3/envs/testbed/lib/python3.6/importlib/_bootstrap.py:219: RuntimeWarning: numpy.ufunc size changed, may indicate binary incompatibility. Expected 192 from C header, got 216 from PyObject
+  return f(*args, **kwds)

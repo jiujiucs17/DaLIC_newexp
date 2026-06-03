@@ -1,4 +1,24 @@
-  File "/tmp/A.py", line 1
-    from __future__ import annotations
-    ^
-SyntaxError: future feature annotations is not defined
+/testbed/sklearn/linear_model/stochastic_gradient.py:144: FutureWarning: max_iter and tol parameters have been added in SGDClassifier in 0.19. If both are left unset, they default to max_iter=5 and tol=None. If tol is not None, max_iter defaults to max_iter=1000. From 0.21, default max_iter will be 1000, and default tol will be 1e-3.
+  FutureWarning)
+/testbed/sklearn/utils/estimator_checks.py:2214: UserWarning: ValueError occurred during set_params. It is recommended to delay parameter validation until fit.
+  "validation until fit.".format(e_type))
+/testbed/sklearn/utils/estimator_checks.py:2226: UserWarning: Estimator's parameters changed after set_params raised ValueError
+  warnings.warn(change_warning_msg)
+/testbed/sklearn/utils/estimator_checks.py:2214: UserWarning: TypeError occurred during set_params. It is recommended to delay parameter validation until fit.
+  "validation until fit.".format(e_type))
+/testbed/sklearn/utils/estimator_checks.py:2226: UserWarning: Estimator's parameters changed after set_params raised TypeError
+  warnings.warn(change_warning_msg)
+/testbed/sklearn/linear_model/stochastic_gradient.py:144: FutureWarning: max_iter and tol parameters have been added in SGDClassifier in 0.19. If both are left unset, they default to max_iter=5 and tol=None. If tol is not None, max_iter defaults to max_iter=1000. From 0.21, default max_iter will be 1000, and default tol will be 1e-3.
+  FutureWarning)
+/testbed/sklearn/linear_model/stochastic_gradient.py:144: FutureWarning: max_iter and tol parameters have been added in SGDClassifier in 0.19. If both are left unset, they default to max_iter=5 and tol=None. If tol is not None, max_iter defaults to max_iter=1000. From 0.21, default max_iter will be 1000, and default tol will be 1e-3.
+  FutureWarning)
+/testbed/sklearn/utils/estimator_checks.py:2214: UserWarning: ValueError occurred during set_params. It is recommended to delay parameter validation until fit.
+  "validation until fit.".format(e_type))
+/testbed/sklearn/utils/estimator_checks.py:2226: UserWarning: Estimator's parameters changed after set_params raised ValueError
+  warnings.warn(change_warning_msg)
+/testbed/sklearn/utils/estimator_checks.py:2214: UserWarning: TypeError occurred during set_params. It is recommended to delay parameter validation until fit.
+  "validation until fit.".format(e_type))
+/testbed/sklearn/utils/estimator_checks.py:2226: UserWarning: Estimator's parameters changed after set_params raised TypeError
+  warnings.warn(change_warning_msg)
+/testbed/sklearn/utils/estimator_checks.py:305: SkipTestWarning: decision_function of SVC is not invariant when applied to a subset.
+  warnings.warn(str(exception), SkipTestWarning)

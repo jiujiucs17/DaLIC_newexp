@@ -1,4 +1,14 @@
-  File "/tmp/B.py", line 1
-    from __future__ import annotations
-    ^
-SyntaxError: future feature annotations is not defined
+/testbed/sklearn/linear_model/stochastic_gradient.py:917: RuntimeWarning: divide by zero encountered in log
+  return np.log(self.predict_proba(X))
+Traceback (most recent call last):
+  File "/tmp/B.py", line 231, in <module>
+    main()
+  File "/tmp/B.py", line 220, in main
+    workflow_0002()
+  File "/tmp/B.py", line 183, in workflow_0002
+    return _sr_run_function(_SR_MODULE_NS_0, "test_grid_search_failing_classifier", tuple([]))
+  File "/tmp/B.py", line 147, in _sr_run_function
+    return _sr_maybe_await(namespace[function_name](**kwargs))
+  File "sklearn/model_selection/tests/test_search.py", line 236, in test_grid_search_failing_classifier
+    y = np.array([0] * 5 + [1] * 5)
+AttributeError: 'GridSearchCV' object has no attribute 'cv_results_'

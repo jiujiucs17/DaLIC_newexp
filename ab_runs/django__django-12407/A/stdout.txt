@@ -1,4 +1,28 @@
-  File "/tmp/A.py", line 1
-    from __future__ import annotations
-    ^
-SyntaxError: future feature annotations is not defined
+Traceback (most recent call last):
+  File "/tmp/A.py", line 236, in <module>
+    main()
+  File "/tmp/A.py", line 222, in main
+    workflow_0000()
+  File "/tmp/A.py", line 175, in workflow_0000
+    return _sr_run_method(_SR_MODULE_NS_0, "IncludeTests", "test_include_from_loader_get_template", tuple([]))
+  File "/tmp/A.py", line 164, in _sr_run_method
+    return _sr_maybe_await(method(**kwargs))
+  File "tests/template_tests/syntax_tests/test_include.py", line 81, in test_include_from_loader_get_template
+    if self.engine.string_if_invalid:
+  File "/testbed/django/template/loader.py", line 12, in get_template
+    engines = _engine_list(using)
+  File "/testbed/django/template/loader.py", line 66, in _engine_list
+    return engines.all() if using is None else [engines[using]]
+  File "/testbed/django/template/utils.py", line 90, in all
+    return [self[alias] for alias in self]
+  File "/testbed/django/template/utils.py", line 87, in __iter__
+    return iter(self.templates)
+  File "/testbed/django/utils/functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/testbed/django/template/utils.py", line 28, in templates
+    self._templates = settings.TEMPLATES
+  File "/testbed/django/conf/__init__.py", line 77, in __getattr__
+    self._setup(name)
+  File "/testbed/django/conf/__init__.py", line 62, in _setup
+    % (desc, ENVIRONMENT_VARIABLE))
+django.core.exceptions.ImproperlyConfigured: Requested setting TEMPLATES, but settings are not configured. You must either define the environment variable DJANGO_SETTINGS_MODULE or call settings.configure() before accessing settings.

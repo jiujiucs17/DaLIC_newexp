@@ -7,9 +7,11 @@
       "script_kind": "A",
       "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/sympy__sympy-12812/A.py",
       "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/sympy__sympy-12812/A/stdout.txt",
-      "container_id": "fd60717156c142cf7b0933b74527ef6248a7c8ff28a91c36bf4dfa1b849972eb",
-      "runtime_seconds": 1.1487662529980298,
+      "container_id": "a432fe0d69d5fe053ba8656b79dbc98aef4cb168a6c71ca753499907d405ed21",
+      "runtime_seconds": 1.1637900650093798,
       "exit_code": 0,
+      "execution_stage": "run",
+      "failure_category": null,
       "timed_out": false
     },
     {
@@ -17,11 +19,13 @@
       "script_kind": "B",
       "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/sympy__sympy-12812/B.py",
       "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/sympy__sympy-12812/B/stdout.txt",
-      "container_id": "d8857bb004d4cef27f9850e599c056d204cca970fa2b65b72020fb064f706a06",
-      "runtime_seconds": 1.0901657619979233,
+      "container_id": "6f19e7ccc89c935f326389ccaaaf9e7cdcdf3a19a84430b031ce67d2631149c3",
+      "runtime_seconds": 1.0845136400021147,
       "exit_code": 0,
+      "execution_stage": "run",
+      "failure_category": null,
       "timed_out": false
     }
   ],
-  "docker_image_size_bytes": 291900000000
+  "docker_image_size_bytes": 295200000000
 }

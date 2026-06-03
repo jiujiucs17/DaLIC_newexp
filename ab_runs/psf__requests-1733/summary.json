@@ -7,9 +7,11 @@
       "script_kind": "A",
       "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/psf__requests-1733/A.py",
       "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/psf__requests-1733/A/stdout.txt",
-      "container_id": "2dcefc1551269659caae69ff313a4f3fc7ce162aa21118a37f4fec9f60f9b58b",
-      "runtime_seconds": 2.603103863999422,
-      "exit_code": 1,
+      "container_id": "29f43261371a25424baf60692d6036b292c053a1c35378c99897621ea73fefd1",
+      "runtime_seconds": 9.31223311299982,
+      "exit_code": 0,
+      "execution_stage": "run",
+      "failure_category": null,
       "timed_out": false
     },
     {
@@ -17,11 +19,13 @@
       "script_kind": "B",
       "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/psf__requests-1733/B.py",
       "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/psf__requests-1733/B/stdout.txt",
-      "container_id": "5dda48c55754c4ad056ee2c622c1b49d166f7906262b4e90f0f000503877702f",
-      "runtime_seconds": 1.7825300719996449,
+      "container_id": "f7e85f9b34d97f26f26527c822934d3aa4caf5385cc85bf5363cf4eadd2ad9c2",
+      "runtime_seconds": 27.452596199000254,
       "exit_code": 0,
+      "execution_stage": "run",
+      "failure_category": null,
       "timed_out": false
     }
   ],
-  "docker_image_size_bytes": 226300000000
+  "docker_image_size_bytes": 295200000000
 }

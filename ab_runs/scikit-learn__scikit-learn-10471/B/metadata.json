@@ -3,8 +3,10 @@
   "script_kind": "B",
   "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/scikit-learn__scikit-learn-10471/B.py",
   "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/scikit-learn__scikit-learn-10471/B/stdout.txt",
-  "container_id": "233694be4f09cc912db2a92ea0982981bbbba0fd54ba1ef6fabbf3d0321b7160",
-  "runtime_seconds": 0.21456227300222963,
-  "exit_code": 1,
+  "container_id": "fa59eb92fd23bd412e31b17be4e8d9939a2963918d1a4e9d0cf4733d9fcac550",
+  "runtime_seconds": 0.8375429699954111,
+  "exit_code": 0,
+  "execution_stage": "run",
+  "failure_category": null,
   "timed_out": false
 }

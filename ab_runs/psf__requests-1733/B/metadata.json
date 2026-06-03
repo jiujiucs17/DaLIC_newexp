@@ -3,8 +3,10 @@
   "script_kind": "B",
   "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/psf__requests-1733/B.py",
   "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/psf__requests-1733/B/stdout.txt",
-  "container_id": "5dda48c55754c4ad056ee2c622c1b49d166f7906262b4e90f0f000503877702f",
-  "runtime_seconds": 1.7825300719996449,
+  "container_id": "f7e85f9b34d97f26f26527c822934d3aa4caf5385cc85bf5363cf4eadd2ad9c2",
+  "runtime_seconds": 27.452596199000254,
   "exit_code": 0,
+  "execution_stage": "run",
+  "failure_category": null,
   "timed_out": false
 }

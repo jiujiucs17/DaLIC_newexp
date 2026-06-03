@@ -3,8 +3,10 @@
   "script_kind": "B",
   "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/pydata__xarray-2922/B.py",
   "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/pydata__xarray-2922/B/stdout.txt",
-  "container_id": "a9c39eeba5de59e22917326486ab3a6ac66f9fa04cc519245188550ddcbbe811",
-  "runtime_seconds": 1.9221055529997102,
+  "container_id": "558440c1228aba5d744c03c8a2b11a294e985fdabb6298415fea4b27353d0388",
+  "runtime_seconds": 1.9118287530000089,
   "exit_code": 0,
+  "execution_stage": "run",
+  "failure_category": null,
   "timed_out": false
 }

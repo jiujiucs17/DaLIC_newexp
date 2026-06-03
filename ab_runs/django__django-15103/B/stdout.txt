@@ -1,8 +1,12 @@
 Traceback (most recent call last):
-  File "/tmp/B.py", line 166, in <module>
-    _SR_MODULE_NS_0 = _sr_load_module(_SR_MODULE_SOURCE_0, "tests/template_tests/filter_tests/test_json_script.py", "tests.template_tests.filter_tests.test_json_script")
-  File "/tmp/B.py", line 18, in _sr_load_module
-    exec(compile(source, filename, 'exec'), module.__dict__)
-  File "tests/template_tests/filter_tests/test_json_script.py", line 2, in <module>
+  File "/tmp/B.py", line 229, in <module>
+    main()
+  File "/tmp/B.py", line 217, in main
+    workflow_0000()
+  File "/tmp/B.py", line 178, in workflow_0000
+    return _sr_run_method(_SR_MODULE_NS_0, "JsonScriptTests", "test_basic", tuple([]))
+  File "/tmp/B.py", line 164, in _sr_run_method
+    return _sr_maybe_await(method(**kwargs))
+  File "tests/template_tests/filter_tests/test_json_script.py", line 7, in test_basic
     
-ModuleNotFoundError: No module named 'tests'
+AttributeError: 'JsonScriptTests' object has no attribute 'engine'

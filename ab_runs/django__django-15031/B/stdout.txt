@@ -1,7 +1,7 @@
 Traceback (most recent call last):
-  File "/tmp/B.py", line 166, in <module>
+  File "/tmp/B.py", line 171, in <module>
     _SR_MODULE_NS_0 = _sr_load_module(_SR_MODULE_SOURCE_0, "tests/admin_filters/tests.py", "tests.admin_filters.tests")
-  File "/tmp/B.py", line 18, in _sr_load_module
+  File "/tmp/B.py", line 16, in _sr_load_module
     exec(compile(source, filename, 'exec'), module.__dict__)
   File "tests/admin_filters/tests.py", line 6, in <module>
     AllValuesFieldListFilter, BooleanFieldListFilter, EmptyFieldListFilter,

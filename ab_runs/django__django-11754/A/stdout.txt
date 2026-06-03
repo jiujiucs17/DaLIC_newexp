@@ -1,4 +1,12 @@
-  File "/tmp/A.py", line 1
-    from __future__ import annotations
-    ^
-SyntaxError: future feature annotations is not defined
+Traceback (most recent call last):
+  File "/tmp/A.py", line 236, in <module>
+    main()
+  File "/tmp/A.py", line 222, in main
+    workflow_0000()
+  File "/tmp/A.py", line 175, in workflow_0000
+    return _sr_run_method(_SR_MODULE_NS_0, "DebugViewTests", "test_technical_404_converter_raise_404", tuple([]))
+  File "/tmp/A.py", line 164, in _sr_run_method
+    return _sr_maybe_await(method(**kwargs))
+  File "tests/view_tests/tests/test_debug.py", line 113, in test_technical_404_converter_raise_404
+    def test_404(self):
+AttributeError: 'DebugViewTests' object has no attribute 'client'

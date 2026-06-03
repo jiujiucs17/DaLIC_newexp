@@ -1,4 +1,20 @@
-  File "/tmp/B.py", line 1
-    from __future__ import annotations
-    ^
-SyntaxError: future feature annotations is not defined
+Traceback (most recent call last):
+  File "/tmp/B.py", line 221, in <module>
+    main()
+  File "/tmp/B.py", line 210, in main
+    workflow_0000()
+  File "/tmp/B.py", line 175, in workflow_0000
+    return _sr_run_method(_SR_MODULE_NS_0, "ConversionExceptionTests", "test_resolve_type_error_propagates", tuple([]))
+  File "/tmp/B.py", line 164, in _sr_run_method
+    return _sr_maybe_await(method(**kwargs))
+  File "tests/urlpatterns/tests.py", line 87, in test_resolve_type_error_propagates
+    match = resolve('/more/99/')
+  File "/testbed/django/urls/base.py", line 25, in resolve
+    return get_resolver(urlconf).resolve(path)
+  File "/testbed/django/urls/resolvers.py", line 69, in get_resolver
+    urlconf = settings.ROOT_URLCONF
+  File "/testbed/django/conf/__init__.py", line 77, in __getattr__
+    self._setup(name)
+  File "/testbed/django/conf/__init__.py", line 62, in _setup
+    % (desc, ENVIRONMENT_VARIABLE))
+django.core.exceptions.ImproperlyConfigured: Requested setting ROOT_URLCONF, but settings are not configured. You must either define the environment variable DJANGO_SETTINGS_MODULE or call settings.configure() before accessing settings.

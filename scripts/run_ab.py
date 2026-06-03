@@ -176,6 +176,14 @@ def docker_image_size_bytes() -> int:
     raise RuntimeError("docker system df did not report image usage")
 
 
+def official_image_exists(client: docker.DockerClient, image_key: str) -> bool:
+    try:
+        client.images.get(image_key)
+    except docker.errors.ImageNotFound:
+        return False
+    return True
+
+
 def run_script(
     *,
     kind: str,
@@ -199,6 +207,8 @@ def run_script(
         "container_id": None,
         "runtime_seconds": None,
         "exit_code": None,
+        "execution_stage": None,
+        "failure_category": None,
         "timed_out": False,
     }
     container = None
@@ -245,23 +255,50 @@ def run_script(
         logger.info("[Step %s] kind=%s patches applied; diff_stat=%r", step, kind, diff_stat)
 
         step = f"{group}.5"
-        shell_command = (
+        env_setup_command = (
             "source /opt/miniconda3/etc/profile.d/conda.sh && "
             "conda activate testbed && "
             f"cd {DOCKER_WORKDIR} && "
-            f"python {container_script}"
+            f"export PYTHONPATH={shlex.quote(DOCKER_WORKDIR)}${{PYTHONPATH:+:$PYTHONPATH}} && "
         )
+        compile_command = env_setup_command + f"python -m py_compile {container_script}"
+        logger.info("[Step %s] kind=%s validating script syntax inside container", step, kind)
+        compile_result = docker_exec(
+            container.name,
+            ["bash", "-lc", compile_command],
+            check=False,
+        )
+        if compile_result.returncode != 0:
+            metadata["exit_code"] = compile_result.returncode
+            metadata["execution_stage"] = "compile"
+            metadata["failure_category"] = "script_compile_error"
+            metadata["runtime_seconds"] = 0.0
+            (output_dir / "stdout.txt").write_text(compile_result.stdout, encoding=UTF8)
+            logger.info(
+                "[Step %s] kind=%s script failed container-side compilation; exit_code=%s",
+                step,
+                kind,
+                metadata["exit_code"],
+            )
+            return metadata
+
+        shell_command = env_setup_command + f"python {container_script}"
         logger.info("[Step %s] kind=%s executing script; timeout_seconds=%d", step, kind, args.timeout)
         start_time = time.monotonic()
         try:
             result = docker_exec(container.name, ["bash", "-lc", shell_command], check=False, timeout=args.timeout)
             output_text = result.stdout
             metadata["exit_code"] = result.returncode
+            metadata["execution_stage"] = "run"
+            if result.returncode != 0:
+                metadata["failure_category"] = "script_runtime_error"
         except subprocess.TimeoutExpired as exc:
             output_text = exc.stdout or ""
             if isinstance(output_text, bytes):
                 output_text = output_text.decode(UTF8, errors="replace")
             metadata["timed_out"] = True
+            metadata["execution_stage"] = "run"
+            metadata["failure_category"] = "script_timeout"
         metadata["runtime_seconds"] = time.monotonic() - start_time
         logger.info(
             "[Step %s] kind=%s execution finished; timed_out=%s runtime_seconds=%.3f exit_code=%s",
@@ -309,6 +346,20 @@ def run_instance(
         files = write_instance_files(row, instance_dir)
         logger.info("[Instance %d/%d Step 1.2] wrote host files; dir=%s files=%s", index, total, instance_dir, ",".join(sorted(files)))
         test_spec = make_test_spec(row, namespace=OFFICIAL_NAMESPACE)
+        if not official_image_exists(client, test_spec.instance_image_key):
+            summary["status"] = "failed"
+            summary["error"] = (
+                "MissingInstanceImage: Official historical image is not available locally: "
+                f"{test_spec.instance_image_key}"
+            )
+            summary["missing_instance_image"] = test_spec.instance_image_key
+            logger.error(
+                "[Instance %d/%d Step 1.3] missing official historical image; image=%s",
+                index,
+                total,
+                test_spec.instance_image_key,
+            )
+            raise RuntimeError(summary["error"])
         for kind in ("A", "B"):
             summary["results"].append(
                 run_script(kind=kind, args=args, client=client, test_spec=test_spec, files=files, logger=logger)

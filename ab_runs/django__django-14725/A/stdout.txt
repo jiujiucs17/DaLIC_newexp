@@ -1,8 +1,20 @@
 Traceback (most recent call last):
-  File "/tmp/A.py", line 166, in <module>
+  File "/tmp/A.py", line 171, in <module>
     _SR_MODULE_NS_0 = _sr_load_module(_SR_MODULE_SOURCE_0, "tests/model_formsets/tests.py", "tests.model_formsets.tests")
-  File "/tmp/A.py", line 18, in _sr_load_module
+  File "/tmp/A.py", line 16, in _sr_load_module
     exec(compile(source, filename, 'exec'), module.__dict__)
   File "tests/model_formsets/tests.py", line 11, in <module>
     modelformset_factory,
-ModuleNotFoundError: No module named 'tests'
+  File "/testbed/tests/model_formsets/models.py", line 7, in <module>
+    class Author(models.Model):
+  File "/testbed/django/db/models/base.py", line 108, in __new__
+    app_config = apps.get_containing_app_config(module)
+  File "/testbed/django/apps/registry.py", line 253, in get_containing_app_config
+    self.check_apps_ready()
+  File "/testbed/django/apps/registry.py", line 135, in check_apps_ready
+    settings.INSTALLED_APPS
+  File "/testbed/django/conf/__init__.py", line 89, in __getattr__
+    self._setup(name)
+  File "/testbed/django/conf/__init__.py", line 70, in _setup
+    raise ImproperlyConfigured(
+django.core.exceptions.ImproperlyConfigured: Requested setting INSTALLED_APPS, but settings are not configured. You must either define the environment variable DJANGO_SETTINGS_MODULE or call settings.configure() before accessing settings.

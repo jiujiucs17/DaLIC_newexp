@@ -1,4 +1,18 @@
-  File "/tmp/B.py", line 1
-    from __future__ import annotations
-    ^
-SyntaxError: future feature annotations is not defined
+Traceback (most recent call last):
+  File "/tmp/B.py", line 171, in <module>
+    _SR_MODULE_NS_0 = _sr_load_module(_SR_MODULE_SOURCE_0, "tests/admin_scripts/tests.py", "tests.admin_scripts.tests")
+  File "/tmp/B.py", line 16, in _sr_load_module
+    exec(compile(source, filename, 'exec'), module.__dict__)
+  File "tests/admin_scripts/tests.py", line 25, in <module>
+    from django.core.management.commands.runserver import (
+  File "/testbed/django/db/migrations/recorder.py", line 9, in <module>
+    class MigrationRecorder:
+  File "/testbed/django/db/migrations/recorder.py", line 22, in MigrationRecorder
+    class Migration(models.Model):
+  File "/testbed/django/db/models/base.py", line 87, in __new__
+    app_config = apps.get_containing_app_config(module)
+  File "/testbed/django/apps/registry.py", line 244, in get_containing_app_config
+    self.check_apps_ready()
+  File "/testbed/django/apps/registry.py", line 127, in check_apps_ready
+    raise AppRegistryNotReady("Apps aren't loaded yet.")
+django.core.exceptions.AppRegistryNotReady: Apps aren't loaded yet.

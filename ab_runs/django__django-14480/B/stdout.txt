@@ -1,7 +1,7 @@
 Traceback (most recent call last):
-  File "/tmp/B.py", line 166, in <module>
+  File "/tmp/B.py", line 171, in <module>
     _SR_MODULE_NS_0 = _sr_load_module(_SR_MODULE_SOURCE_0, "tests/aggregation_regress/tests.py", "tests.aggregation_regress.tests")
-  File "/tmp/B.py", line 18, in _sr_load_module
+  File "/tmp/B.py", line 16, in _sr_load_module
     exec(compile(source, filename, 'exec'), module.__dict__)
   File "tests/aggregation_regress/tests.py", line 6, in <module>
     

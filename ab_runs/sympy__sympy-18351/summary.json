@@ -2,6 +2,7 @@
   "instance_id": "sympy__sympy-18351",
   "status": "failed",
   "results": [],
-  "error": "BuildImageError: Error building image sympy__sympy-18351: 404 Client Error for http+docker://localhost/v1.54/images/swebench/sweb.eval.x86_64.sympy_1776_sympy-18351:latest/json: Not Found (\"No such image: swebench/sweb.eval.x86_64.sympy_1776_sympy-18351:latest\")\nCheck (/home/mengqi/work/DaLIC_newexp/ab_runs/run_ab.log) for more information.",
+  "error": "RuntimeError: MissingInstanceImage: Official historical image is not available locally: swebench/sweb.eval.x86_64.sympy_1776_sympy-18351:latest",
+  "missing_instance_image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-18351:latest",
   "docker_image_size_bytes": 295200000000
 }

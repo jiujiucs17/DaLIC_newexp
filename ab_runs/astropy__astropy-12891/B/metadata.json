@@ -3,8 +3,10 @@
   "script_kind": "B",
   "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/astropy__astropy-12891/B.py",
   "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/astropy__astropy-12891/B/stdout.txt",
-  "container_id": "d5dc777f0aad3c710eb7247df427c15ec7e092dfad2032651e2538474fe2b3b7",
-  "runtime_seconds": 0.5635550610022619,
+  "container_id": "20c6b7b0455bc17d3bc6548239071505eb8e4c486b396a1a72e297b306f737e2",
+  "runtime_seconds": 0.564539754006546,
   "exit_code": 0,
+  "execution_stage": "run",
+  "failure_category": null,
   "timed_out": false
 }

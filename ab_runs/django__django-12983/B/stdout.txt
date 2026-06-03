@@ -1,4 +1,22 @@
-  File "/tmp/B.py", line 1
-    from __future__ import annotations
-    ^
-SyntaxError: future feature annotations is not defined
+Traceback (most recent call last):
+  File "/tmp/B.py", line 231, in <module>
+    main()
+  File "/tmp/B.py", line 226, in main
+    workflow_0008()
+  File "/tmp/B.py", line 207, in workflow_0008
+    return _sr_run_method(_SR_MODULE_NS_0, "TestUtilsText", "test_format_lazy", tuple([]))
+  File "/tmp/B.py", line 164, in _sr_run_method
+    return _sr_maybe_await(method(**kwargs))
+  File "tests/utils_tests/test_text.py", line 72, in test_format_lazy
+    # combining characters with no precomposed form, and that combining
+  File "/testbed/django/utils/translation/__init__.py", line 236, in __enter__
+    self.old_language = get_language()
+  File "/testbed/django/utils/translation/__init__.py", line 252, in get_language
+    return _trans.get_language()
+  File "/testbed/django/utils/translation/__init__.py", line 57, in __getattr__
+    if settings.USE_I18N:
+  File "/testbed/django/conf/__init__.py", line 77, in __getattr__
+    self._setup(name)
+  File "/testbed/django/conf/__init__.py", line 62, in _setup
+    % (desc, ENVIRONMENT_VARIABLE))
+django.core.exceptions.ImproperlyConfigured: Requested setting USE_I18N, but settings are not configured. You must either define the environment variable DJANGO_SETTINGS_MODULE or call settings.configure() before accessing settings.

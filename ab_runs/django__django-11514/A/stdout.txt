@@ -1,4 +1,20 @@
-  File "/tmp/A.py", line 1
-    from __future__ import annotations
-    ^
-SyntaxError: future feature annotations is not defined
+Traceback (most recent call last):
+  File "/tmp/A.py", line 171, in <module>
+    _SR_MODULE_NS_0 = _sr_load_module(_SR_MODULE_SOURCE_0, "tests/decorators/tests.py", "tests.decorators.tests")
+  File "/tmp/A.py", line 16, in _sr_load_module
+    exec(compile(source, filename, 'exec'), module.__dict__)
+  File "tests/decorators/tests.py", line 30, in <module>
+    
+  File "/testbed/django/views/decorators/cache.py", line 23, in cache_page
+    cache_timeout=timeout, cache_alias=cache, key_prefix=key_prefix
+  File "/testbed/django/utils/decorators.py", line 116, in _make_decorator
+    middleware = middleware_class(*m_args, **m_kwargs)
+  File "/testbed/django/middleware/cache.py", line 189, in __init__
+    self.cache = caches[self.cache_alias]
+  File "/testbed/django/core/cache/__init__.py", line 74, in __getitem__
+    if alias not in settings.CACHES:
+  File "/testbed/django/conf/__init__.py", line 76, in __getattr__
+    self._setup(name)
+  File "/testbed/django/conf/__init__.py", line 61, in _setup
+    % (desc, ENVIRONMENT_VARIABLE))
+django.core.exceptions.ImproperlyConfigured: Requested setting CACHES, but settings are not configured. You must either define the environment variable DJANGO_SETTINGS_MODULE or call settings.configure() before accessing settings.

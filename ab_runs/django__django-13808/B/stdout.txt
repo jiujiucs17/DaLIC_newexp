@@ -8,9 +8,9 @@ AttributeError: '_thread._local' object has no attribute 'default'
 During handling of the above exception, another exception occurred:
 
 Traceback (most recent call last):
-  File "/tmp/B.py", line 166, in <module>
+  File "/tmp/B.py", line 171, in <module>
     _SR_MODULE_NS_0 = _sr_load_module(_SR_MODULE_SOURCE_0, "tests/backends/postgresql/tests.py", "tests.backends.postgresql.tests")
-  File "/tmp/B.py", line 18, in _sr_load_module
+  File "/tmp/B.py", line 16, in _sr_load_module
     exec(compile(source, filename, 'exec'), module.__dict__)
   File "tests/backends/postgresql/tests.py", line 9, in <module>
     

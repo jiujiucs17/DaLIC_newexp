@@ -3,8 +3,10 @@
   "script_kind": "A",
   "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/pylint-dev__pylint-4970/A.py",
   "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/pylint-dev__pylint-4970/A/stdout.txt",
-  "container_id": "49e8db245973e832e8d85927cb6e3d5bd37302b815ba52dcb107e27105f6fdb3",
-  "runtime_seconds": 0.8377218000023277,
+  "container_id": "4ddb1ce4438de81155d0ceb5e6b4b0dcd2666d389c738fff01650c87231e1be5",
+  "runtime_seconds": 0.9280311450129375,
   "exit_code": 0,
+  "execution_stage": "run",
+  "failure_category": null,
   "timed_out": false
 }

@@ -1,4 +1,14 @@
-  File "/tmp/A.py", line 1
-    from __future__ import annotations
-    ^
-SyntaxError: future feature annotations is not defined
+Traceback (most recent call last):
+  File "/tmp/A.py", line 236, in <module>
+    main()
+  File "/tmp/A.py", line 222, in main
+    workflow_0000()
+  File "/tmp/A.py", line 175, in workflow_0000
+    return _sr_run_method(_SR_MODULE_NS_0, "SettingsTests", "test_no_settings_module", tuple([]))
+  File "/tmp/A.py", line 164, in _sr_run_method
+    return _sr_maybe_await(method(**kwargs))
+  File "tests/settings_tests/tests.py", line 108, in test_no_settings_module
+    @override_settings(TEST='override')
+  File "/opt/miniconda3/envs/testbed/lib/python3.6/os.py", line 669, in __getitem__
+    raise KeyError(key) from None
+KeyError: 'DJANGO_SETTINGS_MODULE'

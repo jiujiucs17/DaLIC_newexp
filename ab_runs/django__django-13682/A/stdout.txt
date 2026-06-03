@@ -1,8 +1,18 @@
 Traceback (most recent call last):
-  File "/tmp/A.py", line 169, in <module>
-    _SR_MODULE_NS_1 = _sr_load_module(_SR_MODULE_SOURCE_1, "tests/urlpatterns/tests.py", "tests.urlpatterns.tests")
-  File "/tmp/A.py", line 18, in _sr_load_module
-    exec(compile(source, filename, 'exec'), module.__dict__)
-  File "tests/urlpatterns/tests.py", line 8, in <module>
-    from django.views import View
-ModuleNotFoundError: No module named 'tests'
+  File "/tmp/A.py", line 239, in <module>
+    main()
+  File "/tmp/A.py", line 225, in main
+    workflow_0000()
+  File "/tmp/A.py", line 178, in workflow_0000
+    return _sr_run_method(_SR_MODULE_NS_0, "CheckUrlConfigTests", "test_check_unique_namespaces", tuple([]))
+  File "/tmp/A.py", line 164, in _sr_run_method
+    return _sr_maybe_await(method(**kwargs))
+  File "tests/check_framework/test_urls.py", line 42, in test_check_unique_namespaces
+    def test_contains_tuple_not_url_instance(self):
+  File "/testbed/django/core/checks/urls.py", line 35, in check_url_namespaces_unique
+    if not getattr(settings, 'ROOT_URLCONF', None):
+  File "/testbed/django/conf/__init__.py", line 69, in __getattr__
+    self._setup(name)
+  File "/testbed/django/conf/__init__.py", line 50, in _setup
+    raise ImproperlyConfigured(
+django.core.exceptions.ImproperlyConfigured: Requested setting ROOT_URLCONF, but settings are not configured. You must either define the environment variable DJANGO_SETTINGS_MODULE or call settings.configure() before accessing settings.

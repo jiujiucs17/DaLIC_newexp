@@ -1,8 +1,8 @@
 Traceback (most recent call last):
-  File "/tmp/B.py", line 166, in <module>
+  File "/tmp/B.py", line 171, in <module>
     _SR_MODULE_NS_0 = _sr_load_module(_SR_MODULE_SOURCE_0, "tests/admin_checks/tests.py", "tests.admin_checks.tests")
                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/tmp/B.py", line 18, in _sr_load_module
+  File "/tmp/B.py", line 16, in _sr_load_module
     exec(compile(source, filename, 'exec'), module.__dict__)
   File "tests/admin_checks/tests.py", line 4, in <module>
     from django.contrib.auth.backends import ModelBackend

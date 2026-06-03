@@ -1,4 +1,9 @@
-  File "/tmp/A.py", line 1
-    from __future__ import annotations
+Traceback (most recent call last):
+  File "/tmp/A.py", line 171, in <module>
+    _SR_MODULE_NS_0 = _sr_load_module(_SR_MODULE_SOURCE_0, "sklearn/ensemble/tests/test_voting.py", "sklearn.ensemble.tests.test_voting")
+  File "/tmp/A.py", line 16, in _sr_load_module
+    exec(compile(source, filename, 'exec'), module.__dict__)
+  File "sklearn/ensemble/tests/test_voting.py", line 85
+    clf = MockClassifier()
     ^
-SyntaxError: future feature annotations is not defined
+IndentationError: expected an indented block

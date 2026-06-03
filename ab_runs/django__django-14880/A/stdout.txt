@@ -1,13 +1,13 @@
 Traceback (most recent call last):
-  File "/tmp/A.py", line 231, in <module>
+  File "/tmp/A.py", line 236, in <module>
     main()
-  File "/tmp/A.py", line 217, in main
+  File "/tmp/A.py", line 222, in main
     workflow_0000()
-  File "/tmp/A.py", line 170, in workflow_0000
+  File "/tmp/A.py", line 175, in workflow_0000
     return _sr_run_method(_SR_MODULE_NS_0, "SelfReferentialM2MClashTests", "test_valid_model", tuple([]))
-  File "/tmp/A.py", line 156, in _sr_run_method
+  File "/tmp/A.py", line 161, in _sr_run_method
     _sr_call_optional(instance, 'setUp')
-  File "/tmp/A.py", line 130, in _sr_call_optional
+  File "/tmp/A.py", line 135, in _sr_call_optional
     value(*args)
   File "/testbed/django/test/utils.py", line 411, in setUp
     context = self.enable()

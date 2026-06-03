@@ -1,4 +1,14 @@
-  File "/tmp/A.py", line 1
-    from __future__ import annotations
-    ^
-SyntaxError: future feature annotations is not defined
+Traceback (most recent call last):
+  File "/tmp/A.py", line 236, in <module>
+    main()
+  File "/tmp/A.py", line 225, in main
+    workflow_0003()
+  File "/tmp/A.py", line 187, in workflow_0003
+    return _sr_run_method(_SR_MODULE_NS_0, "AjaxResponseExceptionReporterFilter", "test_ajax_response_encoding", tuple([]))
+  File "/tmp/A.py", line 161, in _sr_run_method
+    _sr_call_optional(instance, 'setUp')
+  File "/tmp/A.py", line 135, in _sr_call_optional
+    value(*args)
+  File "/testbed/django/test/utils.py", line 791, in setUp
+    self.old_stream = self.logger.handlers[0].stream
+IndexError: list index out of range

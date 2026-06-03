@@ -7,9 +7,11 @@
       "script_kind": "A",
       "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/pydata__xarray-4827/A.py",
       "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/pydata__xarray-4827/A/stdout.txt",
-      "container_id": "482e7da5995742cffb9428c9da128c54e148cad82e110d59df14c2553cdf5511",
-      "runtime_seconds": 2.0899886490005883,
+      "container_id": "7ae7b199beaf3f834c396910f39498dd48436825d16c67dd14e6d068b20cf209",
+      "runtime_seconds": 2.120093182005803,
       "exit_code": 0,
+      "execution_stage": "run",
+      "failure_category": null,
       "timed_out": false
     },
     {
@@ -17,11 +19,13 @@
       "script_kind": "B",
       "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/pydata__xarray-4827/B.py",
       "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/pydata__xarray-4827/B/stdout.txt",
-      "container_id": "c742746119cc3605b6cd296c17e7e6a268314cefa734e5dc8c56dac02c29e672",
-      "runtime_seconds": 2.037212871997326,
+      "container_id": "cf1fa099bdeb7389f36260ac820e5828c3208b2b7f189f2856426bb6f5c134d2",
+      "runtime_seconds": 2.0820716809976147,
       "exit_code": 0,
+      "execution_stage": "run",
+      "failure_category": null,
       "timed_out": false
     }
   ],
-  "docker_image_size_bytes": 233400000000
+  "docker_image_size_bytes": 295200000000
 }

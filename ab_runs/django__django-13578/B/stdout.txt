@@ -1,4 +1,24 @@
-  File "/tmp/B.py", line 1
-    from __future__ import annotations
-    ^
-SyntaxError: future feature annotations is not defined
+Traceback (most recent call last):
+  File "/tmp/B.py", line 231, in <module>
+    main()
+  File "/tmp/B.py", line 220, in main
+    workflow_0002()
+  File "/tmp/B.py", line 183, in workflow_0002
+    return _sr_run_method(_SR_MODULE_NS_0, "TestIsBoundBehavior", "test_empty_forms_are_unbound", tuple([]))
+  File "/tmp/B.py", line 164, in _sr_run_method
+    return _sr_maybe_await(method(**kwargs))
+  File "tests/forms_tests/tests/test_formsets.py", line 99, in test_empty_forms_are_unbound
+    # FormSet are treated similarly to Forms. FormSet has an is_valid()
+  File "/testbed/django/forms/formsets.py", line 203, in empty_form
+    **self.get_form_kwargs(None)
+  File "/testbed/django/forms/forms.py", line 78, in __init__
+    self.label_suffix = label_suffix if label_suffix is not None else _(':')
+  File "/testbed/django/utils/translation/__init__.py", line 94, in gettext
+    return _trans.gettext(message)
+  File "/testbed/django/utils/translation/__init__.py", line 57, in __getattr__
+    if settings.USE_I18N:
+  File "/testbed/django/conf/__init__.py", line 83, in __getattr__
+    self._setup(name)
+  File "/testbed/django/conf/__init__.py", line 68, in _setup
+    % (desc, ENVIRONMENT_VARIABLE))
+django.core.exceptions.ImproperlyConfigured: Requested setting USE_I18N, but settings are not configured. You must either define the environment variable DJANGO_SETTINGS_MODULE or call settings.configure() before accessing settings.

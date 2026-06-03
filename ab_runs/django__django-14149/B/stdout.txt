@@ -1,11 +1,11 @@
 Traceback (most recent call last):
-  File "/tmp/B.py", line 226, in <module>
+  File "/tmp/B.py", line 231, in <module>
     main()
-  File "/tmp/B.py", line 213, in main
+  File "/tmp/B.py", line 218, in main
     workflow_0000()
-  File "/tmp/B.py", line 170, in workflow_0000
+  File "/tmp/B.py", line 175, in workflow_0000
     return _sr_run_method(_SR_MODULE_NS_0, "IsOverriddenTest", "test_settings_repr", tuple([]))
-  File "/tmp/B.py", line 159, in _sr_run_method
+  File "/tmp/B.py", line 164, in _sr_run_method
     return _sr_maybe_await(method(**kwargs))
   File "tests/settings_tests/tests.py", line 70, in test_settings_repr
     self.assertEqual(FullyDecoratedTranTestCase.__name__, 'FullyDecoratedTranTestCase')

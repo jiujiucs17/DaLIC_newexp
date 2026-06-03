@@ -1,11 +1,11 @@
 Traceback (most recent call last):
-  File "/tmp/A.py", line 231, in <module>
+  File "/tmp/A.py", line 236, in <module>
     main()
-  File "/tmp/A.py", line 217, in main
+  File "/tmp/A.py", line 222, in main
     workflow_0000()
-  File "/tmp/A.py", line 170, in workflow_0000
+  File "/tmp/A.py", line 175, in workflow_0000
     return _sr_run_method(_SR_MODULE_NS_0, "FormsTestCase", "test_custom_boundfield", tuple([]))
-  File "/tmp/A.py", line 159, in _sr_run_method
+  File "/tmp/A.py", line 164, in _sr_run_method
     return _sr_maybe_await(method(**kwargs))
   File "tests/forms_tests/tests/test_forms.py", line 134, in test_custom_boundfield
     <input type="text" name="first_name" id="id_first_name" required></td></tr>

@@ -1,8 +1,20 @@
 Traceback (most recent call last):
-  File "/tmp/A.py", line 166, in <module>
-    _SR_MODULE_NS_0 = _sr_load_module(_SR_MODULE_SOURCE_0, "tests/utils_tests/test_autoreload.py", "tests.utils_tests.test_autoreload")
-  File "/tmp/A.py", line 18, in _sr_load_module
-    exec(compile(source, filename, 'exec'), module.__dict__)
-  File "tests/utils_tests/test_autoreload.py", line 26, in <module>
-    from django.utils import autoreload
-ModuleNotFoundError: No module named 'tests'
+  File "/tmp/A.py", line 236, in <module>
+    main()
+  File "/tmp/A.py", line 227, in main
+    workflow_0005()
+  File "/tmp/A.py", line 195, in workflow_0005
+    return _sr_run_method(_SR_MODULE_NS_0, "TestChildArguments", "test_raises_runtimeerror", tuple([]))
+  File "/tmp/A.py", line 164, in _sr_run_method
+    return _sr_maybe_await(method(**kwargs))
+  File "tests/utils_tests/test_autoreload.py", line 94, in test_raises_runtimeerror
+    autoreload.check_errors(import_module)('test_syntax_error')
+  File "/opt/miniconda3/envs/testbed/lib/python3.9/contextlib.py", line 126, in __exit__
+    next(self.gen)
+  File "/testbed/django/test/testcases.py", line 684, in _assert_raises_or_warns_cm
+    yield cm
+  File "/opt/miniconda3/envs/testbed/lib/python3.9/unittest/case.py", line 226, in __exit__
+    self._raiseFailure("{} not raised".format(exc_name))
+  File "/opt/miniconda3/envs/testbed/lib/python3.9/unittest/case.py", line 163, in _raiseFailure
+    raise self.test_case.failureException(msg)
+AssertionError: RuntimeError not raised

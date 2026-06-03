@@ -1,4 +1,22 @@
-  File "/tmp/B.py", line 1
-    from __future__ import annotations
-    ^
-SyntaxError: future feature annotations is not defined
+Traceback (most recent call last):
+  File "/tmp/B.py", line 231, in <module>
+    main()
+  File "/tmp/B.py", line 218, in main
+    workflow_0000()
+  File "/tmp/B.py", line 175, in workflow_0000
+    return _sr_run_method(_SR_MODULE_NS_0, "SetCookieTests", "test_httponly_cookie", tuple([]))
+  File "/tmp/B.py", line 164, in _sr_run_method
+    return _sr_maybe_await(method(**kwargs))
+  File "tests/responses/test_cookie.py", line 50, in test_httponly_cookie
+    response.set_cookie('datetime', expires=datetime(2038, 1, 1, 4, 5, 6))
+  File "/testbed/django/http/response.py", line 296, in __init__
+    super().__init__(*args, **kwargs)
+  File "/testbed/django/http/response.py", line 61, in __init__
+    content_type = 'text/html; charset=%s' % self.charset
+  File "/testbed/django/http/response.py", line 85, in charset
+    return settings.DEFAULT_CHARSET
+  File "/testbed/django/conf/__init__.py", line 83, in __getattr__
+    self._setup(name)
+  File "/testbed/django/conf/__init__.py", line 68, in _setup
+    % (desc, ENVIRONMENT_VARIABLE))
+django.core.exceptions.ImproperlyConfigured: Requested setting DEFAULT_CHARSET, but settings are not configured. You must either define the environment variable DJANGO_SETTINGS_MODULE or call settings.configure() before accessing settings.

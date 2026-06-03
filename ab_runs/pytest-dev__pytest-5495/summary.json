@@ -2,6 +2,7 @@
   "instance_id": "pytest-dev__pytest-5495",
   "status": "failed",
   "results": [],
-  "error": "SyntaxError: invalid syntax (A.py, line 198)",
-  "docker_image_size_bytes": 248300000000
+  "error": "RuntimeError: MissingInstanceImage: Official historical image is not available locally: swebench/sweb.eval.x86_64.pytest-dev_1776_pytest-5495:latest",
+  "missing_instance_image": "swebench/sweb.eval.x86_64.pytest-dev_1776_pytest-5495:latest",
+  "docker_image_size_bytes": 295200000000
 }

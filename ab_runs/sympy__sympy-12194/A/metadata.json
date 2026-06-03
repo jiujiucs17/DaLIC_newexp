@@ -3,8 +3,10 @@
   "script_kind": "A",
   "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/sympy__sympy-12194/A.py",
   "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/sympy__sympy-12194/A/stdout.txt",
-  "container_id": "c31d8d02dc95d9d12691a0b572816f33cb3d6d23da6ed26f3a7c2ca6e5287dd4",
-  "runtime_seconds": 0.9388073899972369,
+  "container_id": "1ef93577c58046b297e0854079efb9ca0ce891d03cb02f6248b83d0d88f2ee03",
+  "runtime_seconds": 0.9422756889980519,
   "exit_code": 0,
+  "execution_stage": "run",
+  "failure_category": null,
   "timed_out": false
 }

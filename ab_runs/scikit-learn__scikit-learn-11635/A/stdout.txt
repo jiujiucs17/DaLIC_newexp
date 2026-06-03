@@ -1,4 +1,8 @@
-  File "/tmp/A.py", line 1
-    from __future__ import annotations
-    ^
-SyntaxError: future feature annotations is not defined
+/testbed/sklearn/svm/_base.py:947: ConvergenceWarning: Liblinear failed to converge, increase the number of iterations.
+  "the number of iterations.", ConvergenceWarning)
+/testbed/sklearn/svm/_base.py:947: ConvergenceWarning: Liblinear failed to converge, increase the number of iterations.
+  "the number of iterations.", ConvergenceWarning)
+/testbed/sklearn/feature_selection/_variance_threshold.py:77: RuntimeWarning: Degrees of freedom <= 0 for slice.
+  self.variances_ = np.nanvar(X, axis=0)
+/testbed/sklearn/feature_selection/_variance_threshold.py:85: RuntimeWarning: All-NaN slice encountered
+  self.variances_ = np.nanmin(compare_arr, axis=0)

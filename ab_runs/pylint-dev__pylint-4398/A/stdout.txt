@@ -1,7 +1,7 @@
 Traceback (most recent call last):
-  File "/tmp/A.py", line 166, in <module>
+  File "/tmp/A.py", line 171, in <module>
     _SR_MODULE_NS_0 = _sr_load_module(_SR_MODULE_SOURCE_0, "tests/test_self.py", "tests.test_self")
-  File "/tmp/A.py", line 18, in _sr_load_module
+  File "/tmp/A.py", line 16, in _sr_load_module
     exec(compile(source, filename, 'exec'), module.__dict__)
   File "tests/test_self.py", line 141
     if output is not None:

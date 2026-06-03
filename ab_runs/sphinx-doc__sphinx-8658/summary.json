@@ -7,9 +7,11 @@
       "script_kind": "A",
       "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/sphinx-doc__sphinx-8658/A.py",
       "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/sphinx-doc__sphinx-8658/A/stdout.txt",
-      "container_id": "fef6466818a498654530ca8fa55781fa88c4065135bae61eabf2a7357faa2bf6",
-      "runtime_seconds": 0.5214658990007592,
+      "container_id": "28b62eca681ed9b7911ecf56ae529d39e0da349bd5169919610592f51d8be5f6",
+      "runtime_seconds": 0.5746082310070051,
       "exit_code": 0,
+      "execution_stage": "run",
+      "failure_category": null,
       "timed_out": false
     },
     {
@@ -17,11 +19,13 @@
       "script_kind": "B",
       "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/sphinx-doc__sphinx-8658/B.py",
       "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/sphinx-doc__sphinx-8658/B/stdout.txt",
-      "container_id": "f52a50d73f6670af1660f78073a478cea63a78b166fbb1c26fa637789e7e352c",
-      "runtime_seconds": 0.5108361189995776,
+      "container_id": "74e70558c9116bad77d604546c1e3e8e78b456e71ed97ce2a42c37405ae7ee3f",
+      "runtime_seconds": 0.5099224820005475,
       "exit_code": 0,
+      "execution_stage": "run",
+      "failure_category": null,
       "timed_out": false
     }
   ],
-  "docker_image_size_bytes": 286500000000
+  "docker_image_size_bytes": 295200000000
 }

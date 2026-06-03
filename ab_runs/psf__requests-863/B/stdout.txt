@@ -1,25 +1,27 @@
+/testbed/requests/models.py:795: SyntaxWarning: "is" with a literal. Did you mean "=="?
+  if self.status_code is 0:
 Traceback (most recent call last):
-  File "/tmp/B.py", line 226, in <module>
+  File "/tmp/B.py", line 231, in <module>
     main()
-  File "/tmp/B.py", line 214, in main
+  File "/tmp/B.py", line 219, in main
     workflow_0001()
-  File "/tmp/B.py", line 174, in workflow_0001
+  File "/tmp/B.py", line 179, in workflow_0001
     return _sr_run_method(_SR_MODULE_NS_0, "RequestsTestSuite", "test_session_persistent_cookies", tuple([]))
-  File "/tmp/B.py", line 159, in _sr_run_method
+  File "/tmp/B.py", line 164, in _sr_run_method
     return _sr_maybe_await(method(**kwargs))
   File "tests/test_requests.py", line 105, in test_session_persistent_cookies
     r = get(httpbin('get'))
-  File "/opt/miniconda3/envs/testbed/lib/python3.9/site-packages/requests/api.py", line 65, in get
+  File "/testbed/requests/api.py", line 65, in get
     return request('get', url, **kwargs)
-  File "/opt/miniconda3/envs/testbed/lib/python3.9/site-packages/requests/safe_mode.py", line 39, in wrapped
+  File "/testbed/requests/safe_mode.py", line 39, in wrapped
     return function(method, url, **kwargs)
-  File "/opt/miniconda3/envs/testbed/lib/python3.9/site-packages/requests/api.py", line 51, in request
+  File "/testbed/requests/api.py", line 51, in request
     return session.request(method=method, url=url, **kwargs)
-  File "/opt/miniconda3/envs/testbed/lib/python3.9/site-packages/requests/sessions.py", line 241, in request
+  File "/testbed/requests/sessions.py", line 241, in request
     r.send(prefetch=prefetch)
-  File "/opt/miniconda3/envs/testbed/lib/python3.9/site-packages/requests/models.py", line 603, in send
+  File "/testbed/requests/models.py", line 605, in send
     cookie_header = get_cookie_header(self.cookies, self)
-  File "/opt/miniconda3/envs/testbed/lib/python3.9/site-packages/requests/cookies.py", line 109, in get_cookie_header
+  File "/testbed/requests/cookies.py", line 109, in get_cookie_header
     jar.add_cookie_header(r)
   File "/opt/miniconda3/envs/testbed/lib/python3.9/http/cookiejar.py", line 1365, in add_cookie_header
     cookies = self._cookies_for_request(request)

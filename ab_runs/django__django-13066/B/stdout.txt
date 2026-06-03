@@ -1,4 +1,20 @@
-  File "/tmp/B.py", line 1
-    from __future__ import annotations
-    ^
-SyntaxError: future feature annotations is not defined
+Traceback (most recent call last):
+  File "/tmp/B.py", line 221, in <module>
+    main()
+  File "/tmp/B.py", line 218, in main
+    workflow_0008()
+  File "/tmp/B.py", line 207, in workflow_0008
+    return _sr_run_method(_SR_MODULE_NS_0, "TestUtilsHashPass", "test_check_password_calls_harden_runtime", tuple([]))
+  File "/tmp/B.py", line 164, in _sr_run_method
+    return _sr_maybe_await(method(**kwargs))
+  File "tests/auth_tests/test_hashers.py", line 29, in test_check_password_calls_harden_runtime
+    except ImportError:
+  File "/testbed/django/contrib/auth/hashers.py", line 121, in get_hasher
+    return get_hashers()[0]
+  File "/testbed/django/contrib/auth/hashers.py", line 88, in get_hashers
+    for hasher_path in settings.PASSWORD_HASHERS:
+  File "/testbed/django/conf/__init__.py", line 77, in __getattr__
+    self._setup(name)
+  File "/testbed/django/conf/__init__.py", line 62, in _setup
+    % (desc, ENVIRONMENT_VARIABLE))
+django.core.exceptions.ImproperlyConfigured: Requested setting PASSWORD_HASHERS, but settings are not configured. You must either define the environment variable DJANGO_SETTINGS_MODULE or call settings.configure() before accessing settings.

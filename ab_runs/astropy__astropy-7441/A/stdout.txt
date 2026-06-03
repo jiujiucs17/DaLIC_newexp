@@ -1,4 +1,12 @@
-  File "/tmp/A.py", line 1
-    from __future__ import annotations
-    ^
-SyntaxError: future feature annotations is not defined
+Traceback (most recent call last):
+  File "/tmp/A.py", line 236, in <module>
+    main()
+  File "/tmp/A.py", line 224, in main
+    workflow_0002()
+  File "/tmp/A.py", line 183, in workflow_0002
+    return _sr_run_method(_SR_MODULE_NS_0, "TestTimeDelta", "test_keep_properties", tuple([]))
+  File "/tmp/A.py", line 164, in _sr_run_method
+    return _sr_maybe_await(method(**kwargs))
+  File "astropy/time/tests/test_delta.py", line 89, in test_keep_properties
+    
+AttributeError: 'TestTimeDelta' object has no attribute 't'

@@ -1,8 +1,22 @@
 Traceback (most recent call last):
-  File "/tmp/B.py", line 166, in <module>
-    _SR_MODULE_NS_0 = _sr_load_module(_SR_MODULE_SOURCE_0, "tests/forms_tests/tests/test_forms.py", "tests.forms_tests.tests.test_forms")
-  File "/tmp/B.py", line 18, in _sr_load_module
-    exec(compile(source, filename, 'exec'), module.__dict__)
-  File "tests/forms_tests/tests/test_forms.py", line 18, in <module>
-    FileInput,
-ModuleNotFoundError: No module named 'tests'
+  File "/tmp/B.py", line 231, in <module>
+    main()
+  File "/tmp/B.py", line 218, in main
+    workflow_0000()
+  File "/tmp/B.py", line 175, in workflow_0000
+    return _sr_run_method(_SR_MODULE_NS_0, "FormsTestCase", "test_label_attrs_not_localized", tuple([]))
+  File "/tmp/B.py", line 164, in _sr_run_method
+    return _sr_maybe_await(method(**kwargs))
+  File "tests/forms_tests/tests/test_forms.py", line 139, in test_label_attrs_not_localized
+    )
+  File "/testbed/django/forms/forms.py", line 98, in __init__
+    self.label_suffix = label_suffix if label_suffix is not None else _(":")
+  File "/testbed/django/utils/translation/__init__.py", line 95, in gettext
+    return _trans.gettext(message)
+  File "/testbed/django/utils/translation/__init__.py", line 65, in __getattr__
+    if settings.USE_I18N:
+  File "/testbed/django/conf/__init__.py", line 92, in __getattr__
+    self._setup(name)
+  File "/testbed/django/conf/__init__.py", line 72, in _setup
+    raise ImproperlyConfigured(
+django.core.exceptions.ImproperlyConfigured: Requested setting USE_I18N, but settings are not configured. You must either define the environment variable DJANGO_SETTINGS_MODULE or call settings.configure() before accessing settings.

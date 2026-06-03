@@ -1,12 +1,12 @@
 Traceback (most recent call last):
-  File "/tmp/A.py", line 231, in <module>
+  File "/tmp/A.py", line 236, in <module>
     main()
-  File "/tmp/A.py", line 228, in main
+  File "/tmp/A.py", line 233, in main
     workflow_0011()
-  File "/tmp/A.py", line 214, in workflow_0011
+  File "/tmp/A.py", line 219, in workflow_0011
     return _sr_run_method(_SR_MODULE_NS_0, "TestUtilsHtml", "test_format_html_no_params", tuple([]))
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/tmp/A.py", line 159, in _sr_run_method
+  File "/tmp/A.py", line 164, in _sr_run_method
     return _sr_maybe_await(method(**kwargs))
                            ^^^^^^^^^^^^^^^^
   File "tests/utils_tests/test_html.py", line 37, in test_format_html_no_params

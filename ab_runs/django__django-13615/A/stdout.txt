@@ -1,4 +1,8 @@
-  File "/tmp/A.py", line 1
-    from __future__ import annotations
-    ^
-SyntaxError: future feature annotations is not defined
+Traceback (most recent call last):
+  File "/tmp/A.py", line 171, in <module>
+    _SR_MODULE_NS_0 = _sr_load_module(_SR_MODULE_SOURCE_0, "tests/i18n/test_extraction.py", "tests.i18n.test_extraction")
+  File "/tmp/A.py", line 16, in _sr_load_module
+    exec(compile(source, filename, 'exec'), module.__dict__)
+  File "tests/i18n/test_extraction.py", line 10, in <module>
+    
+ModuleNotFoundError: No module named 'admin_scripts'

@@ -3,8 +3,10 @@
   "script_kind": "B",
   "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/matplotlib__matplotlib-24691/B.py",
   "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/matplotlib__matplotlib-24691/B/stdout.txt",
-  "container_id": "c89d16e5a6876fe89ddbc207f60466baf72546fb178935b524e76817aa104450",
-  "runtime_seconds": 2.0652653189972625,
+  "container_id": "4a349fe75fb79636e09e0f63418c8f035e442cbc431187d5186f66282a51d482",
+  "runtime_seconds": 2.061479766998673,
   "exit_code": 0,
+  "execution_stage": "run",
+  "failure_category": null,
   "timed_out": false
 }

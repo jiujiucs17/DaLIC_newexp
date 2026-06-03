@@ -1,11 +1,11 @@
 Traceback (most recent call last):
-  File "/tmp/A.py", line 231, in <module>
+  File "/tmp/A.py", line 236, in <module>
     main()
-  File "/tmp/A.py", line 217, in main
+  File "/tmp/A.py", line 222, in main
     workflow_0000()
-  File "/tmp/A.py", line 170, in workflow_0000
+  File "/tmp/A.py", line 175, in workflow_0000
     return _sr_run_method(_SR_MODULE_NS_0, "TestUtilsHashPass", "test_bcrypt_sha256", tuple([]))
-  File "/tmp/A.py", line 159, in _sr_run_method
+  File "/tmp/A.py", line 164, in _sr_run_method
     return _sr_maybe_await(method(**kwargs))
   File "tests/auth_tests/test_hashers.py", line 74, in test_bcrypt_sha256
     make_password(1)

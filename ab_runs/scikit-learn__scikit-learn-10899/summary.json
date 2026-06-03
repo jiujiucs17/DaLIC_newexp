@@ -7,9 +7,11 @@
       "script_kind": "A",
       "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/scikit-learn__scikit-learn-10899/A.py",
       "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/scikit-learn__scikit-learn-10899/A/stdout.txt",
-      "container_id": "a470fd268d699288207cd74c873b34c4eb16ceeee112544f53853d88bb74fd2a",
-      "runtime_seconds": 0.22871736700471956,
-      "exit_code": 1,
+      "container_id": "c07f0ab145635b4c8ba9d1e05c68a48590225dd9e6eda7f6bb2cfca9c3d1519a",
+      "runtime_seconds": 0.7397970379970502,
+      "exit_code": 0,
+      "execution_stage": "run",
+      "failure_category": null,
       "timed_out": false
     },
     {
@@ -17,11 +19,13 @@
       "script_kind": "B",
       "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/scikit-learn__scikit-learn-10899/B.py",
       "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/scikit-learn__scikit-learn-10899/B/stdout.txt",
-      "container_id": "db24172c7a1e7725bdc3ebd1aebab2ebf58c22825ed364b821fae8b26d1238b9",
-      "runtime_seconds": 0.2365617609975743,
-      "exit_code": 1,
+      "container_id": "a0c589bfc3272c78dd62d642674024267d3ce31c2ae34f4c5ba832d87a0fc928",
+      "runtime_seconds": 0.750641758000711,
+      "exit_code": 0,
+      "execution_stage": "run",
+      "failure_category": null,
       "timed_out": false
     }
   ],
-  "docker_image_size_bytes": 258800000000
+  "docker_image_size_bytes": 295200000000
 }

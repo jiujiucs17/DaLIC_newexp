@@ -1,11 +1,11 @@
 Traceback (most recent call last):
-  File "/tmp/B.py", line 191, in <module>
+  File "/tmp/B.py", line 196, in <module>
     main()
-  File "/tmp/B.py", line 185, in main
+  File "/tmp/B.py", line 190, in main
     workflow_0000()
-  File "/tmp/B.py", line 170, in workflow_0000
+  File "/tmp/B.py", line 175, in workflow_0000
     return _sr_run_function(_SR_MODULE_NS_0, "test_invalid_arraysize", tuple([]))
-  File "/tmp/B.py", line 142, in _sr_run_function
+  File "/tmp/B.py", line 147, in _sr_run_function
     return _sr_maybe_await(namespace[function_name](**kwargs))
   File "astropy/io/votable/tests/converter_test.py", line 12, in test_invalid_arraysize
     from astropy.io.votable import converters

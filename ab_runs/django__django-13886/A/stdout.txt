@@ -1,4 +1,27 @@
-  File "/tmp/A.py", line 1
-    from __future__ import annotations
-    ^
-SyntaxError: future feature annotations is not defined
+Traceback (most recent call last):
+  File "/tmp/A.py", line 236, in <module>
+    main()
+  File "/tmp/A.py", line 222, in main
+    workflow_0000()
+  File "/tmp/A.py", line 175, in workflow_0000
+    return _sr_run_method(_SR_MODULE_NS_0, "IndexesTests", "test_func_index_required_db_features", tuple([]))
+  File "/tmp/A.py", line 161, in _sr_run_method
+    _sr_call_optional(instance, 'setUp')
+  File "/tmp/A.py", line 135, in _sr_call_optional
+    value(*args)
+  File "/testbed/django/test/utils.py", line 356, in setUp
+    context = self.enable()
+  File "/testbed/django/test/utils.py", line 837, in enable
+    apps = Apps(self.installed_apps)
+  File "/testbed/django/apps/registry.py", line 59, in __init__
+    self.populate(installed_apps)
+  File "/testbed/django/apps/registry.py", line 91, in populate
+    app_config = AppConfig.create(entry)
+  File "/testbed/django/apps/config.py", line 224, in create
+    import_module(entry)
+  File "/opt/miniconda3/envs/testbed/lib/python3.6/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 994, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 971, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 953, in _find_and_load_unlocked
+ModuleNotFoundError: No module named 'invalid_models_tests'

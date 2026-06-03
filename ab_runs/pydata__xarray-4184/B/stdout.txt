@@ -1,13 +1,13 @@
 /testbed/xarray/core/dataset.py:4552: FutureWarning: MultiIndex.is_lexsorted is deprecated as a public function, users should use MultiIndex.is_monotonic_increasing instead.
   is_sorted = idx.is_lexsorted()
 Traceback (most recent call last):
-  File "/tmp/B.py", line 221, in <module>
+  File "/tmp/B.py", line 226, in <module>
     main()
-  File "/tmp/B.py", line 214, in main
+  File "/tmp/B.py", line 219, in main
     workflow_0005()
-  File "/tmp/B.py", line 190, in workflow_0005
+  File "/tmp/B.py", line 195, in workflow_0005
     return _sr_run_method(_SR_MODULE_NS_0, "TestDataset", "test_from_dataframe_categorical", tuple([]))
-  File "/tmp/B.py", line 159, in _sr_run_method
+  File "/tmp/B.py", line 164, in _sr_run_method
     return _sr_maybe_await(method(**kwargs))
   File "xarray/tests/test_dataset.py", line 140, in test_from_dataframe_categorical
     ds_with_new_var = xr.Dataset(

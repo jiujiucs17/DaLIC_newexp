@@ -1,11 +1,11 @@
 Traceback (most recent call last):
-  File "/tmp/A.py", line 234, in <module>
+  File "/tmp/A.py", line 239, in <module>
     main()
-  File "/tmp/A.py", line 225, in main
+  File "/tmp/A.py", line 230, in main
     workflow_0005()
-  File "/tmp/A.py", line 193, in workflow_0005
+  File "/tmp/A.py", line 198, in workflow_0005
     return _sr_run_method(_SR_MODULE_NS_1, "TestClip", "test_clip_simple", tuple([]))
-  File "/tmp/A.py", line 159, in _sr_run_method
+  File "/tmp/A.py", line 164, in _sr_run_method
     return _sr_maybe_await(method(**kwargs))
   File "astropy/units/tests/test_quantity_ufuncs.py", line 35, in test_clip_simple
     for result, expected in zip(results, tc.q_out):

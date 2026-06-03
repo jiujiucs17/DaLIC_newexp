@@ -7,9 +7,11 @@
       "script_kind": "A",
       "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/matplotlib__matplotlib-26341/A.py",
       "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/matplotlib__matplotlib-26341/A/stdout.txt",
-      "container_id": "0c27c92e2ab985771b60f04729f031ae2e3d696172e2fbce3db3d5a99b54de9d",
-      "runtime_seconds": 2.2250059110010625,
+      "container_id": "693419780ee695d81a5ee66a2dd2fb2ef160aae129d5f247cb0c21e05fa24c07",
+      "runtime_seconds": 2.4332118640013505,
       "exit_code": 0,
+      "execution_stage": "run",
+      "failure_category": null,
       "timed_out": false
     },
     {
@@ -17,11 +19,13 @@
       "script_kind": "B",
       "script_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/matplotlib__matplotlib-26341/B.py",
       "stdout_path": "/home/mengqi/work/DaLIC_newexp/ab_runs/matplotlib__matplotlib-26341/B/stdout.txt",
-      "container_id": "44c1c02bac5c9173ebb95c98a3101ce2c5feb143685613ae7c7a6d122cee6e44",
-      "runtime_seconds": 2.169329240998195,
+      "container_id": "ace7efa53b3af48d066e5dcc0ecd82eeba949c27df81df7ac17babd8de1f9e34",
+      "runtime_seconds": 2.128886563004926,
       "exit_code": 0,
+      "execution_stage": "run",
+      "failure_category": null,
       "timed_out": false
     }
   ],
-  "docker_image_size_bytes": 225100000000
+  "docker_image_size_bytes": 295200000000
 }
