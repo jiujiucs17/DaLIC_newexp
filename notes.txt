@@ -93,3 +93,6 @@ A/B 都非空
 A 为空时，根本没有 feature-side workflow。
 B 为空时，没有 baseline/control。
 这种情况下即使没有 unresolved，也很难做有意义的 SR 对比。
+
+
+Update: for manual validation of the automatic issue-type classification, we currently audit only the subset predicted as `feature`, because only feature-classified instances are used in downstream analysis. Concretely, we treat the 592 predicted-`feature` instances as a finite population and draw a simple random sample without replacement of 148 unique instances with a fixed seed (`random.sample(..., 148)`, seed = 42). For each sampled instance, we export `instance_id`, `problem_statement`, and predicted `class` to an `.xlsx` sheet for independent human review. This sampling design prioritizes estimating the purity/precision of the retained feature subset, rather than overall classifier accuracy or recall on non-feature instances; the chosen sample size is intended to provide roughly 95% confidence with an approximate margin of error of +/-7% for the feature stratum under a conservative proportion assumption with finite-population correction.

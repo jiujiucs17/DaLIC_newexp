@@ -8,6 +8,8 @@ from tempfile import NamedTemporaryFile
 from zipfile import ZIP_DEFLATED, ZipFile
 from xml.sax.saxutils import escape
 
+HEADERS = ["instance_id", "problem_statement", "class"]
+
 
 def get_repo_root() -> Path:
     for candidate in [Path(__file__).resolve().parent, *Path(__file__).resolve().parents]:
@@ -16,20 +18,15 @@ def get_repo_root() -> Path:
     raise RuntimeError("Could not locate repo root from script path.")
 
 
-def resolve_default_classification_input(repo_root: Path) -> Path:
-    return repo_root / "dataset" / "swebench_nlbse23_roberta.jsonl"
-
-
 def parse_args() -> argparse.Namespace:
     repo_root = get_repo_root()
-
     parser = argparse.ArgumentParser(
-        description="Sample feature-classified SWE-bench instances for manual validation."
+        description="Sample classified SWE-bench instances for manual validation."
     )
     parser.add_argument(
         "--classification-input",
         type=Path,
-        default=resolve_default_classification_input(repo_root),
+        default=repo_root / "dataset" / "swebench_nlbse23_roberta.jsonl",
     )
     parser.add_argument(
         "--source-input",
@@ -41,14 +38,20 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         default=repo_root / "dataset" / "swebench_sample.xlsx",
     )
-    parser.add_argument("--sample-count", type=int, default=148)
+    parser.add_argument("--num-feature", "--num_feature", dest="num_feature", type=int, default=148)
+    parser.add_argument(
+        "--num-non-feature",
+        "--num_non_feature",
+        dest="num_non_feature",
+        type=int,
+        default=0,
+    )
     parser.add_argument("--seed", type=int, default=42)
     args = parser.parse_args()
-    validate_args(args)
-    return args
+    return validate_args(args)
 
 
-def validate_args(args: argparse.Namespace) -> None:
+def validate_args(args: argparse.Namespace) -> argparse.Namespace:
     args.classification_input = args.classification_input.expanduser().resolve()
     args.source_input = args.source_input.expanduser().resolve()
     args.output = args.output.expanduser().resolve()
@@ -63,102 +66,105 @@ def validate_args(args: argparse.Namespace) -> None:
         raise ValueError("--source-input must be a .jsonl file.")
     if args.output.suffix != ".xlsx":
         raise ValueError("--output must be a .xlsx file.")
-    if args.sample_count <= 0:
-        raise ValueError("--sample-count must be a positive integer.")
+    if args.num_feature < 0:
+        raise ValueError("--num-feature must be a non-negative integer.")
+    if args.num_non_feature < 0:
+        raise ValueError("--num-non-feature must be a non-negative integer.")
+    return args
 
 
-def load_rows(path: Path):
+def load_jsonl(path: Path):
     with path.open("r", encoding="utf-8") as input_file:
         for line in input_file:
             yield json.loads(line)
 
 
-def get_required_field(row: dict, field_name: str):
+def require_field(row: dict, field_name: str, path: Path):
     if field_name not in row:
-        raise ValueError(f"Missing required field '{field_name}' in row: {row}")
+        raise ValueError(f"Missing required field {field_name!r} in {path}: {row}")
     return row[field_name]
 
 
-def load_classification_map(path: Path) -> dict[str, str]:
-    label_by_id: dict[str, str] = {}
-    for row in load_rows(path):
-        instance_id = get_required_field(row, "instance_id")
-        label = get_required_field(row, "class")
-        if instance_id in label_by_id:
+def load_labels(path: Path) -> dict[str, str]:
+    labels: dict[str, str] = {}
+    for row in load_jsonl(path):
+        instance_id = require_field(row, "instance_id", path)
+        label = require_field(row, "class", path)
+        if instance_id in labels:
             raise ValueError(f"Duplicate instance_id found in classification file: {instance_id}")
-        label_by_id[instance_id] = label
-
-    if not label_by_id:
+        labels[instance_id] = label
+    if not labels:
         raise ValueError(f"Classification file is empty: {path}")
-    return label_by_id
+    return labels
+
+
+def load_problem_statements(path: Path) -> dict[str, str]:
+    problem_statements: dict[str, str] = {}
+    for row in load_jsonl(path):
+        instance_id = require_field(row, "instance_id", path)
+        problem_statement = require_field(row, "problem_statement", path)
+        if instance_id in problem_statements:
+            raise ValueError(f"Duplicate instance_id found in source file: {instance_id}")
+        problem_statements[instance_id] = problem_statement
+    if not problem_statements:
+        raise ValueError(f"Source file is empty: {path}")
+    return problem_statements
 
 
 def sample_instance_ids(
-    label_by_id: dict[str, str],
-    sample_count: int,
+    labels: dict[str, str],
+    num_feature: int,
+    num_non_feature: int,
     seed: int,
 ) -> list[str]:
-    feature_ids = [instance_id for instance_id, label in label_by_id.items() if label == "feature"]
-
-    if len(feature_ids) < sample_count:
-        raise ValueError(
-            f"Not enough feature instances to sample {sample_count}. "
-            f"Only found {len(feature_ids)}."
-        )
+    feature_ids = [instance_id for instance_id, label in labels.items() if label == "feature"]
+    non_feature_ids = [instance_id for instance_id, label in labels.items() if label != "feature"]
 
     rng = random.Random(seed)
-    return rng.sample(feature_ids, sample_count)
+    sampled_ids = []
 
+    if num_feature:
+        if num_feature > len(feature_ids):
+            raise ValueError(
+                f"Requested {num_feature} feature samples, but only {len(feature_ids)} are available."
+            )
+        sampled_ids.extend(rng.sample(feature_ids, k=num_feature))
 
-def load_source_map(path: Path) -> dict[str, dict]:
-    source_by_id: dict[str, dict] = {}
-    for row in load_rows(path):
-        instance_id = get_required_field(row, "instance_id")
-        if instance_id in source_by_id:
-            raise ValueError(f"Duplicate instance_id found in source file: {instance_id}")
-        source_by_id[instance_id] = row
+    if num_non_feature:
+        if num_non_feature > len(non_feature_ids):
+            raise ValueError(
+                "Requested "
+                f"{num_non_feature} non-feature samples, but only {len(non_feature_ids)} are available."
+            )
+        sampled_ids.extend(rng.sample(non_feature_ids, k=num_non_feature))
 
-    if not source_by_id:
-        raise ValueError(f"Source file is empty: {path}")
-    return source_by_id
+    rng.shuffle(sampled_ids)
+    return sampled_ids
 
 
 def build_sample_rows(
     sampled_ids: list[str],
-    label_by_id: dict[str, str],
-    source_by_id: dict[str, dict],
+    labels: dict[str, str],
+    problem_statements: dict[str, str],
 ) -> list[dict[str, str]]:
-    sample_rows: list[dict[str, str]] = []
-    missing_ids: list[str] = []
-
+    rows: list[dict[str, str]] = []
     for instance_id in sampled_ids:
-        source_row = source_by_id.get(instance_id)
-        if source_row is None:
-            missing_ids.append(instance_id)
-            continue
-
-        sample_rows.append(
+        if instance_id not in problem_statements:
+            raise ValueError(f"Sampled instance_id not found in source file: {instance_id}")
+        rows.append(
             {
                 "instance_id": instance_id,
-                "problem_statement": get_required_field(source_row, "problem_statement"),
-                "class": label_by_id[instance_id],
+                "problem_statement": problem_statements[instance_id],
+                "class": labels[instance_id],
             }
         )
-
-    if missing_ids:
-        preview = ", ".join(missing_ids[:5])
-        raise ValueError(
-            f"Could not find {len(missing_ids)} sampled instance(s) in source file. "
-            f"Examples: {preview}"
-        )
-    return sample_rows
+    return rows
 
 
 def column_name(index: int) -> str:
     name = ""
-    current = index
-    while current > 0:
-        current, remainder = divmod(current - 1, 26)
+    while index > 0:
+        index, remainder = divmod(index - 1, 26)
         name = chr(ord("A") + remainder) + name
     return name
 
@@ -168,33 +174,33 @@ def make_inline_string_cell(cell_ref: str, value: str) -> str:
     return f'<c r="{cell_ref}" t="inlineStr"><is><t xml:space="preserve">{escaped}</t></is></c>'
 
 
-def build_sheet_xml(headers: list[str], rows: list[dict[str, str]]) -> str:
-    row_xml_parts: list[str] = []
-
-    header_cells = []
-    for index, header in enumerate(headers, start=1):
-        header_cells.append(make_inline_string_cell(f"{column_name(index)}1", header))
+def build_sheet_xml(rows: list[dict[str, str]]) -> str:
+    row_xml_parts = []
+    header_cells = [
+        make_inline_string_cell(f"{column_name(index)}1", header)
+        for index, header in enumerate(HEADERS, start=1)
+    ]
     row_xml_parts.append(f'<row r="1">{"".join(header_cells)}</row>')
 
     for row_index, row in enumerate(rows, start=2):
-        cells = []
-        for col_index, header in enumerate(headers, start=1):
-            cell_ref = f"{column_name(col_index)}{row_index}"
-            cells.append(make_inline_string_cell(cell_ref, row.get(header, "")))
+        cells = [
+            make_inline_string_cell(f"{column_name(col_index)}{row_index}", row.get(header, ""))
+            for col_index, header in enumerate(HEADERS, start=1)
+        ]
         row_xml_parts.append(f'<row r="{row_index}">{"".join(cells)}</row>')
 
-    rows_xml = "".join(row_xml_parts)
     return (
         '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
         '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'
-        f"<sheetData>{rows_xml}</sheetData>"
-        "</worksheet>"
+        f'<sheetData>{"".join(row_xml_parts)}</sheetData>'
+        '</worksheet>'
     )
 
 
 def write_xlsx(output_path: Path, rows: list[dict[str, str]]) -> None:
-    headers = ["instance_id", "problem_statement", "class"]
-    sheet_xml = build_sheet_xml(headers, rows)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    sheet_xml = build_sheet_xml(rows)
+
     content_types_xml = (
         '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
         '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">'
@@ -206,7 +212,7 @@ def write_xlsx(output_path: Path, rows: list[dict[str, str]]) -> None:
         'ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>'
         '<Override PartName="/xl/styles.xml" '
         'ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>'
-        "</Types>"
+        '</Types>'
     )
     rels_xml = (
         '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
@@ -214,14 +220,14 @@ def write_xlsx(output_path: Path, rows: list[dict[str, str]]) -> None:
         '<Relationship Id="rId1" '
         'Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" '
         'Target="xl/workbook.xml"/>'
-        "</Relationships>"
+        '</Relationships>'
     )
     workbook_xml = (
         '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
         '<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" '
         'xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">'
         '<sheets><sheet name="sample" sheetId="1" r:id="rId1"/></sheets>'
-        "</workbook>"
+        '</workbook>'
     )
     workbook_rels_xml = (
         '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
@@ -232,7 +238,7 @@ def write_xlsx(output_path: Path, rows: list[dict[str, str]]) -> None:
         '<Relationship Id="rId2" '
         'Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" '
         'Target="styles.xml"/>'
-        "</Relationships>"
+        '</Relationships>'
     )
     styles_xml = (
         '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
@@ -243,10 +249,8 @@ def write_xlsx(output_path: Path, rows: list[dict[str, str]]) -> None:
         '<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>'
         '<cellXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/></cellXfs>'
         '<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles>'
-        "</styleSheet>"
+        '</styleSheet>'
     )
-
-    output_path.parent.mkdir(parents=True, exist_ok=True)
 
     temp_path: Path | None = None
     try:
@@ -259,7 +263,6 @@ def write_xlsx(output_path: Path, rows: list[dict[str, str]]) -> None:
                 workbook_zip.writestr("xl/_rels/workbook.xml.rels", workbook_rels_xml)
                 workbook_zip.writestr("xl/worksheets/sheet1.xml", sheet_xml)
                 workbook_zip.writestr("xl/styles.xml", styles_xml)
-
         temp_path.replace(output_path)
     except Exception:
         if temp_path is not None and temp_path.exists():
@@ -267,21 +270,30 @@ def write_xlsx(output_path: Path, rows: list[dict[str, str]]) -> None:
         raise
 
 
+def print_summary(output_path: Path, rows: list[dict[str, str]]) -> None:
+    total_rows = len(rows)
+    feature_rows = sum(row["class"] == "feature" for row in rows)
+    unique_instance_ids = len({row["instance_id"] for row in rows})
+
+    print(f"Wrote {total_rows} sampled rows to {output_path}")
+    print(f"Feature rows: {feature_rows}")
+    print(f"Non-feature rows: {total_rows - feature_rows}")
+    print(f"Unique instance_ids: {unique_instance_ids}")
+
+
 def main() -> None:
     args = parse_args()
-    label_by_id = load_classification_map(args.classification_input)
+    labels = load_labels(args.classification_input)
+    problem_statements = load_problem_statements(args.source_input)
     sampled_ids = sample_instance_ids(
-        label_by_id=label_by_id,
-        sample_count=args.sample_count,
+        labels=labels,
+        num_feature=args.num_feature,
+        num_non_feature=args.num_non_feature,
         seed=args.seed,
     )
-    source_by_id = load_source_map(args.source_input)
-    sample_rows = build_sample_rows(
-        sampled_ids=sampled_ids,
-        label_by_id=label_by_id,
-        source_by_id=source_by_id,
-    )
+    sample_rows = build_sample_rows(sampled_ids, labels, problem_statements)
     write_xlsx(args.output, sample_rows)
+    print_summary(args.output, sample_rows)
 
 
 if __name__ == "__main__":
