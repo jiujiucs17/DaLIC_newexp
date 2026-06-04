@@ -24,7 +24,7 @@ def parse_args() -> argparse.Namespace:
     repo_root = get_repo_root()
 
     parser = argparse.ArgumentParser(
-        description="Sample SWE-bench instances for manual validation of issue classification results."
+        description="Sample feature-classified SWE-bench instances for manual validation."
     )
     parser.add_argument(
         "--classification-input",
@@ -41,8 +41,7 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         default=repo_root / "dataset" / "swebench_sample.xlsx",
     )
-    parser.add_argument("--feature-count", type=int, default=80)
-    parser.add_argument("--other-count", type=int, default=30)
+    parser.add_argument("--sample-count", type=int, default=148)
     parser.add_argument("--seed", type=int, default=42)
     args = parser.parse_args()
     validate_args(args)
@@ -64,10 +63,8 @@ def validate_args(args: argparse.Namespace) -> None:
         raise ValueError("--source-input must be a .jsonl file.")
     if args.output.suffix != ".xlsx":
         raise ValueError("--output must be a .xlsx file.")
-    if args.feature_count <= 0:
-        raise ValueError("--feature-count must be a positive integer.")
-    if args.other_count <= 0:
-        raise ValueError("--other-count must be a positive integer.")
+    if args.sample_count <= 0:
+        raise ValueError("--sample-count must be a positive integer.")
 
 
 def load_rows(path: Path):
@@ -98,28 +95,19 @@ def load_classification_map(path: Path) -> dict[str, str]:
 
 def sample_instance_ids(
     label_by_id: dict[str, str],
-    feature_count: int,
-    other_count: int,
+    sample_count: int,
     seed: int,
 ) -> list[str]:
     feature_ids = [instance_id for instance_id, label in label_by_id.items() if label == "feature"]
-    other_ids = [instance_id for instance_id, label in label_by_id.items() if label != "feature"]
 
-    if len(feature_ids) < feature_count:
+    if len(feature_ids) < sample_count:
         raise ValueError(
-            f"Not enough feature instances to sample {feature_count}. "
+            f"Not enough feature instances to sample {sample_count}. "
             f"Only found {len(feature_ids)}."
-        )
-    if len(other_ids) < other_count:
-        raise ValueError(
-            f"Not enough non-feature instances to sample {other_count}. "
-            f"Only found {len(other_ids)}."
         )
 
     rng = random.Random(seed)
-    sampled_ids = rng.sample(feature_ids, feature_count) + rng.sample(other_ids, other_count)
-    rng.shuffle(sampled_ids)
-    return sampled_ids
+    return rng.sample(feature_ids, sample_count)
 
 
 def load_source_map(path: Path) -> dict[str, dict]:
@@ -284,8 +272,7 @@ def main() -> None:
     label_by_id = load_classification_map(args.classification_input)
     sampled_ids = sample_instance_ids(
         label_by_id=label_by_id,
-        feature_count=args.feature_count,
-        other_count=args.other_count,
+        sample_count=args.sample_count,
         seed=args.seed,
     )
     source_by_id = load_source_map(args.source_input)
