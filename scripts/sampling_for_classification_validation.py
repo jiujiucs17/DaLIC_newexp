@@ -1,5 +1,14 @@
 #!/usr/bin/env python3
 
+# accepted arguments:
+# --classification-input: path to the .jsonl file containing the classification results (default: dataset/swebench_nlbse23_roberta.jsonl)
+# --source-input: path to the .jsonl file containing the original problem statements (default: dataset/swebench.jsonl)
+# --output: path to the output .xlsx file (default: dataset/swebench_sample.xlsx)
+# --num-feature: number of "feature" samples to include (default: 148)
+# --num-non-feature: number of "non-feature" samples to include (default: 0)
+# --seed: random seed for sampling (default: 42)
+
+
 import argparse
 import json
 import random
