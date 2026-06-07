@@ -96,3 +96,140 @@ B 为空时，没有 baseline/control。
 
 
 Update: for manual validation of the automatic issue-type classification, we currently audit only the subset predicted as `feature`, because only feature-classified instances are used in downstream analysis. Concretely, we treat the 592 predicted-`feature` instances as a finite population and draw a simple random sample without replacement of 148 unique instances with a fixed seed (`random.sample(..., 148)`, seed = 42). For each sampled instance, we export `instance_id`, `problem_statement`, and predicted `class` to an `.xlsx` sheet for independent human review. This sampling design prioritizes estimating the purity/precision of the retained feature subset, rather than overall classifier accuracy or recall on non-feature instances; the chosen sample size is intended to provide roughly 95% confidence with an approximate margin of error of +/-7% for the feature stratum under a conservative proportion assumption with finite-population correction.
+
+
+
+
+
+RELATED WORK ORGANIZATION
+
+1. Classical and Hybrid Dynamic Feature Location
+
+Purpose:
+- Establish the historical basis for using execution scenarios and dynamic traces as feature-location evidence.
+- Clarify why this work is SR-inspired but not a direct reproduction of Wilde-style Software Reconnaissance.
+
+Main points:
+- Wilde-style Software Reconnaissance uses feature-invoking and feature-excluding executions to identify code executed by the feature but not by non-feature scenarios.
+- Later hybrid feature-location techniques combine dynamic execution evidence with textual, structural, or probabilistic evidence.
+- PROMESIR combines scenario-based probabilistic ranking with IR/LSI ranking as separate experts.
+- SITIR avoids requiring feature-excluding scenarios by using a single feature-exercising execution trace as a search-space filter and applying IR ranking within that trace.
+- CERBERUS combines information retrieval, execution tracing, and prune dependency analysis for concern-to-code tracing.
+
+How this motivates my work:
+- Prior work shows that dynamic execution evidence is useful for feature/code localization.
+- However, classical SR requires carefully selected invoking/excluding scenarios, which are not directly available in SWE-bench-style patch benchmarks.
+- My work uses test-patch-derived feature-relevant tests to construct dynamic evidence, and studies how this evidence can be consumed by LLM/Agent localizers.
+
+Key references:
+- Wilde, N., and Scully, M. C. “Software Reconnaissance: Mapping Program Features to Code.” Software Maintenance: Research and Practice, 7(1):49–62, 1995.
+- Poshyvanyk, D., Guéhéneuc, Y.-G., Marcus, A., Antoniol, G., and Rajlich, V. “Feature Location Using Probabilistic Ranking of Methods Based on Execution Scenarios and Information Retrieval.” IEEE Transactions on Software Engineering, 33(6):420–432, 2007.
+- Liu, D., Marcus, A., Poshyvanyk, D., and Rajlich, V. “Feature Location via Information Retrieval Based Filtering of a Single Scenario Execution Trace.” ASE 2007, pp. 234–243.
+- Eaddy, M., Aho, A. V., Antoniol, G., and Guéhéneuc, Y.-G. “CERBERUS: Tracing Requirements to Source Code Using Information Retrieval, Dynamic Analysis, and Program Analysis.” ICPC 2008.
+
+2. Test-Based Scenario Selection for Feature Location
+
+Purpose:
+- Position my test_patch-derived scenario construction relative to prior work that uses tests as feature-location scenarios.
+- Explain that existing work often requires explicit labels, agile process information, or manually selected invoking/excluding tests.
+
+Main points:
+- Dynamic feature location commonly uses tests or execution scenarios to exercise target features.
+- Ziftci and Krueger reuse existing test cases for feature location, but their method relies on labeled test cases.
+- DeLozier et al. use agile/TDD iteration information to automatically select invoking tests and construct excluding coverage sets from previous tests.
+- Their work confirms that selecting invoking/excluding tests is a known bottleneck in Software Reconnaissance.
+
+How this motivates my work:
+- SWE-bench does not provide manually curated SR scenarios or explicit test-feature relevance labels.
+- However, test_patch provides a developer-authored weak relevance signal: tests added or modified to validate the issue/fix are likely feature-relevant.
+- My work adapts test-based dynamic feature-location ideas to patch-based benchmarks by deriving feature-relevant execution scenarios directly from test_patch.
+
+Key references:
+- Ziftci, C., and Krueger, I. “Feature Location Using Data Mining on Existing Test-Cases.” WCRE 2012, pp. 155–164.
+- DeLozier, G. S., Decker, M. J., Newman, C. D., and Maletic, J. I. “Leveraging the Agile Development Process for Selecting Invoking/Excluding Tests to Support Feature Location.” ICPC 2018, Industry Track, pp. 370–379.
+
+3. Multi-Source and Data-Fusion Feature Location
+
+Purpose:
+- Show that combining different evidence sources is a standard trajectory after early SR/SITIR/PROMESIR.
+- Position LLM/Agent reasoning as a modern evidence-consumption mechanism rather than a simple replacement for IR ranking.
+
+Main points:
+- PROMESIR combines dynamic scenario-based evidence and IR evidence.
+- Later data-fusion work generalizes this idea by combining textual, dynamic, and link-analysis evidence.
+- CERBERUS similarly combines IR, execution tracing, and dependency analysis.
+- These works motivate treating dynamic traces, data-dependency chains, textual issue information, and static code graph information as complementary evidence.
+
+How this motivates my work:
+- My work does not claim that any single evidence type is universally sufficient.
+- Instead, it constructs structured dynamic evidence and studies how LLM/Agent consumers use it.
+- The LLM/Agent acts as a flexible downstream evidence integrator, analogous in motivation to earlier data-fusion approaches but using contemporary LLM-based reasoning.
+
+Key references:
+- Revelle, M., Dit, B., and Poshyvanyk, D. “Using Data Fusion and Web Mining to Support Feature Location in Software.” ICPC 2010, pp. 14–23.
+- Dit, B., Revelle, M., and Poshyvanyk, D. “Integrating Information Retrieval, Execution and Link Analysis Algorithms to Improve Feature Location in Software.” Empirical Software Engineering, 18(2):277–309, 2013.
+- Poshyvanyk et al., TSE 2007.
+- Eaddy et al., ICPC 2008.
+
+4. Change-History-Aware Feature Location
+
+Purpose:
+- Connect test_patch to the broader idea that developer-authored change artifacts encode feature intent.
+- Distinguish my use of test_patch from prior work using changeset descriptions or changeset topics.
+
+Main points:
+- Chochlov et al. use changeset descriptions from version control history to annotate source code artifacts for IR-based feature location.
+- Corley et al. model changeset topics by training topic models on changeset documents rather than source snapshots.
+- These works show that changesets and other historical artifacts can provide useful feature-location evidence.
+- However, they use changesets as textual/historical evidence, not as execution-scenario sources.
+
+How this motivates my work:
+- test_patch is also a developer-authored change artifact, but it is more directly executable than commit messages or source diffs.
+- My work uses test_patch not only as text or history, but as a weak source of feature-relevant execution scenarios.
+- This connects change-history-aware FL with dynamic test-derived evidence construction.
+
+Key references:
+- Chochlov, M., English, M., and Buckley, J. “Using Changeset Descriptions as a Data Source to Assist Feature Location.” SCAM 2015, pp. 51–60.
+- Corley, C. S., Kashuda, K. L., and Kraft, N. A. “Modeling Changeset Topics for Feature Location.” ICSME 2015, pp. 71–80.
+- Corley, C. S., Damevski, K., and Kraft, N. A. “Exploring the Use of Deep Learning for Feature Location.” ICSME 2015, pp. 556–560.
+
+5. Spectrum-Based, SPL-Oriented, and Variant-Based Feature Location
+
+Purpose:
+- Acknowledge modern feature-location work that represents multiple executions, variants, or systems as feature-location evidence.
+- Explain why my instance-based SWE-bench setting is not a standard spectrum-based feature localization setting.
+
+Main points:
+- Spectrum-based feature localization represents executions, scenarios, or variants as spectra over program elements.
+- This direction is especially natural for software product lines, clone-and-own variants, or families of systems where feature presence/absence can be compared.
+- Some work also applies spectrum-style analysis to single systems, but it benefits from multiple comparable executions or feature labels.
+
+How this motivates my work:
+- My data is instance-based: each SWE-bench instance corresponds to a different issue/feature-like change.
+- test_patch provides primarily positive, feature-relevant tests, not a stable mixture of feature-present and feature-absent executions across the same feature space.
+- Therefore, my method is better described as test-patch-derived multi-trace execution evidence, not standard spectrum-based feature localization.
+
+Key references:
+- Xue, Y., Xing, Z., and Jarzabek, S. “Feature Location in a Collection of Product Variants.” WCRE 2012, pp. 145–154.
+- Müller, S., and Eisenecker, U. W. “A Graph-Based Feature Location Approach Using Set Theory.” SPLC 2019 Challenge/Solution.
+- Michelon, G. K., et al. “Spectrum-Based Feature Localization: A Case Study Using ArgoUML.” 2021.
+- Michelon, G. K., et al. “Spectrum-Based Feature Localization for Families of Systems.” Journal of Systems and Software, 2023.
+
+6. LLM- and Agent-Based Code Localization
+
+Purpose:
+- Position my downstream analyzer choice in the contemporary code-localization landscape.
+- Explain why LocAgent is a strong contemporary baseline/consumer.
+
+Main points:
+- Recent code localization increasingly uses LLMs and agentic repository navigation.
+- LocAgent constructs a directed heterogeneous code graph and uses an LLM agent for graph-guided code localization.
+- My work can use LocAgent-style agentic localization as a downstream consumer of dynamic evidence.
+
+How this motivates my work:
+- Prior hybrid FL work combined dynamic traces with IR, dependency analysis, or link analysis.
+- Recent LLM/agent work provides more powerful downstream reasoners, but it remains unclear how structured dynamic evidence such as execution traces and runtime data-dependency chains should be constructed and supplied to these reasoners.
+- My work studies this evidence-construction and evidence-consumption problem in SWE-bench-style instances.
+
+Key references:
+- Xia, C. S., et al. “LocAgent: Graph-Guided LLM Agents for Code Localization.” ACL 2025, Long Papers.
