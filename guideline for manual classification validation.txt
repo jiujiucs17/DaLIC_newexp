@@ -1,36 +1,7 @@
-Manual Validation Guideline for Feature / Non-Feature Classification
+Manual Validation Guideline
 
-Classify each instance using only the problem_statement. Treat the first line as the title and the remaining text as the body. Ignore issue-template boilerplate, contribution-guide links, and other non-substantive template text.
+Please classify each issue as 'feature' or 'not-feature' using only the problem_statement. Treat the first line as the title and the remaining text as the body. Ignore issue templates, contribution guidelines.
 
-Binary label mapping:
-- feature: instances whose predicted class is "feature"
-- non-feature: instances whose predicted class is "bug", "documentation", or "question"
+A 'feature' is a request to add, extend, or intentionally change the software's behavior or capability in terms of developer-facing functionality. Please note that in this dataset, all the systems are software library systems, therefore the functionality can be very specific to certain technical details.
 
-Definition of Feature:
-Label an instance as feature if the main request is to add, extend, or intentionally change software behavior or capability.
-
-Typical feature cases include:
-- Adding a new API, method, argument, option, setting, command-line flag, or configuration.
-- Supporting a new input type, output type, file format, backend, platform, protocol, data structure, or interoperability path.
-- Adding a new conversion, export, serialization, or integration capability.
-- Changing or improving default behavior as an intentional product/API evolution.
-- Deprecating, renaming, replacing, or harmonizing APIs for consistency.
-- Adding new validation, safeguards, warnings, system checks, or clearer diagnostic behavior (When the request is for a new capability rather than fixing a broken existing behavior)
-- Improving performance, usability, or consistency when the description is framed as an enhancement rather than a regression or failure.
-
-Definition of Non-Feature:
-Label an instance as non-feature if the main request is to fix, document, or discuss existing behavior rather than add or intentionally change capability.
-
-Typical non-feature cases include:
-- Bug reports: crashes, tracebacks, exceptions, wrong results, incorrect output, broken behavior, failures, regressions, or behavior that no longer works after an upgrade.
-- Reports with clear actual-vs-expected behavior showing that an existing API or feature fails for valid usage.
-- Documentation issues: missing docs, incorrect docs, unclear docs, missing API reference entries, missing examples, or docstring/doc page improvements.
-- Questions or design discussions without a concrete request to implement a new capability.
-- Requests asking whether behavior is intended, how something should be used, or what the design should be, unless the statement clearly asks for a concrete new feature.
-
-Boundary Rules:
-- If the statement says something is "not supported" or there is "no way" to do something, classify as feature when it asks for a new capability. Classify as non-feature when the described behavior should already work or appears to violate an existing API contract.
-- Error-message issues: classify as non-feature when the current error message is wrong, misleading, or caused by a bug. Classify as feature when the request is to add richer diagnostics, customizable messages, new checks, or new safeguards.
-- Performance issues: classify as non-feature when the statement describes a regression, pathological slowness, or existing functionality becoming unusable. Classify as feature when it proposes a new optimization, optimization command, or intentional performance enhancement.
-- Deprecation, removal, renaming, or default changes are usually feature if they propose a concrete API evolution. They are non-feature if they are mainly asking whether such a change should happen.
-- If an issue contains both a bug and an enhancement, choose the label based on the primary user request in the problem_statement.
+A 'not-feature' is a request to fix, document, clarify, or discuss existing behavior rather than add or intentionally change capability. This includes bug reports, missing or unclear documentation, usage questions without a concrete request for a new capability.
