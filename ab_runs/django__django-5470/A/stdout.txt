@@ -1,8 +1,0 @@
-Traceback (most recent call last):
-  File "/tmp/A.py", line 171, in <module>
-    _SR_MODULE_NS_0 = _sr_load_module(_SR_MODULE_SOURCE_0, "tests/user_commands/tests.py", "tests.user_commands.tests")
-  File "/tmp/A.py", line 16, in _sr_load_module
-    exec(compile(source, filename, 'exec'), module.__dict__)
-  File "tests/user_commands/tests.py", line 2, in <module>
-    
-ImportError: No module named 'admin_scripts'

@@ -1,2 +1,0 @@
-/testbed/xarray/core/options.py:52: FutureWarning: The enable_cftimeindex option is now a no-op and will be removed in a future version of xarray.
-  warnings.warn(

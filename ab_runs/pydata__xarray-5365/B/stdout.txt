@@ -1,2 +1,0 @@
-/testbed/xarray/core/missing.py:269: FutureWarning: is_monotonic is deprecated and will be removed in a future version. Use is_monotonic_increasing instead.
-  if not index.is_monotonic:

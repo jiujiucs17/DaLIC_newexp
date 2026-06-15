@@ -1,7 +1,0 @@
-Traceback (most recent call last):
-  File "/tmp/A.py", line 174, in <module>
-    _SR_MODULE_NS_1 = _sr_load_module(_SR_MODULE_SOURCE_1, "astropy/utils/masked/tests/test_masked.py", "astropy.utils.masked.tests.test_masked")
-  File "/tmp/A.py", line 16, in _sr_load_module
-    exec(compile(source, filename, 'exec'), module.__dict__)
-  File "astropy/utils/masked/tests/test_masked.py", line 70, in <module>
-NameError: name 'TestMaskedArrayCopyFilled' is not defined

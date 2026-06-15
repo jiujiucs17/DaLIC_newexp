@@ -1,8 +1,0 @@
-Traceback (most recent call last):
-  File "/tmp/A.py", line 174, in <module>
-    _SR_MODULE_NS_1 = _sr_load_module(_SR_MODULE_SOURCE_1, "tests/user_commands/tests.py", "tests.user_commands.tests")
-  File "/tmp/A.py", line 16, in _sr_load_module
-    exec(compile(source, filename, 'exec'), module.__dict__)
-  File "tests/user_commands/tests.py", line 4, in <module>
-    
-ModuleNotFoundError: No module named 'admin_scripts'

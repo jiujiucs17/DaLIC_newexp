@@ -1,8 +1,0 @@
-Traceback (most recent call last):
-  File "/tmp/A.py", line 171, in <module>
-    _SR_MODULE_NS_0 = _sr_load_module(_SR_MODULE_SOURCE_0, "tests/migrations/test_writer.py", "tests.migrations.test_writer")
-  File "/tmp/A.py", line 16, in _sr_load_module
-    exec(compile(source, filename, 'exec'), module.__dict__)
-  File "tests/migrations/test_writer.py", line 20, in <module>
-    except ImportError:
-ModuleNotFoundError: No module named 'custom_migration_operations'

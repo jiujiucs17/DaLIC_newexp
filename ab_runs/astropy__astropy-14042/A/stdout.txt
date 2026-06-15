@@ -1,2 +1,0 @@
-WARNING: UnitsWarning: Unit 'furlong' not supported by the VOUnit standard.  [astropy.units.format.vounit]
-WARNING: UnitsWarning: Unit 'week' not supported by the VOUnit standard.  [astropy.units.format.vounit]

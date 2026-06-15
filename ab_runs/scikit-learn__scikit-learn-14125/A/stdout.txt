@@ -1,2 +1,0 @@
-sklearn/utils/tests/test_multiclass.py:97: FutureWarning: The pandas.SparseArray class is deprecated and will be removed from pandas in a future version. Use pandas.arrays.SparseArray instead.
-  np.array([0, 1, 1, 1, 0, 0, 0, 1, 1, 1], dtype=np.int8),

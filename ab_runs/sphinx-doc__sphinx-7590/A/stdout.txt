@@ -1,4 +1,0 @@
-Too many template argument lists compared to parameter lists. Argument lists: 1, Parameter lists: 0, Extra empty parameters lists prepended: 1. Declaration:
-	A<T>
-Too many template argument lists compared to parameter lists. Argument lists: 1, Parameter lists: 0, Extra empty parameters lists prepended: 1. Declaration:
-	A<T>

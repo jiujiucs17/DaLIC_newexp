@@ -1,8 +1,0 @@
-{
-  "instance_id": "sympy__sympy-18961",
-  "status": "failed",
-  "results": [],
-  "error": "RuntimeError: MissingInstanceImage: Official historical image is not available locally: swebench/sweb.eval.x86_64.sympy_1776_sympy-18961:latest",
-  "missing_instance_image": "swebench/sweb.eval.x86_64.sympy_1776_sympy-18961:latest",
-  "docker_image_size_bytes": 295200000000
-}

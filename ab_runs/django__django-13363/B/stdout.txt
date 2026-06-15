@@ -1,9 +1,0 @@
-Traceback (most recent call last):
-  File "/tmp/B.py", line 171, in <module>
-    _SR_MODULE_NS_0 = _sr_load_module(_SR_MODULE_SOURCE_0, "tests/db_functions/datetime/test_extract_trunc.py", "tests.db_functions.datetime.test_extract_trunc")
-  File "/tmp/B.py", line 16, in _sr_load_module
-    exec(compile(source, filename, 'exec'), module.__dict__)
-  File "tests/db_functions/datetime/test_extract_trunc.py", line 193
-    def test_date_kind(kind):
-      ^
-IndentationError: expected an indented block

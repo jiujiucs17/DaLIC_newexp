@@ -1,9 +1,0 @@
-Traceback (most recent call last):
-  File "/tmp/B.py", line 171, in <module>
-    _SR_MODULE_NS_0 = _sr_load_module(_SR_MODULE_SOURCE_0, "sklearn/ensemble/tests/test_voting.py", "sklearn.ensemble.tests.test_voting")
-  File "/tmp/B.py", line 16, in _sr_load_module
-    exec(compile(source, filename, 'exec'), module.__dict__)
-  File "sklearn/ensemble/tests/test_voting.py", line 56
-    clf = MockClassifier()
-    ^
-IndentationError: expected an indented block
