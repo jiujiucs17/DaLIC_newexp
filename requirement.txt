@@ -9,3 +9,5 @@ accelerate
 sentencepiece
 protobuf
 unidiff
+docker
+-e ./tools/SWE-bench

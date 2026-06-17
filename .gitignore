@@ -1,8 +1,10 @@
 .DS_Store
 dataset/.gt_source_cache
+dataset/vartracer_results
 scripts/__pycache__
 tools/SWE-bench
 tmp
 .vscode
 .pycache
 dalic-newexp
+python_venv

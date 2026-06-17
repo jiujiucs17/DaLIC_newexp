@@ -38,14 +38,13 @@ DEFAULT_RUN_ID = "trace_test_cases"
 DEFAULT_TIMEOUT_SECONDS = 600
 DEFAULT_TEST_TIMEOUT_SECONDS = 300
 TEST_SAMPLE_SIZE = 5
-IMAGE_LIMIT_BYTES = 500 * 1000**3
+IMAGE_LIMIT_BYTES = 800 * 1000**3
+MAX_TEST_CASES_PER_INSTANCE = 200
 PARAMETRIZE_DECORATOR_NAMES = {
     "parametrize",
     "pytest.mark.parametrize",
     "mark.parametrize",
 }
-
-
 @dataclass
 class PatchedPythonFile:
     file_path: str
@@ -184,6 +183,14 @@ def parse_args(repo_root: Path) -> argparse.Namespace:
     parser.add_argument("--seed", type=int, default=None, help="Random seed for --test sampling. Omit for a fresh random sample each run.")
     parser.add_argument("--run-id", default=DEFAULT_RUN_ID)
     parser.add_argument("--timeout", type=int, default=argparse.SUPPRESS)
+    parser.add_argument(
+        "--resume",
+        action="store_true",
+        help=(
+            "Skip instances whose summary.json is already finalized. "
+            "Rerun instances with missing, unreadable, or unfinished summaries."
+        ),
+    )
     args = parser.parse_args()
 
     args.input = resolve_path(args.input, repo_root)
@@ -211,6 +218,10 @@ def get_required_field(row: dict[str, Any], field_name: str) -> Any:
 def write_json(path: Path, payload: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding=UTF8)
+
+
+def read_json(path: Path) -> Any:
+    return json.loads(path.read_text(encoding=UTF8))
 
 
 def write_text_atomically(target_path: Path, content: str) -> None:
@@ -248,6 +259,49 @@ def setup_logger(log_file: Path) -> logging.Logger:
 
 def instance_logger(logger: logging.Logger, instance_id: str) -> logging.LoggerAdapter:
     return logging.LoggerAdapter(logger, {"instance_id": instance_id})
+
+
+def load_existing_resume_summary(
+    *,
+    index: int,
+    total: int,
+    instance_id: str,
+    instance_dir: Path,
+    logger: logging.LoggerAdapter,
+) -> dict[str, Any] | None:
+    summary_path = instance_dir / "summary.json"
+    if not summary_path.is_file():
+        return None
+
+    try:
+        summary = read_json(summary_path)
+    except (OSError, json.JSONDecodeError) as exc:
+        logger.warning("[Instance %d/%d] existing summary unreadable (%s); rerunning", index, total, exc)
+        return None
+
+    if not isinstance(summary, dict):
+        logger.warning("[Instance %d/%d] existing summary is not a JSON object; rerunning", index, total)
+        return None
+
+    if str(summary.get("instance_id")) != instance_id:
+        logger.warning(
+            "[Instance %d/%d] existing summary instance_id mismatch (%s); rerunning",
+            index,
+            total,
+            summary.get("instance_id"),
+        )
+        return None
+
+    finalized = summary.get("finalized")
+    if finalized is True:
+        logger.info("[Instance %d/%d] resume skipped finalized instance", index, total)
+        return summary
+    if finalized is False:
+        logger.info("[Instance %d/%d] resume found unfinished summary; rerunning", index, total)
+        return None
+
+    logger.info("[Instance %d/%d] resume found summary without finalized marker; rerunning", index, total)
+    return None
 
 
 def load_docker_dependencies() -> tuple[Any, Any, Any, Any]:
@@ -1434,6 +1488,7 @@ def run_instance(
     summary: dict[str, Any] = {
         "instance_id": instance_id,
         "status": "completed",
+        "finalized": False,
         "test_cases": 0,
         "completed_test_cases": 0,
         "failed_test_cases": 0,
@@ -1451,6 +1506,7 @@ def run_instance(
 
         if not extraction.test_cases:
             summary["status"] = "no_test_cases"
+            summary["finalized"] = True
             test_cases_path = write_test_cases_jsonl(instance_dir, [])
             summary["test_cases_path"] = str(test_cases_path)
             write_json(instance_dir / "summary.json", summary)
@@ -1468,6 +1524,20 @@ def run_instance(
         test_cases_path = write_test_cases_jsonl(instance_dir, test_cases)
         summary["test_cases"] = len(test_cases)
         summary["test_cases_path"] = str(test_cases_path)
+        if len(test_cases) > MAX_TEST_CASES_PER_INSTANCE:
+            summary["status"] = "failed"
+            summary["finalized"] = True
+            summary["error"] = (
+                f"too_many_test_cases: {len(test_cases)} > {MAX_TEST_CASES_PER_INSTANCE}"
+            )
+            logger.warning(
+                "[Instance %d/%d] skipping trace because collected test_cases=%d exceeds limit=%d",
+                index,
+                total,
+                len(test_cases),
+                MAX_TEST_CASES_PER_INSTANCE,
+            )
+            return summary
 
         for test_case in test_cases:
             result = run_traced_test_case(
@@ -1489,11 +1559,18 @@ def run_instance(
 
         if summary["failed_test_cases"] or summary["timed_out_test_cases"]:
             summary["status"] = "failed"
+        summary["finalized"] = True
 
     except Exception as exc:
         summary["status"] = "failed"
+        summary["finalized"] = True
         summary["error"] = f"{type(exc).__name__}: {exc}"
         logger.exception("[Instance %d/%d] failed", index, total)
+    except BaseException as exc:
+        summary["status"] = "interrupted"
+        summary["error"] = f"{type(exc).__name__}: {exc}"
+        logger.exception("[Instance %d/%d] interrupted", index, total)
+        raise
     finally:
         if container is not None:
             run_command(["docker", "rm", "-f", container.name], check=False)
@@ -1550,6 +1627,8 @@ def main() -> None:
             len(scheduled_rows),
             bool(args.test),
         )
+        if args.resume:
+            batch_logger.info("resume enabled")
 
         history_state = build_history_state(args.cache_dir)
         docker_module, _, _, _ = load_docker_dependencies()
@@ -1557,6 +1636,18 @@ def main() -> None:
         summaries: list[dict[str, Any]] = []
         for index, row in enumerate(tqdm(scheduled_rows, desc="trace_test_cases", unit="instance"), start=1):
             instance_id = str(row["instance_id"])
+            logger_adapter = instance_logger(logger, instance_id)
+            if args.resume:
+                existing_summary = load_existing_resume_summary(
+                    index=index,
+                    total=len(scheduled_rows),
+                    instance_id=instance_id,
+                    instance_dir=args.output_dir / instance_id,
+                    logger=logger_adapter,
+                )
+                if existing_summary is not None:
+                    summaries.append(existing_summary)
+                    continue
             summaries.append(
                 run_instance(
                     index=index,
@@ -1565,7 +1656,7 @@ def main() -> None:
                     args=args,
                     history_state=history_state,
                     client=client,
-                    logger=instance_logger(logger, instance_id),
+                    logger=logger_adapter,
                 )
             )
 
