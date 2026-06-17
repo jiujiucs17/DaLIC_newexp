@@ -233,3 +233,5 @@ How this motivates my work:
 
 Key references:
 - Xia, C. S., et al. “LocAgent: Graph-Guided LLM Agents for Code Localization.” ACL 2025, Long Papers.
+
+Update: `scripts/prepare_agent_workbench.py` now sanitizes each prepared `<instance_id>/repo/` before finalizing the instance folder by deleting `.git`, deleting `.hg`, `.github` when present, and removing any `*.patch` or `*.diff` files. This keeps the checked-out and patched file state while reducing the risk that version history or patch artifacts leak ground-truth information to an LLM.
