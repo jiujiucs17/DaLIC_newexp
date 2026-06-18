@@ -255,6 +255,7 @@ def prepare_instance(
     try:
         create_repo_snapshot(instance, temp_dir / "repo", repo_cache_dir)
         clean_repo_artifacts(temp_dir / "repo")
+        # (temp_dir / "mini-swe-agent-results").mkdir()
         (temp_dir / "problem_statement.txt").write_text(
             instance.problem_statement,
             encoding="utf-8",

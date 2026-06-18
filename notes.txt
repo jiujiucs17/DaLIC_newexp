@@ -235,3 +235,64 @@ Key references:
 - Xia, C. S., et al. “LocAgent: Graph-Guided LLM Agents for Code Localization.” ACL 2025, Long Papers.
 
 Update: `scripts/prepare_agent_workbench.py` now sanitizes each prepared `<instance_id>/repo/` before finalizing the instance folder by deleting `.git`, deleting `.hg`, `.github` when present, and removing any `*.patch` or `*.diff` files. This keeps the checked-out and patched file state while reducing the risk that version history or patch artifacts leak ground-truth information to an LLM.
+
+
+
+trace_test_cases: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 573/573 [9:39:24<00:00, 60.67s/instance] {                                                                                                                                                                          
+  "dataset_rows": 592,
+  "sure_instances": 573,
+  "scheduled_instances": 573,
+  "completed_instances": 463,
+  "failed_instances": 106,
+  "no_test_case_instances": 4,
+  "history_stats": {
+    "memory_cache_hits": 0,
+    "disk_cache_hits": 248,
+    "downloaded_files": 0,
+    "download_failures": 0,
+    "missing_remote_files": 0,
+    "patch_parse_failures": 0,
+    "test_patch_source_failures": 2
+  }
+}
+
+
+docker build \
+  -t dalic-mini-swe:2caffc56 \
+  -f docker/baseline.dockerfile .
+
+
+docker run --rm -it \
+  --name mini-fl-astropy-7973 \
+  --env-file docker/baseline.env \
+  -v /home/mengqi/work/DaLIC_newexp/dataset/agent_workbench/astropy__astropy-7973:/workspace/instance:ro \
+  -v /home/mengqi/work/DaLIC_newexp/dataset/agent_workbench/astropy__astropy-7973/mini-swe-agent-results:/home/miniagent/.config/mini-swe-agent \
+  -w /workspace/instance \
+  dalic-mini-swe:2caffc56 \
+  mini -y
+
+  docker run --rm -it \
+  --name mini-fl-$INSTANCE_ID \
+  --env-file docker/baseline.env \
+  -v /home/mengqi/work/DaLIC_newexp/dataset/agent_workbench/$INSTANCE_ID:/workspace/instance:ro \
+  -w /workspace/instance \
+  dalic-mini-swe:2caffc56 \
+
+  docker run -it \
+  --name mini-fl-$INSTANCE_ID \
+  --env-file /home/mengqi/work/DaLIC_newexp/docker/baseline.env \
+  -v /home/mengqi/work/DaLIC_newexp/dataset/agent_workbench/$INSTANCE_ID:/workspace/instance:ro \
+  -v /home/mengqi/work/DaLIC_newexp/scripts/run_mini_instance.py:/opt/dalic/run_mini_instance.py:ro \
+  -v /home/mengqi/work/DaLIC_newexp/scripts/prompts:/opt/dalic/prompts:ro \
+  -w /workspace/instance \
+  dalic-mini-swe:2caffc56 \
+  python /opt/dalic/run_mini_instance.py
+
+  docker run --rm -it \
+  --name mini-fl-<INSTANCE_ID> \
+  --env-file /home/mengqi/work/DaLIC_newexp/docker/baseline.env \
+  -v <path_to_project_root>/dataset/agent_workbench/<INSTANCE_ID>:/workspace/instance:ro \
+  -v <path_to_project_root>/scripts/run_mini_instance.py:/opt/dalic/run_mini_instance.py:ro \
+  -v <path_to_project_root>/scripts/prompts:/opt/dalic/prompts:ro \
+  -w /workspace/instance \
+  dalic-mini-swe:2caffc56
