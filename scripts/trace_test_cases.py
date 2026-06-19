@@ -181,7 +181,7 @@ def parse_args(repo_root: Path) -> argparse.Namespace:
     parser.add_argument(
         "--vartracer-wheel",
         type=Path,
-        default=repo_root / "tools" / "vartracer" / "vartracer-0.2.14-py3-none-any.whl",
+        default=repo_root / "tools" / "vartracer" / "vartracer-0.2.15-py3-none-any.whl",
         help="Local VarTracer wheel copied into each container.",
     )
     parser.add_argument(
