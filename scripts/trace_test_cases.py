@@ -1,4 +1,26 @@
 #!/usr/bin/env python3
+# Options:
+#   --input PATH
+#       default: dataset/swebench_feature_with_truth.jsonl (schedule only sure rows)
+#   --output-dir PATH
+#       default: dataset/vartracer_results
+#   --cache-dir PATH
+#       default: dataset/.gt_source_cache
+#   --vartracer-wheel PATH
+#       default: tools/vartracer/vartracer-0.2.15-py3-none-any.whl
+#   --test [BOOL]
+#       default: False (trace all sure instances; when enabled, randomly trace at most 5)
+#   --seed INTEGER
+#       default: None (fresh random sample in test mode; ignored outside test mode)
+#   --run-id TEXT
+#       default: trace_test_cases
+#   --timeout INTEGER
+#       default: 600 seconds normally; 300 seconds in test mode
+#   --resume
+#       default: False (rerun all; when enabled, skip finalized current-policy results)
+#
+# Relative paths are resolved from the repository root. Resume mode still runs
+# static screening for every scheduled instance before deciding which traces to skip.
 
 from __future__ import annotations
 
@@ -35,12 +57,14 @@ DEFAULT_INPUT_FILE = "swebench_feature_with_truth.jsonl"
 DEFAULT_OUTPUT_DIR = "vartracer_results"
 DEFAULT_CACHE_DIR = ".gt_source_cache"
 DEFAULT_RUN_ID = "trace_test_cases"
+TRACE_ELIGIBLE_TOML_NAME = "trace_eligible_instance.toml"
+TRACE_COMPLETED_TOML_NAME = "trace_completed_instance.toml"
 DEFAULT_TIMEOUT_SECONDS = 600
 DEFAULT_TEST_TIMEOUT_SECONDS = 300
 TEST_SAMPLE_SIZE = 5
 IMAGE_LIMIT_BYTES = 800 * 1000**3
 MAX_TEST_CASES_PER_INSTANCE = 200
-RECOVERY_POLICY = "direct_test_patch_changes_only_v1"
+RECOVERY_POLICY = "direct_test_patch_changes_only_v2"
 PARAMETRIZE_DECORATOR_NAMES = {
     "parametrize",
     "pytest.mark.parametrize",
@@ -96,8 +120,18 @@ class ModuleSourceInfo:
     module: ast.Module
     bindings: dict[str, ast.AST]
     tests: list[TestDefinition]
-    changed_intervals: tuple[tuple[int, int], ...]
+    test_class_names: set[str]
+    base_tests: list[TestDefinition]
+    base_test_class_names: set[str]
+    changed_regions: tuple[ChangedRegion, ...]
     patch_order: int
+
+
+@dataclass(frozen=True)
+class ChangedRegion:
+    kind: str
+    start_line: int
+    end_line: int
 
 
 @dataclass(frozen=True)
@@ -116,7 +150,6 @@ class TestCase:
 class ExtractionResult:
     test_cases: list[TestCase]
     module_sources: dict[str, str]
-    pytest_collect_basenames: set[str]
     changed_regions: int
     matched_changed_regions: int
     unmatched_changes: list[dict[str, Any]]
@@ -128,6 +161,13 @@ class ExtractionResult:
     @property
     def fully_recovered(self) -> bool:
         return bool(self.test_cases) and not self.unmatched_changes
+
+
+@dataclass
+class ScreeningResult:
+    extractions_by_instance_id: dict[str, ExtractionResult]
+    eligible_instance_ids: list[str]
+    category_counts: dict[str, int]
 
 
 def get_repo_root() -> Path:
@@ -182,7 +222,10 @@ def parse_args(repo_root: Path) -> argparse.Namespace:
         "--vartracer-wheel",
         type=Path,
         default=repo_root / "tools" / "vartracer" / "vartracer-0.2.15-py3-none-any.whl",
-        help="Local VarTracer wheel copied into each container.",
+        help=(
+            "Local VarTracer wheel copied into each container. "
+            "Default: tools/vartracer/vartracer-0.2.15-py3-none-any.whl"
+        ),
     )
     parser.add_argument(
         "--test",
@@ -193,14 +236,27 @@ def parse_args(repo_root: Path) -> argparse.Namespace:
         help="When true, randomly sample 5 sure instances instead of tracing all sure instances.",
     )
     parser.add_argument("--seed", type=int, default=None, help="Random seed for --test sampling. Omit for a fresh random sample each run.")
-    parser.add_argument("--run-id", default=DEFAULT_RUN_ID)
-    parser.add_argument("--timeout", type=int, default=argparse.SUPPRESS)
+    parser.add_argument(
+        "--run-id",
+        default=DEFAULT_RUN_ID,
+        help=f"Run identifier passed to the SWE-bench container builder. Default: {DEFAULT_RUN_ID}",
+    )
+    parser.add_argument(
+        "--timeout",
+        type=int,
+        default=argparse.SUPPRESS,
+        help=(
+            "Positive per-command timeout in seconds. When omitted: "
+            f"{DEFAULT_TIMEOUT_SECONDS} normally, {DEFAULT_TEST_TIMEOUT_SECONDS} with --test."
+        ),
+    )
     parser.add_argument(
         "--resume",
         action="store_true",
         help=(
             "Skip instances whose summary.json is already finalized. "
-            "Rerun instances with missing, unreadable, or unfinished summaries."
+            "Rerun instances with missing, unreadable, unfinished, or older-policy summaries. "
+            "Static screening still runs before resume decisions."
         ),
     )
     args = parser.parse_args()
@@ -432,14 +488,6 @@ def parse_patch_files(
     return parsed_files
 
 
-def parse_test_patch(patch_text: str, history_state: dict[str, Any]) -> list[PatchedPythonFile]:
-    parsed_files: list[PatchedPythonFile] = []
-    for file_path, base_lookup_path, patch_order, patched_file in parse_patch_files(patch_text, history_state):
-        if file_path.endswith(".py"):
-            parsed_files.append(PatchedPythonFile(file_path, base_lookup_path, patch_order, patched_file))
-    return parsed_files
-
-
 def apply_file_diff_to_source(base_text: str, patched_file: Any) -> str:
     base_lines = base_text.splitlines()
     patched_lines: list[str] = []
@@ -500,25 +548,23 @@ def merge_intervals(intervals: list[tuple[int, int]]) -> tuple[tuple[int, int], 
     return tuple(merged)
 
 
-def collect_changed_intervals(patched_file: Any) -> tuple[tuple[int, int], ...]:
-    direct_intervals: list[tuple[int, int]] = []
-    fallback_intervals: list[tuple[int, int]] = []
+def collect_changed_regions(patched_file: Any) -> tuple[ChangedRegion, ...]:
+    added_lines: list[tuple[int, int]] = []
+    removed_lines: list[tuple[int, int]] = []
 
     for hunk in patched_file:
-        target_start = max(int(hunk.target_start or 1), 1)
-        target_length = int(hunk.target_length or 0)
-        fallback_intervals.append(
-            (target_start, target_start + target_length - 1)
-            if target_length > 0
-            else (target_start, target_start)
-        )
-
         for hunk_line in hunk:
             if hunk_line.is_added and hunk_line.target_line_no is not None:
                 line_no = int(hunk_line.target_line_no)
-                direct_intervals.append((line_no, line_no))
+                added_lines.append((line_no, line_no))
+            elif hunk_line.is_removed and hunk_line.source_line_no is not None:
+                line_no = int(hunk_line.source_line_no)
+                removed_lines.append((line_no, line_no))
 
-    return merge_intervals(direct_intervals) or merge_intervals(fallback_intervals)
+    return tuple(
+        [ChangedRegion("added", start, end) for start, end in merge_intervals(added_lines)]
+        + [ChangedRegion("removed", start, end) for start, end in merge_intervals(removed_lines)]
+    )
 
 
 def dotted_name(node: ast.AST) -> str | None:
@@ -723,13 +769,6 @@ def extract_parametrize_info(
     return result
 
 
-def has_parametrize_decorator(function_node: ast.FunctionDef | ast.AsyncFunctionDef) -> bool:
-    return any(
-        isinstance(decorator, ast.Call) and dotted_name(decorator.func) in PARAMETRIZE_DECORATOR_NAMES
-        for decorator in function_node.decorator_list
-    )
-
-
 def expanded_param_case_ids(function_node: ast.FunctionDef | ast.AsyncFunctionDef, module_info: ModuleSourceInfo) -> list[str | None]:
     decorators = extract_parametrize_info(function_node, module_info)
     if decorators is None:
@@ -752,6 +791,71 @@ def test_overlaps_intervals(test: TestDefinition, intervals: tuple[tuple[int, in
         if not (test.end_line < start or end < test.start_line):
             return True
     return False
+
+
+def django_test_label_from_parts(
+    file_path: str,
+    class_path: tuple[str, ...],
+    function_name: str,
+) -> str:
+    module_path = file_path
+    if module_path.startswith("tests/"):
+        module_path = module_path[len("tests/") :]
+    if module_path.endswith(".py"):
+        module_path = module_path[:-3]
+    module_name = module_path.replace("/", ".")
+    return ".".join([module_name, *class_path, function_name])
+
+
+def test_definition_is_candidate(test: TestDefinition, test_class_names: set[str]) -> bool:
+    if not test.class_path:
+        return True
+    return any(class_name in test_class_names for class_name in test.class_path)
+
+
+def collect_class_definitions(body: list[ast.stmt]) -> list[ast.ClassDef]:
+    classes: list[ast.ClassDef] = []
+    for node in body:
+        if isinstance(node, ast.ClassDef):
+            classes.append(node)
+            classes.extend(collect_class_definitions(node.body))
+    return classes
+
+
+def collect_test_class_names(module: ast.Module) -> set[str]:
+    class_nodes = collect_class_definitions(module.body)
+    local_class_names = {node.name for node in class_nodes}
+    base_names = {
+        node.name: {
+            base_name.rsplit(".", 1)[-1]
+            for base in node.bases
+            if (base_name := dotted_name(base)) is not None
+        }
+        for node in class_nodes
+    }
+    test_class_names = {
+        node.name
+        for node in class_nodes
+        if node.name.startswith("Test")
+        or node.name.endswith(("Test", "Tests", "TestCase"))
+        or any(base.endswith(("Test", "Tests", "TestCase")) for base in base_names[node.name])
+    }
+
+    changed = True
+    while changed:
+        changed = False
+        for class_name, bases in base_names.items():
+            local_bases = bases & local_class_names
+            if class_name in test_class_names:
+                new_bases = local_bases - test_class_names
+                if new_bases:
+                    test_class_names.update(new_bases)
+                    changed = True
+            elif local_bases & test_class_names:
+                test_class_names.add(class_name)
+                changed = True
+
+    return test_class_names
 
 
 def collect_test_definitions(
@@ -785,11 +889,19 @@ def collect_test_definitions(
 
 def build_module_source_info(
     file_path: str,
+    base_source_text: str,
     source_text: str,
-    changed_intervals: tuple[tuple[int, int], ...],
+    changed_regions: tuple[ChangedRegion, ...],
     patch_order: int,
 ) -> ModuleSourceInfo:
     module = ast.parse(source_text, filename=file_path)
+    base_tests: list[TestDefinition] = []
+    base_test_class_names: set[str] = set()
+    if any(region.kind == "removed" for region in changed_regions):
+        base_module = ast.parse(base_source_text, filename=file_path)
+        base_tests = collect_test_definitions(base_module.body, file_path, (), [0])
+        base_test_class_names = collect_test_class_names(base_module)
+
     bindings: dict[str, ast.AST] = {}
     for node in module.body:
         if isinstance(node, ast.Assign) and len(node.targets) == 1 and isinstance(node.targets[0], ast.Name):
@@ -803,7 +915,10 @@ def build_module_source_info(
         module=module,
         bindings=bindings,
         tests=collect_test_definitions(module.body, file_path, (), [0]),
-        changed_intervals=changed_intervals,
+        test_class_names=collect_test_class_names(module),
+        base_tests=base_tests,
+        base_test_class_names=base_test_class_names,
+        changed_regions=changed_regions,
         patch_order=patch_order,
     )
 
@@ -817,9 +932,6 @@ def get_or_load_patched_module_info(
 ) -> ModuleSourceInfo | None:
     if file_diff.file_path in module_cache:
         return module_cache[file_diff.file_path]
-    if file_diff.patched_file.is_removed_file:
-        module_cache[file_diff.file_path] = None
-        return None
 
     if file_diff.patched_file.is_added_file:
         base_text = ""
@@ -841,8 +953,9 @@ def get_or_load_patched_module_info(
         patched_text = apply_file_diff_to_source(base_text, file_diff.patched_file)
         module_info = build_module_source_info(
             file_path=file_diff.file_path,
+            base_source_text=base_text,
             source_text=patched_text,
-            changed_intervals=collect_changed_intervals(file_diff.patched_file),
+            changed_regions=collect_changed_regions(file_diff.patched_file),
             patch_order=file_diff.patch_order,
         )
     except (SyntaxError, ValueError):
@@ -861,24 +974,67 @@ def select_feature_test_definitions(
     seen: set[tuple[str, tuple[str, ...], str]] = set()
     matched_changed_regions = 0
     unmatched_changes: list[dict[str, Any]] = []
-
     for module_info in sorted(module_infos, key=lambda info: info.patch_order):
-        for start, end in module_info.changed_intervals:
-            candidates = [
+        patched_tests_by_key = {test.key(): test for test in module_info.tests}
+        for region in module_info.changed_regions:
+            source_tests = module_info.tests if region.kind == "added" else module_info.base_tests
+            source_test_class_names = (
+                module_info.test_class_names
+                if region.kind == "added"
+                else module_info.base_test_class_names
+            )
+            overlapping_tests = [
                 test
-                for test in module_info.tests
-                if test_overlaps_intervals(test, ((start, end),))
+                for test in source_tests
+                if test_overlaps_intervals(test, ((region.start_line, region.end_line),))
             ]
-            if not candidates:
+            candidate_tests = [
+                test
+                for test in overlapping_tests
+                if test_definition_is_candidate(test, source_test_class_names)
+            ]
+
+            if not overlapping_tests:
                 unmatched_changes.append(
                     {
                         "file_path": module_info.file_path,
-                        "start_line": start,
-                        "end_line": end,
-                        "reason": "changed_region_does_not_overlap_test",
+                        "change_kind": region.kind,
+                        "start_line": region.start_line,
+                        "end_line": region.end_line,
+                        "reason": "changed_region_does_not_overlap_test_definition",
                     }
                 )
                 continue
+
+            if not candidate_tests:
+                unmatched_changes.append(
+                    {
+                        "file_path": module_info.file_path,
+                        "change_kind": region.kind,
+                        "start_line": region.start_line,
+                        "end_line": region.end_line,
+                        "reason": "changed_region_only_overlaps_non_test_class_method",
+                    }
+                )
+                continue
+
+            if region.kind == "removed":
+                missing_keys = [test.key() for test in candidate_tests if test.key() not in patched_tests_by_key]
+                if missing_keys:
+                    unmatched_changes.append(
+                        {
+                            "file_path": module_info.file_path,
+                            "change_kind": region.kind,
+                            "start_line": region.start_line,
+                            "end_line": region.end_line,
+                            "reason": "removed_region_test_not_present_after_patch",
+                            "test_keys": ["::".join([key[0], *key[1], key[2]]) for key in missing_keys],
+                        }
+                    )
+                    continue
+                candidates = [patched_tests_by_key[test.key()] for test in candidate_tests]
+            else:
+                candidates = candidate_tests
 
             matched_changed_regions += 1
             for test in candidates:
@@ -906,12 +1062,13 @@ def extract_feature_test_cases(row: dict[str, Any], history_state: dict[str, Any
     changed_regions = 0
     unmatched_changes: list[dict[str, Any]] = []
     for file_path, base_lookup_path, patch_order, patched_file in parse_patch_files(test_patch, history_state):
-        file_changed_intervals = collect_changed_intervals(patched_file)
-        if not file_changed_intervals:
+        file_changed_regions = collect_changed_regions(patched_file)
+        if not file_changed_regions:
             changed_regions += 1
             unmatched_changes.append(
                 {
                     "file_path": file_path,
+                    "change_kind": "metadata",
                     "start_line": None,
                     "end_line": None,
                     "reason": "file_change_has_no_changed_line_interval",
@@ -919,16 +1076,17 @@ def extract_feature_test_cases(row: dict[str, Any], history_state: dict[str, Any
             )
             continue
 
-        changed_regions += len(file_changed_intervals)
+        changed_regions += len(file_changed_regions)
         if not file_path.endswith(".py"):
             unmatched_changes.extend(
                 {
                     "file_path": file_path,
-                    "start_line": start,
-                    "end_line": end,
+                    "change_kind": region.kind,
+                    "start_line": region.start_line,
+                    "end_line": region.end_line,
                     "reason": "changed_non_python_file",
                 }
-                for start, end in file_changed_intervals
+                for region in file_changed_regions
             )
             continue
 
@@ -939,26 +1097,26 @@ def extract_feature_test_cases(row: dict[str, Any], history_state: dict[str, Any
             unmatched_changes.extend(
                 {
                     "file_path": file_path,
-                    "start_line": start,
-                    "end_line": end,
+                    "change_kind": region.kind,
+                    "start_line": region.start_line,
+                    "end_line": region.end_line,
                     "reason": reason,
                 }
-                for start, end in file_changed_intervals
+                for region in file_changed_regions
             )
             continue
         module_infos.append(module_info)
 
     module_by_path = {module_info.file_path: module_info for module_info in module_infos}
-    selected_tests, matched_changed_regions, module_unmatched_changes = select_feature_test_definitions(module_infos)
+    selected_tests, matched_changed_regions, module_unmatched_changes = select_feature_test_definitions(
+        module_infos,
+    )
     unmatched_changes.extend(module_unmatched_changes)
 
     test_cases: list[TestCase] = []
     seen_names: set[str] = set()
-    pytest_collect_basenames: set[str] = set()
     for test in selected_tests:
         module_info = module_by_path[test.file_path]
-        if has_parametrize_decorator(test.node):
-            pytest_collect_basenames.add(test.base_name())
         for param_case_id in expanded_param_case_ids(test.node, module_info):
             test_case_name = test.name(param_case_id)
             if test_case_name in seen_names:
@@ -980,7 +1138,6 @@ def extract_feature_test_cases(row: dict[str, Any], history_state: dict[str, Any
     return ExtractionResult(
         test_cases=test_cases,
         module_sources={module_info.file_path: module_info.source_text for module_info in module_infos},
-        pytest_collect_basenames=pytest_collect_basenames,
         changed_regions=changed_regions,
         matched_changed_regions=matched_changed_regions,
         unmatched_changes=unmatched_changes,
@@ -1173,13 +1330,11 @@ def copy_from_container(container_name: str, source: str, target: Path) -> subpr
 
 
 def django_test_label(test_case: TestCase) -> str:
-    module_path = test_case.file_path
-    if module_path.startswith("tests/"):
-        module_path = module_path[len("tests/") :]
-    if module_path.endswith(".py"):
-        module_path = module_path[:-3]
-    module_name = module_path.replace("/", ".")
-    return ".".join([module_name, *test_case.class_path, test_case.function_name])
+    return django_test_label_from_parts(
+        test_case.file_path,
+        test_case.class_path,
+        test_case.function_name,
+    )
 
 
 def pytest_test_command(test_case: TestCase, timeout: int) -> str:
@@ -1314,9 +1469,10 @@ def resolve_pytest_collected_test_cases(
     timeout: int,
     logger: logging.LoggerAdapter,
 ) -> list[TestCase]:
-    # Django and SymPy use repo-native runners rather than pytest nodeids, so
-    # only pytest-backed runners need a container-side collect step.
-    if row.get("repo") in {"django/django", "sympy/sympy"} or not extraction.pytest_collect_basenames:
+    # Django and SymPy use repo-native runners rather than pytest nodeids.
+    # Every pytest-backed candidate is collected in the prepared container so
+    # a name-shaped function cannot reach VarTracer unless pytest recognizes it.
+    if row.get("repo") in {"django/django", "sympy/sympy"}:
         return extraction.test_cases
 
     instance_id = str(get_required_field(row, "instance_id"))
@@ -1332,13 +1488,6 @@ def resolve_pytest_collected_test_cases(
         if base_nodeid in handled_basenames:
             continue
         handled_basenames.add(base_nodeid)
-
-        if base_nodeid not in extraction.pytest_collect_basenames:
-            for original in grouped[base_nodeid]:
-                if original.test_case_name not in seen_names:
-                    seen_names.add(original.test_case_name)
-                    resolved.append(original)
-            continue
 
         command = pytest_collect_command(row, base_nodeid, timeout)
         collect_result = docker_shell(container_name, command, check=False, timeout=timeout + 60)
@@ -1554,6 +1703,7 @@ def run_instance(
     history_state: dict[str, Any],
     client: Any,
     logger: logging.LoggerAdapter,
+    extraction: ExtractionResult | None = None,
 ) -> dict[str, Any]:
     instance_id = str(get_required_field(row, "instance_id"))
     instance_dir = args.output_dir / instance_id
@@ -1576,9 +1726,12 @@ def run_instance(
     image_key: str | None = None
 
     try:
-        logger.info("[Instance %d/%d] extracting feature-positive test cases", index, total)
         files = write_instance_inputs(row, instance_dir)
-        extraction = extract_feature_test_cases(row, history_state)
+        if extraction is None:
+            logger.info("[Instance %d/%d] extracting feature-positive test cases", index, total)
+            extraction = extract_feature_test_cases(row, history_state)
+        else:
+            logger.info("[Instance %d/%d] using pre-screened test cases", index, total)
         summary["test_cases"] = len(extraction.test_cases)
         summary["changed_regions"] = extraction.changed_regions
         summary["matched_changed_regions"] = extraction.matched_changed_regions
@@ -1695,6 +1848,45 @@ def build_history_state(cache_dir: Path) -> dict[str, Any]:
     }
 
 
+def screen_trace_instances(
+    rows: list[dict[str, Any]],
+    history_state: dict[str, Any],
+) -> ScreeningResult:
+    extractions_by_instance_id: dict[str, ExtractionResult] = {}
+    eligible_instance_ids: list[str] = []
+    category_counts = {
+        "trace_eligible": 0,
+        "no_test_cases": 0,
+        "test_cases_not_fully_recovered": 0,
+    }
+
+    for row in tqdm(rows, desc="screen_trace_eligible", unit="instance"):
+        instance_id = str(get_required_field(row, "instance_id"))
+        extraction = extract_feature_test_cases(row, history_state)
+        extractions_by_instance_id[instance_id] = extraction
+        if not extraction.test_cases:
+            category_counts["no_test_cases"] += 1
+        elif not extraction.fully_recovered:
+            category_counts["test_cases_not_fully_recovered"] += 1
+        else:
+            category_counts["trace_eligible"] += 1
+            eligible_instance_ids.append(instance_id)
+
+    return ScreeningResult(
+        extractions_by_instance_id=extractions_by_instance_id,
+        eligible_instance_ids=eligible_instance_ids,
+        category_counts=category_counts,
+    )
+
+
+def select_trace_eligible_instance_ids(
+    rows: list[dict[str, Any]],
+    history_state: dict[str, Any],
+) -> tuple[list[str], dict[str, int]]:
+    screening = screen_trace_instances(rows, history_state)
+    return screening.eligible_instance_ids, screening.category_counts
+
+
 def main() -> None:
     repo_root = get_repo_root()
     args = parse_args(repo_root)
@@ -1720,11 +1912,30 @@ def main() -> None:
             batch_logger.info("resume enabled")
 
         history_state = build_history_state(args.cache_dir)
+        screening = screen_trace_instances(
+            scheduled_rows,
+            history_state,
+        )
+        trace_eligible_instance_ids = screening.eligible_instance_ids
+        screening_category_counts = screening.category_counts
+        screening_history_stats = dict(history_state["stats"])
+        trace_eligible_path = repo_root / "dataset" / TRACE_ELIGIBLE_TOML_NAME
+        write_instance_ids_toml(trace_eligible_path, trace_eligible_instance_ids)
+        batch_logger.info(
+            "screening completed trace_eligible=%d no_test_cases=%d "
+            "test_cases_not_fully_recovered=%d output=%s",
+            screening_category_counts["trace_eligible"],
+            screening_category_counts["no_test_cases"],
+            screening_category_counts["test_cases_not_fully_recovered"],
+            trace_eligible_path,
+        )
+
         docker_module, _, _, _ = load_docker_dependencies()
         client = docker_module.from_env()
         summaries: list[dict[str, Any]] = []
         for index, row in enumerate(tqdm(scheduled_rows, desc="trace_test_cases", unit="instance"), start=1):
             instance_id = str(row["instance_id"])
+            extraction = screening.extractions_by_instance_id.pop(instance_id)
             logger_adapter = instance_logger(logger, instance_id)
             if args.resume:
                 existing_summary = load_existing_resume_summary(
@@ -1746,6 +1957,7 @@ def main() -> None:
                     history_state=history_state,
                     client=client,
                     logger=logger_adapter,
+                    extraction=extraction,
                 )
             )
 
@@ -1753,12 +1965,15 @@ def main() -> None:
             "dataset_rows": total_rows,
             "sure_instances": len(sure_rows),
             "scheduled_instances": len(scheduled_rows),
+            "trace_eligible_instances": len(trace_eligible_instance_ids),
+            "trace_eligible_instances_path": str(trace_eligible_path),
             "completed_instances": sum(summary["status"] == "completed" for summary in summaries),
             "failed_instances": sum(summary["status"] == "failed" for summary in summaries),
             "no_test_case_instances": sum(summary["status"] == "no_test_cases" for summary in summaries),
             "test_cases_not_fully_recovered_instances": sum(
                 summary["status"] == "test_cases_not_fully_recovered" for summary in summaries
             ),
+            "screening_history_stats": screening_history_stats,
             "history_stats": history_state["stats"],
             "instances": summaries,
         }
@@ -1768,7 +1983,10 @@ def main() -> None:
             for summary in summaries
             if summary["status"] == "completed"
         ]
-        write_instance_ids_toml(repo_root / "dataset" / "trace_completed_instance.toml", completed_instance_ids)
+        write_instance_ids_toml(
+            repo_root / "dataset" / TRACE_COMPLETED_TOML_NAME,
+            completed_instance_ids,
+        )
         print(json.dumps({key: value for key, value in batch_summary.items() if key != "instances"}, ensure_ascii=False, indent=2))
     finally:
         for handler in logger.handlers[:]:

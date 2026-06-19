@@ -1,8 +1,13 @@
 #!/usr/bin/env python3
-# Usage:
-#   python3 scripts/run_baseline.py
-#   python3 scripts/run_baseline.py --model_name Qwen_Qwen3.5-9B
-#   python3 scripts/run_baseline.py --model_name some/org-model --test
+# Options:
+#   --model_name TEXT
+#       default: Qwen_Qwen3.5-9B
+#   --test
+#       default: False (run all selected instances; when enabled, randomly run at most 10)
+#   --selected_instances PATH
+#       default: None (do not filter instances; otherwise read instance_ids from TOML)
+#   --workbench_path PATH
+#       default: dataset/agent_workbench
 
 from __future__ import annotations
 
@@ -14,12 +19,14 @@ import shlex
 import shutil
 import subprocess
 import time
+import tomllib
 from pathlib import Path, PurePosixPath
 
 from tqdm import tqdm
 
 
 DEFAULT_MODEL_NAME = "Qwen_Qwen3.5-9B"
+DEFAULT_WORKBENCH_PATH = Path("dataset/agent_workbench")
 CONTAINER_RESULTS_DIR = "/home/miniagent/.config/mini-swe-agent"
 ARTIFACT_NAMES = ("results.txt", "last_mini_run.traj.json")
 RESULTS_FIELDS = ("files", "classes", "functions")
@@ -37,6 +44,8 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(add_help=False)
     parser.add_argument("--model_name", default=DEFAULT_MODEL_NAME)
     parser.add_argument("--test", action="store_true")
+    parser.add_argument("--selected_instances", type=Path, default=None)
+    parser.add_argument("--workbench_path", type=Path, default=DEFAULT_WORKBENCH_PATH)
     return parser.parse_args()
 
 
@@ -64,12 +73,43 @@ def configure_logger(log_path: Path) -> logging.Logger:
     return logger
 
 
-def list_instance_ids(workbench_dir: Path, test_mode: bool) -> tuple[list[str], int | None]:
+def resolve_cli_path(repo_root: Path, path: Path) -> Path:
+    if path.is_absolute():
+        return path.resolve()
+    return (repo_root / path).resolve()
+
+
+def load_selected_instance_ids(selected_instances_path: Path) -> set[str]:
+    with selected_instances_path.open("rb") as selected_instances_file:
+        payload = tomllib.load(selected_instances_file)
+
+    instance_ids = payload.get("instance_ids")
+    if not isinstance(instance_ids, list) or any(
+        not isinstance(instance_id, str) for instance_id in instance_ids
+    ):
+        raise ValueError(
+            f"{selected_instances_path} must define 'instance_ids' as a list of strings"
+        )
+    return set(instance_ids)
+
+
+def list_instance_ids(
+    workbench_dir: Path,
+    test_mode: bool,
+    selected_instances_path: Path | None = None,
+) -> tuple[list[str], int | None]:
     instance_ids = sorted(
         path.name
         for path in workbench_dir.iterdir()
         if path.is_dir() and path.name != ".repo_mirrors"
     )
+    if selected_instances_path is not None:
+        selected_instance_ids = load_selected_instance_ids(selected_instances_path)
+        instance_ids = [
+            instance_id
+            for instance_id in instance_ids
+            if instance_id in selected_instance_ids
+        ]
     if test_mode:
         sample_size = min(TEST_INSTANCE_COUNT, len(instance_ids))
         seed = time.time_ns()
@@ -144,8 +184,6 @@ def validate_results_file(results_path: Path) -> str | None:
             return f"'{field_name}' must contain only strings"
         if len(entries) != len(set(entries)):
             return f"'{field_name}' contains duplicate entries"
-        if entries != sorted(entries):
-            return f"'{field_name}' must be sorted lexicographically"
 
     for file_path in results["files"]:
         path_error = validate_repo_relative_path(file_path)
@@ -192,6 +230,7 @@ def remove_existing_container(
 
 def run_docker_instance(
     repo_root: Path,
+    workbench_dir: Path,
     instance_id: str,
     container_name: str,
     instance_result_dir: Path,
@@ -205,7 +244,7 @@ def run_docker_instance(
         "--env-file",
         str(repo_root / "docker" / "baseline.env"),
         "-v",
-        f"{repo_root / 'dataset' / 'agent_workbench' / instance_id}:/workspace/instance:ro",
+        f"{workbench_dir / instance_id}:/workspace/instance:ro",
         "-v",
         f"{repo_root / 'scripts' / 'run_mini_instance.py'}:/opt/dalic/run_mini_instance.py:ro",
         "-v",
@@ -339,16 +378,27 @@ def write_summary(
 def main() -> None:
     args = parse_args()
     repo_root = get_repo_root().resolve()
-    workbench_dir = repo_root / "dataset" / "agent_workbench"
+    workbench_dir = resolve_cli_path(repo_root, args.workbench_path)
+    selected_instances_path = (
+        resolve_cli_path(repo_root, args.selected_instances)
+        if args.selected_instances is not None
+        else None
+    )
     model_name = sanitize_model_name(args.model_name)
     results_root = prepare_results_root(repo_root, model_name)
     logger = configure_logger(results_root / "baseline.log")
 
-    instance_ids, test_seed = list_instance_ids(workbench_dir, args.test)
+    instance_ids, test_seed = list_instance_ids(
+        workbench_dir,
+        args.test,
+        selected_instances_path,
+    )
     summary_path = results_root / "summary.txt"
     logger.info("Results root: %s", results_root)
     logger.info("Summary path: %s", summary_path)
     logger.info("Resolved repo root: %s", repo_root)
+    logger.info("Workbench path: %s", workbench_dir)
+    logger.info("Selected instances path: %s", selected_instances_path)
     logger.info("Model name: %s", model_name)
     logger.info("Test mode: %s", args.test)
     if test_seed is not None:
@@ -376,7 +426,14 @@ def main() -> None:
                 remove_existing_container(container_name, logger, instance_id)
 
                 progress.set_postfix_str(f"{instance_id}: docker run", refresh=True)
-                if not run_docker_instance(repo_root, instance_id, container_name, instance_result_dir, logger):
+                if not run_docker_instance(
+                    repo_root,
+                    workbench_dir,
+                    instance_id,
+                    container_name,
+                    instance_result_dir,
+                    logger,
+                ):
                     instance_success = False
                     instance_fail_reasons.append("docker run failed")
 

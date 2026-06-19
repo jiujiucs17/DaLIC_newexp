@@ -1,4 +1,15 @@
 #!/usr/bin/env python3
+# Options:
+#   --input PATH
+#       default: dataset/swebench_feature_with_truth.jsonl
+#   --workbench-dir PATH
+#       default: dataset/agent_workbench
+#   --repo-cache-dir PATH
+#       default: dataset/agent_workbench/.repo_mirrors
+#   --insta_num INTEGER
+#       default: None (prepare all eligible instances)
+#   --selected_instances PATH
+#       default: None (do not filter instances; otherwise read instance_ids from TOML)
 
 from __future__ import annotations
 
@@ -9,6 +20,7 @@ import shlex
 import shutil
 import subprocess
 import time
+import tomllib
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -62,6 +74,12 @@ def parse_args() -> argparse.Namespace:
         default=None,
         help="Number of sure instances to randomly select. Omit to use all sure instances.",
     )
+    parser.add_argument(
+        "--selected_instances",
+        type=Path,
+        default=None,
+        help="TOML file whose instance_ids list limits the instances to prepare.",
+    )
     args = parser.parse_args()
     validate_args(args)
     return args
@@ -71,6 +89,8 @@ def validate_args(args: argparse.Namespace) -> None:
     args.input = args.input.expanduser().resolve()
     args.workbench_dir = args.workbench_dir.expanduser().resolve()
     args.repo_cache_dir = args.repo_cache_dir.expanduser().resolve()
+    if args.selected_instances is not None:
+        args.selected_instances = args.selected_instances.expanduser().resolve()
 
     if not args.input.exists():
         raise ValueError(f"Input file does not exist: {args.input}")
@@ -120,6 +140,23 @@ def load_sure_instances(input_path: Path) -> list[InstanceRecord]:
             instances.append(instance)
 
     return instances
+
+
+def load_selected_instance_ids(selected_instances_path: Path) -> set[str]:
+    with selected_instances_path.open("rb") as selected_instances_file:
+        payload = tomllib.load(selected_instances_file)
+    return set(payload["instance_ids"])
+
+
+def filter_selected_instances(
+    instances: list[InstanceRecord],
+    selected_instance_ids: set[str],
+) -> list[InstanceRecord]:
+    return [
+        instance
+        for instance in instances
+        if instance.instance_id in selected_instance_ids
+    ]
 
 
 def select_instances(
@@ -285,7 +322,17 @@ def prepare_instance(
 def main() -> None:
     args = parse_args()
     sure_instances = load_sure_instances(args.input)
-    selected_instances, selection_seed = select_instances(sure_instances, args.insta_num)
+    candidate_instances = sure_instances
+    if args.selected_instances is not None:
+        selected_instance_ids = load_selected_instance_ids(args.selected_instances)
+        candidate_instances = filter_selected_instances(
+            sure_instances,
+            selected_instance_ids,
+        )
+    selected_instances, selection_seed = select_instances(
+        candidate_instances,
+        args.insta_num,
+    )
 
     args.workbench_dir.mkdir(parents=True, exist_ok=True)
 
@@ -295,9 +342,11 @@ def main() -> None:
         print(
             f"Warning: expected {EXPECTED_SURE_COUNT} sure instances but found {sure_count}."
         )
-    if args.insta_num is not None and args.insta_num > sure_count:
+    candidate_count = len(candidate_instances)
+    if args.insta_num is not None and args.insta_num > candidate_count:
         print(
-            f"Requested {args.insta_num} instances but only {sure_count} sure instances are available."
+            f"Requested {args.insta_num} instances but only {candidate_count} eligible "
+            "instances are available."
         )
     # if selection_seed is not None:
     #     print(f"Random selection seed: {selection_seed}")
