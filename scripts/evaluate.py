@@ -33,6 +33,14 @@ class MetricCounts:
     fn: int = 0
 
 
+@dataclass
+class MacroMetricTotals:
+    precision: float = 0.0
+    recall: float = 0.0
+    f1: float = 0.0
+    instance_count: int = 0
+
+
 def get_repo_root() -> Path:
     for candidate in [Path(__file__).resolve().parent, *Path(__file__).resolve().parents]:
         if (candidate / "dataset").is_dir() and (candidate / "scripts").is_dir():
@@ -146,6 +154,8 @@ def load_ground_truth_map(truth_path: Path) -> dict[str, dict[str, dict[str, set
             if not raw_line.strip():
                 continue
             row = json.loads(raw_line)
+            if row.get("ground_truth_certainty") != "sure":
+                continue
             instance_id = row.get("instance_id")
             if not instance_id:
                 raise ValueError(f"Missing instance_id in {truth_path} at line {line_number}.")
@@ -167,13 +177,25 @@ def load_instance_evaluations(
     ground_truth_map: dict[str, dict[str, dict[str, set[str]]]],
 ) -> tuple[list[InstanceEvaluation], list[str]]:
     evaluations: list[InstanceEvaluation] = []
-    skipped_instance_ids: list[str] = []
+    result_instance_dirs = iter_instance_dirs(result_folder)
+    skipped_instance_ids = [
+        instance_dir.name
+        for instance_dir in result_instance_dirs
+        if instance_dir.name not in ground_truth_map
+    ]
 
-    for instance_dir in iter_instance_dirs(result_folder):
-        instance_id = instance_dir.name
-        ground_truth = ground_truth_map.get(instance_id)
-        if ground_truth is None:
-            skipped_instance_ids.append(instance_id)
+    for instance_id, ground_truth in sorted(ground_truth_map.items()):
+        instance_dir = result_folder / instance_id
+        if not instance_dir.is_dir():
+            evaluations.append(
+                InstanceEvaluation(
+                    instance_id=instance_id,
+                    predictions={granularity: set() for granularity in GRANULARITIES},
+                    ground_truth=ground_truth,
+                    is_failure=True,
+                    failure_reason="instance result directory is missing",
+                )
+            )
             continue
 
         predictions, failure_reason = parse_results_file(instance_dir / "results.txt")
@@ -239,12 +261,68 @@ def precision_recall_f1(counts: MetricCounts) -> tuple[float, float, float]:
     return precision, recall, f1
 
 
+def instance_precision_recall_f1(
+    predicted: set[str],
+    truth: set[str],
+) -> tuple[float, float, float]:
+    if not predicted and not truth:
+        return 1.0, 1.0, 1.0
+
+    counts = MetricCounts(
+        tp=len(predicted & truth),
+        fp=len(predicted - truth),
+        fn=len(truth - predicted),
+    )
+    return precision_recall_f1(counts)
+
+
+def build_macro_metrics(
+    evaluations: list[InstanceEvaluation],
+    *,
+    ignore_failures: bool,
+) -> dict[str, dict[str, MacroMetricTotals]]:
+    totals = {
+        change_type: {granularity: MacroMetricTotals() for granularity in GRANULARITIES}
+        for change_type in CHANGE_TYPES
+    }
+
+    for evaluation in evaluations:
+        if ignore_failures and evaluation.is_failure:
+            continue
+
+        for change_type in CHANGE_TYPES:
+            for granularity in GRANULARITIES:
+                precision, recall, f1 = instance_precision_recall_f1(
+                    evaluation.predictions[granularity],
+                    evaluation.ground_truth[change_type][granularity],
+                )
+                metric = totals[change_type][granularity]
+                metric.precision += precision
+                metric.recall += recall
+                metric.f1 += f1
+                metric.instance_count += 1
+
+    return totals
+
+
 def format_metric_line(granularity: str, counts: MetricCounts) -> str:
     precision, recall, f1 = precision_recall_f1(counts)
     return (
         f"{granularity}: "
         f"precision={precision:.4f} recall={recall:.4f} f1={f1:.4f} "
         f"(tp={counts.tp} fp={counts.fp} fn={counts.fn})"
+    )
+
+
+def format_macro_metric_line(granularity: str, totals: MacroMetricTotals) -> str:
+    instance_count = totals.instance_count
+    precision = totals.precision / instance_count if instance_count else 0.0
+    recall = totals.recall / instance_count if instance_count else 0.0
+    f1 = totals.f1 / instance_count if instance_count else 0.0
+    return (
+        f"{granularity}: "
+        f"precision={precision:.4f} recall={recall:.4f} f1={f1:.4f} "
+        f"(instances={instance_count})"
     )
 
 
@@ -255,11 +333,18 @@ def render_evaluation_text(
 ) -> str:
     failed_instance_ids = [evaluation.instance_id for evaluation in evaluations if evaluation.is_failure]
     successful_instance_ids = [evaluation.instance_id for evaluation in evaluations if not evaluation.is_failure]
+    missing_result_instance_ids = [
+        evaluation.instance_id
+        for evaluation in evaluations
+        if evaluation.failure_reason == "instance result directory is missing"
+    ]
 
     sections: list[str] = [
         f"result_folder: {result_folder}",
-        f"total_instance_dirs: {len(evaluations) + len(skipped_instance_ids)}",
-        f"matched_instances: {len(evaluations)}",
+        f"sure_ground_truth_instances: {len(evaluations)}",
+        f"total_instance_dirs: {len(evaluations) - len(missing_result_instance_ids) + len(skipped_instance_ids)}",
+        f"matched_instances: {len(evaluations) - len(missing_result_instance_ids)}",
+        f"missing_result_instance_dirs: {len(missing_result_instance_ids)}",
         f"successful_instances: {len(successful_instance_ids)}",
         f"failed_instances: {len(failed_instance_ids)}",
         f"skipped_instances_without_ground_truth: {len(skipped_instance_ids)}",
@@ -285,11 +370,22 @@ def render_evaluation_text(
         sections.append(f"included_instances: {included_count}")
         sections.append("")
 
+        sections.append("micro:")
         counts = build_counts(evaluations, ignore_failures=ignore_failures)
         for change_type in CHANGE_TYPES:
-            sections.append(f"{change_type}:")
+            sections.append(f"  {change_type}:")
             for granularity in GRANULARITIES:
-                sections.append(format_metric_line(granularity, counts[change_type][granularity]))
+                sections.append(f"    {format_metric_line(granularity, counts[change_type][granularity])}")
+            sections.append("")
+
+        sections.append("macro:")
+        macro_metrics = build_macro_metrics(evaluations, ignore_failures=ignore_failures)
+        for change_type in CHANGE_TYPES:
+            sections.append(f"  {change_type}:")
+            for granularity in GRANULARITIES:
+                sections.append(
+                    f"    {format_macro_metric_line(granularity, macro_metrics[change_type][granularity])}"
+                )
             sections.append("")
 
     return "\n".join(sections).rstrip() + "\n"

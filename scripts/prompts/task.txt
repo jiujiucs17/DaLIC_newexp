@@ -6,7 +6,7 @@ The repository is stored at "repo/<repo_name>". It is one patch ahead of its sta
  
 Your task is NOT to fix the issue. Your task is to identify the code locations that most likely to have been modified to implement the requested feature. You should identify code locations at three granularities: file, class, function.
  
-You may inspect the repository, but only do so when necessary. Never print large files. Limit the length of every command output. Prioritize using tools to look at part of the file over looking at the while file.
+You may inspect the repository, but only do so when necessary. Never print large files. Limit the length of every command output. Prioritize using tools to look at part of the file over looking at the while file. In the result, rank the results base on their relevancy. More relevant results should be at the front of the list.
  
 Do not modify any source code. Do not access any information outside the current work directory, including both directly access (such as change directory, absolute path) or indirectly access (such as using command line tool to copy certain files into current directory). You can only use the information in the current work directory.
 
@@ -28,12 +28,16 @@ Formatting rules:
 1. "files" must contain repo-relative file paths only, for example:
    "astropy/nddata/nduncertainty.py"
 2. "classes" must contain entries of the form:
-   "<file_path>::<QualifiedClassName>"
+   "<project_root_relative_path>::<QualifiedClassName>"
+   For example: 
+   "astropy/nddata/nduncertainty.py::InverseVariance"
 3. "functions" must contain entries of the form:
-   "<file_path>::<QualifiedFunctionOrMethodName>"
+   "<project_root_relative_path>::<QualifiedFunctionOrMethodName>"
+   For example:
+   "astropy/nddata/nduncertainty.py::InverseVariance._convert_from_variance"
 4. Use dotted qualified names for methods or nested scopes, for example:
    "astropy/nddata/nduncertainty.py::VarianceUncertainty._convert_to_variance"
-5. Include all six arrays even if they are empty.
+5. Include all three arrays even if they are empty.
 6. Do not include duplicate entries.
-7. Sort every array lexicographically.
+7. Sort every array base on the relevancy of the item to the feature, the more relevant items should be at front.
 8. Do not output Markdown, numbering, comments, or explanations.
