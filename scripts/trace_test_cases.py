@@ -40,6 +40,7 @@ DEFAULT_TEST_TIMEOUT_SECONDS = 300
 TEST_SAMPLE_SIZE = 5
 IMAGE_LIMIT_BYTES = 800 * 1000**3
 MAX_TEST_CASES_PER_INSTANCE = 200
+RECOVERY_POLICY = "direct_test_patch_changes_only_v1"
 PARAMETRIZE_DECORATOR_NAMES = {
     "parametrize",
     "pytest.mark.parametrize",
@@ -116,6 +117,17 @@ class ExtractionResult:
     test_cases: list[TestCase]
     module_sources: dict[str, str]
     pytest_collect_basenames: set[str]
+    changed_regions: int
+    matched_changed_regions: int
+    unmatched_changes: list[dict[str, Any]]
+
+    @property
+    def unmatched_changed_regions(self) -> int:
+        return len(self.unmatched_changes)
+
+    @property
+    def fully_recovered(self) -> bool:
+        return bool(self.test_cases) and not self.unmatched_changes
 
 
 def get_repo_root() -> Path:
@@ -238,6 +250,13 @@ def write_text_atomically(target_path: Path, content: str) -> None:
         raise
 
 
+def write_instance_ids_toml(path: Path, instance_ids: list[str]) -> None:
+    lines = ["instance_ids = ["]
+    lines.extend(f"  {json.dumps(instance_id)}," for instance_id in instance_ids)
+    lines.append("]")
+    write_text_atomically(path, "\n".join(lines) + "\n")
+
+
 def setup_logger(log_file: Path) -> logging.Logger:
     log_file.parent.mkdir(parents=True, exist_ok=True)
     logger = logging.getLogger("trace_test_cases")
@@ -289,6 +308,14 @@ def load_existing_resume_summary(
             index,
             total,
             summary.get("instance_id"),
+        )
+        return None
+
+    if summary.get("recovery_policy") != RECOVERY_POLICY:
+        logger.info(
+            "[Instance %d/%d] existing summary uses an older recovery policy; rerunning",
+            index,
+            total,
         )
         return None
 
@@ -727,18 +754,6 @@ def test_overlaps_intervals(test: TestDefinition, intervals: tuple[tuple[int, in
     return False
 
 
-def line_distance_to_intervals(line_no: int, intervals: tuple[tuple[int, int], ...]) -> int:
-    if not intervals:
-        return 10**9
-    distances: list[int] = []
-    for start, end in intervals:
-        if start <= line_no <= end:
-            distances.append(0)
-            continue
-        distances.append(min(abs(line_no - start), abs(line_no - end)))
-    return min(distances)
-
-
 def collect_test_definitions(
     body: list[ast.stmt],
     file_path: str,
@@ -752,12 +767,13 @@ def collect_test_definitions(
             continue
 
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name.startswith("test"):
+            decorator_lines = [int(decorator.lineno) for decorator in node.decorator_list]
             collected.append(
                 TestDefinition(
                     file_path=file_path,
                     class_path=class_path,
                     function_name=node.name,
-                    start_line=int(node.lineno),
+                    start_line=min([int(node.lineno), *decorator_lines]),
                     end_line=int(getattr(node, "end_lineno", node.lineno)),
                     order_index=order_counter[0],
                     node=node,
@@ -838,28 +854,40 @@ def get_or_load_patched_module_info(
     return module_info
 
 
-def select_feature_test_definitions(module_infos: list[ModuleSourceInfo]) -> list[TestDefinition]:
+def select_feature_test_definitions(
+    module_infos: list[ModuleSourceInfo],
+) -> tuple[list[TestDefinition], int, list[dict[str, Any]]]:
     selected: list[TestDefinition] = []
     seen: set[tuple[str, tuple[str, ...], str]] = set()
+    matched_changed_regions = 0
+    unmatched_changes: list[dict[str, Any]] = []
 
     for module_info in sorted(module_infos, key=lambda info: info.patch_order):
-        candidates = [test for test in module_info.tests if test_overlaps_intervals(test, module_info.changed_intervals)]
-        if not candidates and module_info.tests:
-            candidates = sorted(
-                module_info.tests,
-                key=lambda test: (
-                    line_distance_to_intervals(test.start_line, module_info.changed_intervals),
-                    test.order_index,
-                ),
-            )[:1]
-
-        for test in candidates:
-            if test.key() in seen:
+        for start, end in module_info.changed_intervals:
+            candidates = [
+                test
+                for test in module_info.tests
+                if test_overlaps_intervals(test, ((start, end),))
+            ]
+            if not candidates:
+                unmatched_changes.append(
+                    {
+                        "file_path": module_info.file_path,
+                        "start_line": start,
+                        "end_line": end,
+                        "reason": "changed_region_does_not_overlap_test",
+                    }
+                )
                 continue
-            selected.append(test)
-            seen.add(test.key())
 
-    return selected
+            matched_changed_regions += 1
+            for test in candidates:
+                if test.key() in seen:
+                    continue
+                selected.append(test)
+                seen.add(test.key())
+
+    return selected, matched_changed_regions, unmatched_changes
 
 
 def make_test_case_id(instance_id: str, test_case_name: str) -> str:
@@ -875,13 +903,54 @@ def extract_feature_test_cases(row: dict[str, Any], history_state: dict[str, Any
 
     module_cache: dict[str, ModuleSourceInfo | None] = {}
     module_infos: list[ModuleSourceInfo] = []
-    for file_diff in parse_test_patch(test_patch, history_state):
+    changed_regions = 0
+    unmatched_changes: list[dict[str, Any]] = []
+    for file_path, base_lookup_path, patch_order, patched_file in parse_patch_files(test_patch, history_state):
+        file_changed_intervals = collect_changed_intervals(patched_file)
+        if not file_changed_intervals:
+            changed_regions += 1
+            unmatched_changes.append(
+                {
+                    "file_path": file_path,
+                    "start_line": None,
+                    "end_line": None,
+                    "reason": "file_change_has_no_changed_line_interval",
+                }
+            )
+            continue
+
+        changed_regions += len(file_changed_intervals)
+        if not file_path.endswith(".py"):
+            unmatched_changes.extend(
+                {
+                    "file_path": file_path,
+                    "start_line": start,
+                    "end_line": end,
+                    "reason": "changed_non_python_file",
+                }
+                for start, end in file_changed_intervals
+            )
+            continue
+
+        file_diff = PatchedPythonFile(file_path, base_lookup_path, patch_order, patched_file)
         module_info = get_or_load_patched_module_info(repo, base_commit, file_diff, history_state, module_cache)
-        if module_info is not None and module_info.tests:
-            module_infos.append(module_info)
+        if module_info is None:
+            reason = "removed_python_file" if patched_file.is_removed_file else "python_test_source_recovery_failed"
+            unmatched_changes.extend(
+                {
+                    "file_path": file_path,
+                    "start_line": start,
+                    "end_line": end,
+                    "reason": reason,
+                }
+                for start, end in file_changed_intervals
+            )
+            continue
+        module_infos.append(module_info)
 
     module_by_path = {module_info.file_path: module_info for module_info in module_infos}
-    selected_tests = select_feature_test_definitions(module_infos)
+    selected_tests, matched_changed_regions, module_unmatched_changes = select_feature_test_definitions(module_infos)
+    unmatched_changes.extend(module_unmatched_changes)
 
     test_cases: list[TestCase] = []
     seen_names: set[str] = set()
@@ -912,6 +981,9 @@ def extract_feature_test_cases(row: dict[str, Any], history_state: dict[str, Any
         test_cases=test_cases,
         module_sources={module_info.file_path: module_info.source_text for module_info in module_infos},
         pytest_collect_basenames=pytest_collect_basenames,
+        changed_regions=changed_regions,
+        matched_changed_regions=matched_changed_regions,
+        unmatched_changes=unmatched_changes,
     )
 
 
@@ -1489,6 +1561,11 @@ def run_instance(
         "instance_id": instance_id,
         "status": "completed",
         "finalized": False,
+        "recovery_policy": RECOVERY_POLICY,
+        "changed_regions": 0,
+        "matched_changed_regions": 0,
+        "unmatched_changed_regions": 0,
+        "unmatched_changes": [],
         "test_cases": 0,
         "completed_test_cases": 0,
         "failed_test_cases": 0,
@@ -1503,11 +1580,23 @@ def run_instance(
         files = write_instance_inputs(row, instance_dir)
         extraction = extract_feature_test_cases(row, history_state)
         summary["test_cases"] = len(extraction.test_cases)
+        summary["changed_regions"] = extraction.changed_regions
+        summary["matched_changed_regions"] = extraction.matched_changed_regions
+        summary["unmatched_changed_regions"] = extraction.unmatched_changed_regions
+        summary["unmatched_changes"] = extraction.unmatched_changes
 
         if not extraction.test_cases:
             summary["status"] = "no_test_cases"
             summary["finalized"] = True
             test_cases_path = write_test_cases_jsonl(instance_dir, [])
+            summary["test_cases_path"] = str(test_cases_path)
+            write_json(instance_dir / "summary.json", summary)
+            return summary
+
+        if not extraction.fully_recovered:
+            summary["status"] = "test_cases_not_fully_recovered"
+            summary["finalized"] = True
+            test_cases_path = write_test_cases_jsonl(instance_dir, extraction.test_cases)
             summary["test_cases_path"] = str(test_cases_path)
             write_json(instance_dir / "summary.json", summary)
             return summary
@@ -1667,10 +1756,19 @@ def main() -> None:
             "completed_instances": sum(summary["status"] == "completed" for summary in summaries),
             "failed_instances": sum(summary["status"] == "failed" for summary in summaries),
             "no_test_case_instances": sum(summary["status"] == "no_test_cases" for summary in summaries),
+            "test_cases_not_fully_recovered_instances": sum(
+                summary["status"] == "test_cases_not_fully_recovered" for summary in summaries
+            ),
             "history_stats": history_state["stats"],
             "instances": summaries,
         }
         write_json(args.output_dir / "summary.json", batch_summary)
+        completed_instance_ids = [
+            str(summary["instance_id"])
+            for summary in summaries
+            if summary["status"] == "completed"
+        ]
+        write_instance_ids_toml(repo_root / "dataset" / "trace_completed_instance.toml", completed_instance_ids)
         print(json.dumps({key: value for key, value in batch_summary.items() if key != "instances"}, ensure_ascii=False, indent=2))
     finally:
         for handler in logger.handlers[:]:
