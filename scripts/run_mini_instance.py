@@ -11,5 +11,5 @@ subprocess.run([
     "--exit-immediately",
     "--task", task,
     "-c", "mini.yaml",
-    "-c", "agent.step_limit=30",
+    "-c", "agent.step_limit=100",
 ], check=True)

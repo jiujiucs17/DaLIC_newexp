@@ -140,6 +140,18 @@ def repo_cache_path(repo_cache_dir: Path, repo: str) -> Path:
     return repo_cache_dir / f"{repo_slug}.git"
 
 
+def repo_name_from_instance_id(instance_id: str) -> str:
+    owner_and_repo = instance_id.split("__", 1)
+    if len(owner_and_repo) != 2 or not owner_and_repo[1]:
+        raise ValueError(f"Invalid instance_id format: {instance_id}")
+
+    repo_name_and_pr = owner_and_repo[1].rsplit("-", 1)
+    if len(repo_name_and_pr) != 2 or not repo_name_and_pr[0] or not repo_name_and_pr[1]:
+        raise ValueError(f"Invalid instance_id format: {instance_id}")
+
+    return repo_name_and_pr[0]
+
+
 def run_command(
     command: list[str],
     *,
@@ -253,8 +265,10 @@ def prepare_instance(
 
     temp_dir.mkdir(parents=True, exist_ok=False)
     try:
-        create_repo_snapshot(instance, temp_dir / "repo", repo_cache_dir)
-        clean_repo_artifacts(temp_dir / "repo")
+        repo_dir = temp_dir / "repo" / repo_name_from_instance_id(instance.instance_id)
+        repo_dir.parent.mkdir(parents=True, exist_ok=True)
+        create_repo_snapshot(instance, repo_dir, repo_cache_dir)
+        clean_repo_artifacts(repo_dir)
         # (temp_dir / "mini-swe-agent-results").mkdir()
         (temp_dir / "problem_statement.txt").write_text(
             instance.problem_statement,

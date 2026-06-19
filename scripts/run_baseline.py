@@ -7,13 +7,14 @@
 from __future__ import annotations
 
 import argparse
+import json
 import logging
 import random
 import shlex
 import shutil
 import subprocess
 import time
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 from tqdm import tqdm
 
@@ -21,6 +22,8 @@ from tqdm import tqdm
 DEFAULT_MODEL_NAME = "Qwen_Qwen3.5-9B"
 CONTAINER_RESULTS_DIR = "/home/miniagent/.config/mini-swe-agent"
 ARTIFACT_NAMES = ("results.txt", "last_mini_run.traj.json")
+RESULTS_FIELDS = ("files", "classes", "functions")
+TEST_INSTANCE_COUNT = 10
 
 
 def get_repo_root() -> Path:
@@ -68,7 +71,7 @@ def list_instance_ids(workbench_dir: Path, test_mode: bool) -> tuple[list[str], 
         if path.is_dir() and path.name != ".repo_mirrors"
     )
     if test_mode:
-        sample_size = min(3, len(instance_ids))
+        sample_size = min(TEST_INSTANCE_COUNT, len(instance_ids))
         seed = time.time_ns()
         rng = random.Random(seed)
         return rng.sample(instance_ids, sample_size), seed
@@ -96,6 +99,71 @@ def write_command_log(
     if exception_message:
         lines.extend(["", "exception:", exception_message])
     log_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def validate_repo_relative_path(path_text: str) -> str | None:
+    if not path_text:
+        return "path is empty"
+    if path_text.startswith("/"):
+        return "path must be repo-relative, not absolute"
+    if path_text.startswith("repo/"):
+        return "path must be repo-relative and must not start with 'repo/'"
+    if "\\" in path_text:
+        return "path must use forward slashes"
+
+    path_parts = PurePosixPath(path_text).parts
+    if any(part in (".", "..") for part in path_parts):
+        return "path must not contain '.' or '..' segments"
+    return None
+
+
+def validate_results_file(results_path: Path) -> str | None:
+    try:
+        payload = json.loads(results_path.read_text(encoding="utf-8"))
+    except FileNotFoundError:
+        return "results.txt is missing"
+    except json.JSONDecodeError as exc:
+        return f"results.txt is not valid JSON: {exc.msg}"
+
+    if not isinstance(payload, dict):
+        return "top-level JSON value must be an object"
+    if set(payload) != {"results"}:
+        return "top-level JSON object must contain exactly one key: 'results'"
+
+    results = payload["results"]
+    if not isinstance(results, dict):
+        return "'results' must be a JSON object"
+    if set(results) != set(RESULTS_FIELDS):
+        return "'results' must contain exactly these keys: files, classes, functions"
+
+    for field_name in RESULTS_FIELDS:
+        entries = results[field_name]
+        if not isinstance(entries, list):
+            return f"'{field_name}' must be a list"
+        if any(not isinstance(entry, str) for entry in entries):
+            return f"'{field_name}' must contain only strings"
+        if len(entries) != len(set(entries)):
+            return f"'{field_name}' contains duplicate entries"
+        if entries != sorted(entries):
+            return f"'{field_name}' must be sorted lexicographically"
+
+    for file_path in results["files"]:
+        path_error = validate_repo_relative_path(file_path)
+        if path_error:
+            return f"invalid file entry '{file_path}': {path_error}"
+
+    for field_name in ("classes", "functions"):
+        for entry in results[field_name]:
+            if entry.count("::") != 1:
+                return f"invalid {field_name[:-1]} entry '{entry}': expected '<file_path>::<qualified_name>'"
+            file_path, qualified_name = entry.split("::", 1)
+            path_error = validate_repo_relative_path(file_path)
+            if path_error:
+                return f"invalid {field_name[:-1]} entry '{entry}': {path_error}"
+            if not qualified_name:
+                return f"invalid {field_name[:-1]} entry '{entry}': qualified name is empty"
+
+    return None
 
 
 def remove_existing_container(
@@ -244,7 +312,12 @@ def remove_container(
         return False
 
 
-def write_summary(results_root: Path, success_count: int, failed_instances: list[str]) -> None:
+def write_summary(
+    results_root: Path,
+    success_count: int,
+    failed_instances: list[str],
+    failure_reasons: dict[str, str],
+) -> None:
     summary_lines = [
         f"success_count: {success_count}",
         f"failure_count: {len(failed_instances)}",
@@ -252,6 +325,12 @@ def write_summary(results_root: Path, success_count: int, failed_instances: list
     ]
     if failed_instances:
         summary_lines.extend(failed_instances)
+    else:
+        summary_lines.append("None")
+    summary_lines.append("failure_reasons:")
+    if failed_instances:
+        for instance_id in failed_instances:
+            summary_lines.append(f"{instance_id}: {failure_reasons.get(instance_id, 'unknown failure')}")
     else:
         summary_lines.append("None")
     (results_root / "summary.txt").write_text("\n".join(summary_lines) + "\n", encoding="utf-8")
@@ -278,8 +357,9 @@ def main() -> None:
     logger.info("Selected %s instances from %s", len(instance_ids), workbench_dir)
 
     failed_instances: list[str] = []
+    failure_reasons: dict[str, str] = {}
     success_count = 0
-    write_summary(results_root, success_count, failed_instances)
+    write_summary(results_root, success_count, failed_instances, failure_reasons)
 
     try:
         progress = tqdm(instance_ids, desc="baseline", unit="instance")
@@ -290,6 +370,7 @@ def main() -> None:
             logger.info("[%s] Starting baseline flow.", instance_id)
 
             instance_success = True
+            instance_fail_reasons: list[str] = []
             try:
                 progress.set_postfix_str(f"{instance_id}: remove old container", refresh=True)
                 remove_existing_container(container_name, logger, instance_id)
@@ -297,28 +378,53 @@ def main() -> None:
                 progress.set_postfix_str(f"{instance_id}: docker run", refresh=True)
                 if not run_docker_instance(repo_root, instance_id, container_name, instance_result_dir, logger):
                     instance_success = False
+                    instance_fail_reasons.append("docker run failed")
 
                 progress.set_postfix_str(f"{instance_id}: docker cp", refresh=True)
-                if not copy_container_artifacts(container_name, instance_result_dir, logger, instance_id):
+                artifacts_copied = copy_container_artifacts(
+                    container_name,
+                    instance_result_dir,
+                    logger,
+                    instance_id,
+                )
+                if not artifacts_copied:
                     instance_success = False
+                    instance_fail_reasons.append("artifact copy failed")
+
+                results_path = instance_result_dir / "results.txt"
+                if results_path.exists():
+                    progress.set_postfix_str(f"{instance_id}: validate results", refresh=True)
+                    validation_error = validate_results_file(results_path)
+                    if validation_error is None:
+                        logger.info("[%s] results.txt validation passed.", instance_id)
+                    else:
+                        logger.error("[%s] results.txt validation failed: %s", instance_id, validation_error)
+                        instance_success = False
+                        instance_fail_reasons.append(f"invalid results.txt: {validation_error}")
+                elif not artifacts_copied:
+                    logger.info("[%s] Skipping results.txt validation because results.txt was not copied.", instance_id)
             except Exception as exc:
                 logger.exception("[%s] Unexpected top-level failure: %s", instance_id, exc)
                 instance_success = False
+                instance_fail_reasons.append(f"unexpected top-level failure: {exc}")
             finally:
                 progress.set_postfix_str(f"{instance_id}: docker rm", refresh=True)
                 if not remove_container(container_name, logger, instance_id):
                     instance_success = False
+                    instance_fail_reasons.append("docker rm failed")
 
             if instance_success:
                 success_count += 1
                 logger.info("[%s] Finished successfully.", instance_id)
             else:
                 failed_instances.append(instance_id)
-                logger.error("[%s] Finished with failures.", instance_id)
+                failure_reason = "; ".join(dict.fromkeys(instance_fail_reasons)) or "unknown failure"
+                failure_reasons[instance_id] = failure_reason
+                logger.error("[%s] Finished with failures. reasons=%s", instance_id, failure_reason)
 
-            write_summary(results_root, success_count, failed_instances)
+            write_summary(results_root, success_count, failed_instances, failure_reasons)
     finally:
-        write_summary(results_root, success_count, failed_instances)
+        write_summary(results_root, success_count, failed_instances, failure_reasons)
 
     logger.info(
         "Run finished. success_count=%s failure_count=%s failed_instances=%s",

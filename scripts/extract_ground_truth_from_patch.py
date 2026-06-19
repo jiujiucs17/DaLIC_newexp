@@ -37,7 +37,7 @@ def parse_args() -> argparse.Namespace:
     repo_root = get_repo_root()
 
     parser = argparse.ArgumentParser(
-        description="Extract added/edited module/class/function ground truth from patch fields."
+        description="Extract added/edited file/class/function ground truth from patch fields."
     )
     parser.add_argument(
         "--input",
@@ -233,8 +233,8 @@ def format_scope_id(file_path: str, qualname_parts: tuple[str, ...] | list[str] 
 
 def build_ground_truth_container() -> dict[str, dict[str, set[str]]]:
     return {
-        "added": {"modules": set(), "classes": set(), "functions": set()},
-        "edited": {"modules": set(), "classes": set(), "functions": set()},
+        "added": {"files": set(), "classes": set(), "functions": set()},
+        "edited": {"files": set(), "classes": set(), "functions": set()},
     }
 
 
@@ -1025,7 +1025,7 @@ def process_file_diff(
         if patched_file.is_removed_file:
             return ground_truth
         if patched_file.is_added_file:
-            ground_truth["added"]["modules"].add(file_path)
+            ground_truth["added"]["files"].add(file_path)
             return ground_truth
         mark_not_sure(certainty_state, "unsupported_diff_form")
         return ground_truth
@@ -1035,9 +1035,9 @@ def process_file_diff(
 
     file_is_new = patched_file.is_added_file
     if file_is_new:
-        ground_truth["added"]["modules"].add(file_path)
+        ground_truth["added"]["files"].add(file_path)
     else:
-        ground_truth["edited"]["modules"].add(file_path)
+        ground_truth["edited"]["files"].add(file_path)
 
     events = collect_file_events(file_path, patched_file)
     base_index, patched_index, lookup_requested = maybe_build_source_indexes(
@@ -1168,7 +1168,7 @@ def merge_ground_truth(
     file_ground_truth: dict[str, dict[str, set[str]]],
 ) -> None:
     for change_type in ("added", "edited"):
-        for level in ("modules", "classes", "functions"):
+        for level in ("files", "classes", "functions"):
             target[change_type][level].update(file_ground_truth[change_type][level])
 
 

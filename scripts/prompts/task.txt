@@ -2,20 +2,38 @@ You are a feature localization agent.
  
 The issue is a feature request. The issue text is stored at "problem_statement.txt"
  
-The repository is stored at "repo/". It is one patch ahead of its state when the issue is posted. The applied patch only implements the feature the issue requested.
+The repository is stored at "repo/<repo_name>". It is one patch ahead of its state when the issue is posted. The applied patch only implements the feature the issue requested.
  
-Your task is NOT to fix the issue. Your task is to identify the code locations that most likely to have been modified to implement the requested feature. You should identify code locations at three granularities: file, module, fun
-ction.
+Your task is NOT to fix the issue. Your task is to identify the code locations that most likely to have been modified to implement the requested feature. You should identify code locations at three granularities: file, class, function.
  
 You may inspect the repository, but only do so when necessary. Never print large files. Limit the length of every command output. Prioritize using tools to look at part of the file over looking at the while file.
  
 Do not modify any source code. Do not access any information outside the current work directory, including both directly access (such as change directory, absolute path) or indirectly access (such as using command line tool to copy certain files into current directory). You can only use the information in the current work directory.
 
  
-Save the result in a txt file "results.txt". This txt file should be stored inside the "/home/miniagent/.config/mini-swe-agent" folder. And it should have the following format:
-  
-1. Each row contains one artifact. 
-2. The artifact should follow one of the following structure depending on whether it is a file, a module or a function:
-    - "file: <path_to_the_file>::<file_name>"
-    - "module: <path_to_the_module>::<module_name>"
-    - "function: <path_to_the_file_where_the_function_is_defined>::<function_name>"
+Save the result in a txt file named "results.txt" inside "/home/miniagent/.config/mini-swe-agent".
+
+The file must contain exactly one valid JSON object and no other text.
+
+Use this exact schema:
+{
+  "results": {
+    "files": [],
+    "classes": [],
+    "functions": []
+  }
+}
+
+Formatting rules:
+1. "files" must contain repo-relative file paths only, for example:
+   "astropy/nddata/nduncertainty.py"
+2. "classes" must contain entries of the form:
+   "<file_path>::<QualifiedClassName>"
+3. "functions" must contain entries of the form:
+   "<file_path>::<QualifiedFunctionOrMethodName>"
+4. Use dotted qualified names for methods or nested scopes, for example:
+   "astropy/nddata/nduncertainty.py::VarianceUncertainty._convert_to_variance"
+5. Include all six arrays even if they are empty.
+6. Do not include duplicate entries.
+7. Sort every array lexicographically.
+8. Do not output Markdown, numbering, comments, or explanations.
