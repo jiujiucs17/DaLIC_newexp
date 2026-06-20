@@ -37,7 +37,8 @@ Formatting rules:
    "astropy/nddata/nduncertainty.py::InverseVariance._convert_from_variance"
 4. Use dotted qualified names for methods or nested scopes, for example:
    "astropy/nddata/nduncertainty.py::VarianceUncertainty._convert_to_variance"
-5. Include all three arrays even if they are empty.
-6. Do not include duplicate entries.
-7. Sort every array base on the relevancy of the item to the feature, the more relevant items should be at front.
-8. Do not output Markdown, numbering, comments, or explanations.
+5. The project root path must be repo-relative and must not start with 'repo/', but start with '<project_name>
+6. Include all three arrays even if they are empty.
+7. Do not include duplicate entries.
+8. Sort every array base on the relevancy of the item to the feature, the more relevant items should be at front.
+9. Do not output Markdown, numbering, comments, or explanations.
