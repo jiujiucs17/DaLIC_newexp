@@ -1,18 +1,24 @@
 #!/usr/bin/env python3
-# Usage:
-#   python3 scripts/evaluate.py
-#   python3 scripts/evaluate.py --result_folder dataset/agent_results/baseline/Qwen_Qwen3.5-9B
+# Options:
+#   --input PATH
+#       default: dataset/swebench_feature_with_truth.jsonl
+#   --selected_instances PATH
+#       default: dataset/trace_eligible_instance.toml
+#   --result_folder PATH
+#       default: dataset/agent_results/baseline/Qwen_Qwen3.5-9B
 
 from __future__ import annotations
 
 import argparse
 import json
+import tomllib
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 
 
-DEFAULT_RESULT_FOLDER = "dataset/agent_results/baseline/Qwen_Qwen3.5-9B"
-TRUTH_RELATIVE_PATH = Path("dataset/swebench_feature_with_truth.jsonl")
+DEFAULT_INPUT_PATH = Path("dataset/swebench_feature_with_truth.jsonl")
+DEFAULT_SELECTED_INSTANCES_PATH = Path("dataset/trace_eligible_instance.toml")
+DEFAULT_RESULT_FOLDER = Path("dataset/agent_results/baseline/Qwen_Qwen3.5-9B")
 GRANULARITIES = ("files", "classes", "functions")
 CHANGE_TYPES = ("added", "edited", "total")
 
@@ -49,11 +55,34 @@ def get_repo_root() -> Path:
 
 
 def parse_args() -> argparse.Namespace:
+    repo_root = get_repo_root()
     parser = argparse.ArgumentParser(
-        description="Evaluate agent result folders against dataset/swebench_feature_with_truth.jsonl."
+        description="Evaluate agent result folders against sure ground truth instances."
     )
-    parser.add_argument("--result_folder", default=DEFAULT_RESULT_FOLDER)
-    return parser.parse_args()
+    parser.add_argument("--input", type=Path, default=repo_root / DEFAULT_INPUT_PATH)
+    parser.add_argument(
+        "--selected_instances",
+        type=Path,
+        default=repo_root / DEFAULT_SELECTED_INSTANCES_PATH,
+        help="TOML file whose instance_ids list limits the instances to evaluate.",
+    )
+    parser.add_argument("--result_folder", type=Path, default=DEFAULT_RESULT_FOLDER)
+    args = parser.parse_args()
+    validate_args(args)
+    return args
+
+
+def validate_args(args: argparse.Namespace) -> None:
+    args.input = args.input.expanduser().resolve()
+    if args.selected_instances is not None:
+        args.selected_instances = args.selected_instances.expanduser().resolve()
+
+    if not args.input.exists():
+        raise ValueError(f"Input file does not exist: {args.input}")
+    if not args.input.is_file():
+        raise ValueError(f"Input path is not a file: {args.input}")
+    if args.input.suffix != ".jsonl":
+        raise ValueError(f"Input file must be a .jsonl file: {args.input}")
 
 
 def validate_repo_relative_path(path_text: str) -> str | None:
@@ -100,8 +129,6 @@ def parse_results_file(results_path: Path) -> tuple[dict[str, set[str]] | None, 
             return None, f"'{field_name}' must contain only strings"
         if len(entries) != len(set(entries)):
             return None, f"'{field_name}' contains duplicate entries"
-        if entries != sorted(entries):
-            return None, f"'{field_name}' must be sorted lexicographically"
         parsed[field_name] = set(entries)
 
     for file_path in parsed["files"]:
@@ -166,6 +193,23 @@ def load_ground_truth_map(truth_path: Path) -> dict[str, dict[str, dict[str, set
                 )
             ground_truth_map[str(instance_id)] = normalize_ground_truth(ground_truth)
     return ground_truth_map
+
+
+def load_selected_instance_ids(selected_instances_path: Path) -> set[str]:
+    with selected_instances_path.open("rb") as selected_instances_file:
+        payload = tomllib.load(selected_instances_file)
+    return set(payload["instance_ids"])
+
+
+def filter_selected_ground_truth(
+    ground_truth_map: dict[str, dict[str, dict[str, set[str]]]],
+    selected_instance_ids: set[str],
+) -> dict[str, dict[str, dict[str, set[str]]]]:
+    return {
+        instance_id: ground_truth
+        for instance_id, ground_truth in ground_truth_map.items()
+        if instance_id in selected_instance_ids
+    }
 
 
 def iter_instance_dirs(result_folder: Path) -> list[Path]:
@@ -394,7 +438,7 @@ def render_evaluation_text(
 def main() -> None:
     args = parse_args()
     repo_root = get_repo_root().resolve()
-    result_folder = Path(args.result_folder).expanduser()
+    result_folder = args.result_folder.expanduser()
     if not result_folder.is_absolute():
         result_folder = (repo_root / result_folder).resolve()
 
@@ -403,11 +447,13 @@ def main() -> None:
     if not result_folder.is_dir():
         raise ValueError(f"Result folder is not a directory: {result_folder}")
 
-    truth_path = repo_root / TRUTH_RELATIVE_PATH
-    if not truth_path.exists():
-        raise ValueError(f"Ground truth file does not exist: {truth_path}")
-
-    ground_truth_map = load_ground_truth_map(truth_path)
+    ground_truth_map = load_ground_truth_map(args.input)
+    if args.selected_instances is not None:
+        selected_instance_ids = load_selected_instance_ids(args.selected_instances)
+        ground_truth_map = filter_selected_ground_truth(
+            ground_truth_map,
+            selected_instance_ids,
+        )
     evaluations, skipped_instance_ids = load_instance_evaluations(result_folder, ground_truth_map)
     evaluation_text = render_evaluation_text(result_folder, evaluations, skipped_instance_ids)
     (result_folder / "evaluation.txt").write_text(evaluation_text, encoding="utf-8")
