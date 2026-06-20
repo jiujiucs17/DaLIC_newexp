@@ -237,62 +237,15 @@ Key references:
 Update: `scripts/prepare_agent_workbench.py` now sanitizes each prepared `<instance_id>/repo/` before finalizing the instance folder by deleting `.git`, deleting `.hg`, `.github` when present, and removing any `*.patch` or `*.diff` files. This keeps the checked-out and patched file state while reducing the risk that version history or patch artifacts leak ground-truth information to an LLM.
 
 
+TRACE TEST COMPLETION CRITERION
 
-trace_test_cases: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 573/573 [9:39:24<00:00, 60.67s/instance] {                                                                                                                                                                          
-  "dataset_rows": 592,
-  "sure_instances": 573,
-  "scheduled_instances": 573,
-  "completed_instances": 463,
-  "failed_instances": 106,
-  "no_test_case_instances": 4,
-  "history_stats": {
-    "memory_cache_hits": 0,
-    "disk_cache_hits": 248,
-    "downloaded_files": 0,
-    "download_failures": 0,
-    "missing_remote_files": 0,
-    "patch_parse_failures": 0,
-    "test_patch_source_failures": 2
-  }
-}
+For `scripts/trace_test_cases.py`, an instance is marked `completed` only when all of the following conditions hold:
 
+1. Static recovery finds at least one test case.
+2. Every changed region in `test_patch` is directly matched to a test definition, so `unmatched_changes` is empty. Inferred or fallback test cases are not accepted.
+3. Container preparation and, where applicable, pytest collection succeed, and the resolved test-case count does not exceed the configured limit.
+4. Every resolved test case finishes without timing out, returns exit code 0, and has its VarTracer result copied successfully.
 
-docker build \
-  -t dalic-mini-swe:2caffc56 \
-  -f docker/baseline.dockerfile .
+If static recovery finds no tests, the status is `no_test_cases`. If only part of the changed regions can be recovered, the status is `test_cases_not_fully_recovered`. If a fully recovered instance later fails preparation, collection, execution, timeout, or trace-result copying, the status is `failed`.
 
-
-docker run --rm -it \
-  --name mini-fl-astropy-7973 \
-  --env-file docker/baseline.env \
-  -v /home/mengqi/work/DaLIC_newexp/dataset/agent_workbench/astropy__astropy-7973:/workspace/instance:ro \
-  -v /home/mengqi/work/DaLIC_newexp/dataset/agent_workbench/astropy__astropy-7973/mini-swe-agent-results:/home/miniagent/.config/mini-swe-agent \
-  -w /workspace/instance \
-  dalic-mini-swe:2caffc56 \
-  mini -y
-
-  docker run --rm -it \
-  --name mini-fl-$INSTANCE_ID \
-  --env-file docker/baseline.env \
-  -v /home/mengqi/work/DaLIC_newexp/dataset/agent_workbench/$INSTANCE_ID:/workspace/instance:ro \
-  -w /workspace/instance \
-  dalic-mini-swe:2caffc56 \
-
-  docker run -it \
-  --name mini-fl-$INSTANCE_ID \
-  --env-file /home/mengqi/work/DaLIC_newexp/docker/baseline.env \
-  -v /home/mengqi/work/DaLIC_newexp/dataset/agent_workbench/$INSTANCE_ID:/workspace/instance:ro \
-  -v /home/mengqi/work/DaLIC_newexp/scripts/run_mini_instance.py:/opt/dalic/run_mini_instance.py:ro \
-  -v /home/mengqi/work/DaLIC_newexp/scripts/prompts:/opt/dalic/prompts:ro \
-  -w /workspace/instance \
-  dalic-mini-swe:2caffc56 \
-  python /opt/dalic/run_mini_instance.py
-
-  docker run --rm -it \
-  --name mini-fl-<INSTANCE_ID> \
-  --env-file /home/mengqi/work/DaLIC_newexp/docker/baseline.env \
-  -v <path_to_project_root>/dataset/agent_workbench/<INSTANCE_ID>:/workspace/instance:ro \
-  -v <path_to_project_root>/scripts/run_mini_instance.py:/opt/dalic/run_mini_instance.py:ro \
-  -v <path_to_project_root>/scripts/prompts:/opt/dalic/prompts:ro \
-  -w /workspace/instance \
-  dalic-mini-swe:2caffc56
+limitation: the current runtime check uses process exit code and trace-copy success; it does not distinguish a genuinely passed pytest case from a skipped or xfailed case when that case returns exit code 0 and still produces a trace artifact. Therefore, script-level `completed` means that all mechanically checked trace conditions succeeded, not necessarily that every test body executed and passed. In the completed full run, `pydata__xarray-4939` contained four skipped parameterized cases and was still classified as `completed`; under the stricter interpretation, 227 rather than 228 instances were fully successful.
