@@ -141,7 +141,25 @@ def write_command_log(
     log_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
-def validate_repo_relative_path(path_text: str) -> str | None:
+def find_instance_repository_root(workbench_dir: Path, instance_id: str) -> Path:
+    repository_parent = workbench_dir / instance_id / "repo"
+    if not repository_parent.is_dir():
+        raise ValueError(f"Repository parent directory is missing: {repository_parent}")
+
+    repository_roots = sorted(
+        path for path in repository_parent.iterdir() if path.is_dir()
+    )
+    if len(repository_roots) != 1:
+        raise ValueError(
+            f"Expected exactly one repository root under {repository_parent}, "
+            f"found {len(repository_roots)}"
+        )
+    return repository_roots[0]
+
+
+def validate_repo_relative_path(
+    path_text: str, repository_root: Path
+) -> str | None:
     if not path_text:
         return "path is empty"
     if path_text.startswith("/"):
@@ -154,10 +172,24 @@ def validate_repo_relative_path(path_text: str) -> str | None:
     path_parts = PurePosixPath(path_text).parts
     if any(part in (".", "..") for part in path_parts):
         return "path must not contain '.' or '..' segments"
+
+    candidate_path = repository_root.joinpath(*path_parts)
+    if (
+        path_parts
+        and path_parts[0] == repository_root.name
+        and not candidate_path.is_file()
+    ):
+        stripped_path = repository_root.joinpath(*path_parts[1:])
+        if stripped_path.is_file():
+            return (
+                f"path contains redundant checkout directory prefix "
+                f"'{repository_root.name}/'; use "
+                f"'{PurePosixPath(*path_parts[1:])}'"
+            )
     return None
 
 
-def validate_results_file(results_path: Path) -> str | None:
+def validate_results_file(results_path: Path, repository_root: Path) -> str | None:
     try:
         payload = json.loads(results_path.read_text(encoding="utf-8"))
     except FileNotFoundError:
@@ -186,7 +218,7 @@ def validate_results_file(results_path: Path) -> str | None:
             return f"'{field_name}' contains duplicate entries"
 
     for file_path in results["files"]:
-        path_error = validate_repo_relative_path(file_path)
+        path_error = validate_repo_relative_path(file_path, repository_root)
         if path_error:
             return f"invalid file entry '{file_path}': {path_error}"
 
@@ -195,7 +227,7 @@ def validate_results_file(results_path: Path) -> str | None:
             if entry.count("::") != 1:
                 return f"invalid {field_name[:-1]} entry '{entry}': expected '<file_path>::<qualified_name>'"
             file_path, qualified_name = entry.split("::", 1)
-            path_error = validate_repo_relative_path(file_path)
+            path_error = validate_repo_relative_path(file_path, repository_root)
             if path_error:
                 return f"invalid {field_name[:-1]} entry '{entry}': {path_error}"
             if not qualified_name:
@@ -451,7 +483,12 @@ def main() -> None:
                 results_path = instance_result_dir / "results.txt"
                 if results_path.exists():
                     progress.set_postfix_str(f"{instance_id}: validate results", refresh=True)
-                    validation_error = validate_results_file(results_path)
+                    repository_root = find_instance_repository_root(
+                        workbench_dir, instance_id
+                    )
+                    validation_error = validate_results_file(
+                        results_path, repository_root
+                    )
                     if validation_error is None:
                         logger.info("[%s] results.txt validation passed.", instance_id)
                     else:

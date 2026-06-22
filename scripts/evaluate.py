@@ -4,6 +4,8 @@
 #       default: dataset/swebench_feature_with_truth.jsonl
 #   --selected_instances PATH
 #       default: dataset/trace_eligible_instance.toml
+#   --workbench_path PATH
+#       default: dataset/agent_workbench
 #   --result_folder PATH
 #       default: dataset/agent_results/baseline/Qwen_Qwen3.5-9B
 
@@ -18,6 +20,7 @@ from pathlib import Path, PurePosixPath
 
 DEFAULT_INPUT_PATH = Path("dataset/swebench_feature_with_truth.jsonl")
 DEFAULT_SELECTED_INSTANCES_PATH = Path("dataset/trace_eligible_instance.toml")
+DEFAULT_WORKBENCH_PATH = Path("dataset/agent_workbench")
 DEFAULT_RESULT_FOLDER = Path("dataset/agent_results/baseline/Qwen_Qwen3.5-9B")
 GRANULARITIES = ("files", "classes", "functions")
 CHANGE_TYPES = ("added", "edited", "total")
@@ -66,6 +69,12 @@ def parse_args() -> argparse.Namespace:
         default=repo_root / DEFAULT_SELECTED_INSTANCES_PATH,
         help="TOML file whose instance_ids list limits the instances to evaluate.",
     )
+    parser.add_argument(
+        "--workbench_path",
+        type=Path,
+        default=repo_root / DEFAULT_WORKBENCH_PATH,
+        help="Workbench containing each instance's checked-out repository.",
+    )
     parser.add_argument("--result_folder", type=Path, default=DEFAULT_RESULT_FOLDER)
     args = parser.parse_args()
     validate_args(args)
@@ -76,6 +85,7 @@ def validate_args(args: argparse.Namespace) -> None:
     args.input = args.input.expanduser().resolve()
     if args.selected_instances is not None:
         args.selected_instances = args.selected_instances.expanduser().resolve()
+    args.workbench_path = args.workbench_path.expanduser().resolve()
 
     if not args.input.exists():
         raise ValueError(f"Input file does not exist: {args.input}")
@@ -83,9 +93,31 @@ def validate_args(args: argparse.Namespace) -> None:
         raise ValueError(f"Input path is not a file: {args.input}")
     if args.input.suffix != ".jsonl":
         raise ValueError(f"Input file must be a .jsonl file: {args.input}")
+    if not args.workbench_path.exists():
+        raise ValueError(f"Workbench path does not exist: {args.workbench_path}")
+    if not args.workbench_path.is_dir():
+        raise ValueError(f"Workbench path is not a directory: {args.workbench_path}")
 
 
-def validate_repo_relative_path(path_text: str) -> str | None:
+def find_instance_repository_root(workbench_dir: Path, instance_id: str) -> Path:
+    repository_parent = workbench_dir / instance_id / "repo"
+    if not repository_parent.is_dir():
+        raise ValueError(f"Repository parent directory is missing: {repository_parent}")
+
+    repository_roots = sorted(
+        path for path in repository_parent.iterdir() if path.is_dir()
+    )
+    if len(repository_roots) != 1:
+        raise ValueError(
+            f"Expected exactly one repository root under {repository_parent}, "
+            f"found {len(repository_roots)}"
+        )
+    return repository_roots[0]
+
+
+def validate_repo_relative_path(
+    path_text: str, repository_root: Path
+) -> str | None:
     if not path_text:
         return "path is empty"
     if path_text.startswith("/"):
@@ -98,10 +130,26 @@ def validate_repo_relative_path(path_text: str) -> str | None:
     path_parts = PurePosixPath(path_text).parts
     if any(part in (".", "..") for part in path_parts):
         return "path must not contain '.' or '..' segments"
+
+    candidate_path = repository_root.joinpath(*path_parts)
+    if (
+        path_parts
+        and path_parts[0] == repository_root.name
+        and not candidate_path.is_file()
+    ):
+        stripped_path = repository_root.joinpath(*path_parts[1:])
+        if stripped_path.is_file():
+            return (
+                f"path contains redundant checkout directory prefix "
+                f"'{repository_root.name}/'; use "
+                f"'{PurePosixPath(*path_parts[1:])}'"
+            )
     return None
 
 
-def parse_results_file(results_path: Path) -> tuple[dict[str, set[str]] | None, str | None]:
+def parse_results_file(
+    results_path: Path, repository_root: Path
+) -> tuple[dict[str, set[str]] | None, str | None]:
     try:
         payload = json.loads(results_path.read_text(encoding="utf-8"))
     except FileNotFoundError:
@@ -132,7 +180,7 @@ def parse_results_file(results_path: Path) -> tuple[dict[str, set[str]] | None, 
         parsed[field_name] = set(entries)
 
     for file_path in parsed["files"]:
-        path_error = validate_repo_relative_path(file_path)
+        path_error = validate_repo_relative_path(file_path, repository_root)
         if path_error:
             return None, f"invalid file entry '{file_path}': {path_error}"
 
@@ -141,7 +189,7 @@ def parse_results_file(results_path: Path) -> tuple[dict[str, set[str]] | None, 
             if entry.count("::") != 1:
                 return None, f"invalid {field_name[:-1]} entry '{entry}': expected '<file_path>::<qualified_name>'"
             file_path, qualified_name = entry.split("::", 1)
-            path_error = validate_repo_relative_path(file_path)
+            path_error = validate_repo_relative_path(file_path, repository_root)
             if path_error:
                 return None, f"invalid {field_name[:-1]} entry '{entry}': {path_error}"
             if not qualified_name:
@@ -219,6 +267,7 @@ def iter_instance_dirs(result_folder: Path) -> list[Path]:
 def load_instance_evaluations(
     result_folder: Path,
     ground_truth_map: dict[str, dict[str, dict[str, set[str]]]],
+    workbench_dir: Path,
 ) -> tuple[list[InstanceEvaluation], list[str]]:
     evaluations: list[InstanceEvaluation] = []
     result_instance_dirs = iter_instance_dirs(result_folder)
@@ -242,7 +291,10 @@ def load_instance_evaluations(
             )
             continue
 
-        predictions, failure_reason = parse_results_file(instance_dir / "results.txt")
+        repository_root = find_instance_repository_root(workbench_dir, instance_id)
+        predictions, failure_reason = parse_results_file(
+            instance_dir / "results.txt", repository_root
+        )
         if predictions is None:
             predictions = {granularity: set() for granularity in GRANULARITIES}
             evaluations.append(
@@ -454,7 +506,11 @@ def main() -> None:
             ground_truth_map,
             selected_instance_ids,
         )
-    evaluations, skipped_instance_ids = load_instance_evaluations(result_folder, ground_truth_map)
+    evaluations, skipped_instance_ids = load_instance_evaluations(
+        result_folder,
+        ground_truth_map,
+        args.workbench_path,
+    )
     evaluation_text = render_evaluation_text(result_folder, evaluations, skipped_instance_ids)
     (result_folder / "evaluation.txt").write_text(evaluation_text, encoding="utf-8")
 

@@ -11,3 +11,4 @@ python_venv
 dataset/agent_workbench
 dataset/agent_results
 docker/baseline.env
+dataset/trace_ground_truth_check
