@@ -288,3 +288,34 @@ Failure reasons for the 38 trace-eligible but incomplete instances:
 - The resolved test-case count exceeded the configured limit (`960 > 200`): 1 instance.
 
 Important limitation: `pydata__xarray-4939` had four skipped parameterized test cases but was still classified as `completed`, because the current mechanical check accepts exit code 0 when a trace artifact is produced. Therefore, the script-level success count is 228, while the stricter count requiring actual test execution and success is 227.
+
+
+
+create_candidate_list.py 的 class 候选恢复限制
+
+当前实现对 class 候选采用“执行源码所属 class（lexical owner class）”语义，而不是
+“运行时对象的实际 class（runtime receiver class）”语义。脚本先从 exec_stack.json
+（同时兼容名为 exec_trace.json 的文件）中读取 CALL frame 的 file_path、func，以及
+daughter_stack 中属于同一 file_path 和 func 的首个 LINE 事件；然后使用这个执行行号
+在 patch 和 test_patch 均已应用的源码 AST 中寻找最内层 FunctionDef/AsyncFunctionDef，
+并把该函数的全部 ClassDef ancestor 作为 class 候选。若执行行直接位于 class body 而
+不位于函数中，则把该位置的全部 enclosing class 作为候选。qualified name 也由这份
+AST 恢复，因此同一文件里的同名方法可以通过源码位置消歧。
+
+这种定义不能恢复“对象属于某个 subclass，但实际执行的函数继承自 base class”的
+runtime subclass。典型例子是 django__django-11603：patch 只在 Avg 和 Sum 的 class
+body 中增加 allow_distinct = True；测试创建 Avg/Count/Sum 对象时，真正进入的 Python
+frame 是 Aggregate.__init__。该 frame 的 code 和执行行都定义在 Aggregate 中，现有
+trace 又没有记录 self.__class__ 或 cls 的运行时类型，所以 exec trace + AST 只能可靠
+恢复 Aggregate，不能证明当前 receiver 是 Avg 或 Sum。测试开始 tracing 之前已经完成
+的模块导入和普通 class body 执行同样不会出现在这些 trace 中。
+
+因此，当前 class candidate list 对“执行了本 class 自己定义的方法”的 class 较可靠，
+但可能漏掉只修改 class attribute、完全继承实现、动态生成，或仅通过 inherited method
+体现行为的 subclass。实现不会把一个已执行 base class 的所有 subclass 自动加入候选，
+因为这并非 trace 中观察到的事实，而且会在继承层次较大的代码库中引入大量假阳性。
+
+若未来需要恢复 runtime subclass，必须扩展 VarTracer，在 CALL frame 中额外记录 self
+或 cls 的实际类型（至少包括 __module__ 和 __qualname__），然后重新采集 trace；仅对
+现有 exec trace 做 AST 后处理无法补回这项运行时信息。本版本按已确认的选择保留最小
+实现，不使用 dep_tree，也不对缺失的 runtime class 作静态猜测。

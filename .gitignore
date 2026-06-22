@@ -9,6 +9,8 @@ tmp
 dalic-newexp
 python_venv
 dataset/agent_workbench
+dataset/agent_workbench_old
+dataset/agent_workbench_dalic
 dataset/agent_results
 docker/baseline.env
 dataset/trace_ground_truth_check

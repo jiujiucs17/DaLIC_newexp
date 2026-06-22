@@ -3,9 +3,9 @@
 #   --input PATH
 #       default: dataset/swebench_feature_with_truth.jsonl
 #   --selected_instances PATH
-#       default: dataset/trace_eligible_instance.toml
+#       default: dataset/trace_completed_instance.toml
 #   --workbench_path PATH
-#       default: dataset/agent_workbench
+#       default: dataset/agent_workbench/baseline
 #   --result_folder PATH
 #       default: dataset/agent_results/baseline/Qwen_Qwen3.5-9B
 
@@ -19,8 +19,8 @@ from pathlib import Path, PurePosixPath
 
 
 DEFAULT_INPUT_PATH = Path("dataset/swebench_feature_with_truth.jsonl")
-DEFAULT_SELECTED_INSTANCES_PATH = Path("dataset/trace_eligible_instance.toml")
-DEFAULT_WORKBENCH_PATH = Path("dataset/agent_workbench")
+DEFAULT_SELECTED_INSTANCES_PATH = Path("dataset/trace_completed_instance.toml")
+DEFAULT_WORKBENCH_PATH = Path("dataset/agent_workbench/baseline")
 DEFAULT_RESULT_FOLDER = Path("dataset/agent_results/baseline/Qwen_Qwen3.5-9B")
 GRANULARITIES = ("files", "classes", "functions")
 CHANGE_TYPES = ("added", "edited", "total")

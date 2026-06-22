@@ -7,7 +7,7 @@
 #   --selected_instances PATH
 #       default: None (do not filter instances; otherwise read instance_ids from TOML)
 #   --workbench_path PATH
-#       default: dataset/agent_workbench
+#       default: dataset/agent_workbench/dalic
 
 from __future__ import annotations
 
@@ -26,7 +26,7 @@ from tqdm import tqdm
 
 
 DEFAULT_MODEL_NAME = "Qwen_Qwen3.5-9B"
-DEFAULT_WORKBENCH_PATH = Path("dataset/agent_workbench")
+DEFAULT_WORKBENCH_PATH = Path("dataset/agent_workbench/dalic")
 CONTAINER_RESULTS_DIR = "/home/miniagent/.config/mini-swe-agent"
 ARTIFACT_NAMES = ("results.txt", "last_mini_run.traj.json")
 RESULTS_FIELDS = ("files", "classes", "functions")
@@ -54,7 +54,7 @@ def sanitize_model_name(model_name: str) -> str:
 
 
 def prepare_results_root(repo_root: Path, model_name: str) -> Path:
-    results_root = repo_root / "dataset" / "agent_results" / "baseline" / model_name
+    results_root = repo_root / "dataset" / "agent_results" / "dalic" / model_name
     if results_root.exists():
         shutil.rmtree(results_root)
     results_root.mkdir(parents=True, exist_ok=True)
@@ -62,7 +62,7 @@ def prepare_results_root(repo_root: Path, model_name: str) -> Path:
 
 
 def configure_logger(log_path: Path) -> logging.Logger:
-    logger = logging.getLogger("run_baseline")
+    logger = logging.getLogger("run_dalic")
     logger.handlers.clear()
     logger.setLevel(logging.INFO)
     logger.propagate = False
@@ -274,7 +274,7 @@ def run_docker_instance(
         "--name",
         container_name,
         "--env-file",
-        str(repo_root / "docker" / "baseline.env"),
+        str(repo_root / "docker" / "mini-swe-agent.env"),
         "-v",
         f"{workbench_dir / instance_id}:/workspace/instance:ro",
         "-v",
@@ -283,9 +283,10 @@ def run_docker_instance(
         f"{repo_root / 'scripts' / 'prompts'}:/opt/dalic/prompts:ro",
         "-w",
         "/workspace/instance",
-        "dalic-mini-swe:2caffc56",
+        "mini-swe-agent:2caffc56",
         "python",
         "/opt/dalic/run_mini_instance.py",
+        "--agent_version", "dalic"
     ]
     log_path = instance_result_dir / "docker_run.log"
 
@@ -418,7 +419,7 @@ def main() -> None:
     )
     model_name = sanitize_model_name(args.model_name)
     results_root = prepare_results_root(repo_root, model_name)
-    logger = configure_logger(results_root / "baseline.log")
+    logger = configure_logger(results_root / "dalic.log")
 
     instance_ids, test_seed = list_instance_ids(
         workbench_dir,
@@ -444,12 +445,12 @@ def main() -> None:
     write_summary(results_root, success_count, failed_instances, failure_reasons)
 
     try:
-        progress = tqdm(instance_ids, desc="baseline", unit="instance")
+        progress = tqdm(instance_ids, desc="dalic", unit="instance")
         for instance_id in progress:
             container_name = f"mini-fl-{instance_id}"
             instance_result_dir = results_root / instance_id
             instance_result_dir.mkdir(parents=True, exist_ok=True)
-            logger.info("[%s] Starting baseline flow.", instance_id)
+            logger.info("[%s] Starting dalic flow.", instance_id)
 
             instance_success = True
             instance_fail_reasons: list[str] = []

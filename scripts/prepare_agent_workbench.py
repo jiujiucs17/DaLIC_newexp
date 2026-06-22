@@ -3,9 +3,9 @@
 #   --input PATH
 #       default: dataset/swebench_feature_with_truth.jsonl
 #   --workbench-dir PATH
-#       default: dataset/agent_workbench
+#       default: dataset/agent_workbench/baseline
 #   --repo-cache-dir PATH
-#       default: dataset/agent_workbench/.repo_mirrors
+#       default: dataset/agent_workbench/baseline/.repo_mirrors
 #   --insta_num INTEGER
 #       default: None (prepare all eligible instances)
 #   --selected_instances PATH
@@ -51,12 +51,12 @@ def get_repo_root() -> Path:
 def parse_args() -> argparse.Namespace:
     repo_root = get_repo_root()
     default_input = repo_root / "dataset" / "swebench_feature_with_truth.jsonl"
-    default_workbench_dir = repo_root / "dataset" / "agent_workbench"
+    default_workbench_dir = repo_root / "dataset" / "agent_workbench" / "baseline"
     default_repo_cache_dir = default_workbench_dir / ".repo_mirrors"
 
     parser = argparse.ArgumentParser(
         description=(
-            "Prepare sure SWE-bench instances under dataset/agent_workbench by creating "
+            "Prepare sure SWE-bench instances under dataset/agent_workbench/baseline by creating "
             "an instance directory with a checked-out repo and a raw problem_statement.txt."
         )
     )
