@@ -3,6 +3,7 @@ dataset/.gt_source_cache
 dataset/vartracer_results
 scripts/__pycache__
 tools/SWE-bench
+tools/mini-swe-agentss
 tmp
 .vscode
 .pycache
@@ -13,6 +14,9 @@ dataset/agent_workbench_old
 dataset/agent_workbench_dalic
 dataset/agent_results
 docker/baseline.env
-dataset/trace_ground_truth_check
+dataset/dalic_ground_truth_check
 docker/mini-swe-agent.env
 docker/mini-swe-agent-baseline.env
+docker/mini-swe-agent-dalic.env
+dataset/results_archive
+dataset/trad_methods_results
