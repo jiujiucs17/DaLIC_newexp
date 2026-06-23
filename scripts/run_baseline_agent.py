@@ -274,7 +274,7 @@ def run_docker_instance(
         "--name",
         container_name,
         "--env-file",
-        str(repo_root / "docker" / "mini-swe-agent.env"),
+        str(repo_root / "docker" / "mini-swe-agent-baseline.env"),
         "-v",
         f"{workbench_dir / instance_id}:/workspace/instance:ro",
         "-v",

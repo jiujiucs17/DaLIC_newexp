@@ -14,3 +14,5 @@ dataset/agent_workbench_dalic
 dataset/agent_results
 docker/baseline.env
 dataset/trace_ground_truth_check
+docker/mini-swe-agent.env
+docker/mini-swe-agent-baseline.env
