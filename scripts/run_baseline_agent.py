@@ -447,7 +447,7 @@ def main() -> None:
     try:
         progress = tqdm(instance_ids, desc="baseline", unit="instance")
         for instance_id in progress:
-            container_name = f"mini-fl-{instance_id}"
+            container_name = f"mini-fl-{instance_id}_baseline"
             instance_result_dir = results_root / instance_id
             instance_result_dir.mkdir(parents=True, exist_ok=True)
             logger.info("[%s] Starting baseline flow.", instance_id)

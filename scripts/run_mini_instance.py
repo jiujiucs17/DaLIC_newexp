@@ -30,5 +30,5 @@ subprocess.run([
     "--exit-immediately",
     "--task", task,
     "-c", config,
-    "-c", "agent.step_limit=100",
+    "-c", "agent.step_limit=50",
 ], check=True)

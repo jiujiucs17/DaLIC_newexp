@@ -1,6 +1,6 @@
 agent:
   system_template: |
-    You are a careful feature localization assistant that can interact with a computer.
+    You are a feature localization assistant that can interact with a computer.
     Your job is to identify the code locations most likely added or edited to implement the requested feature.
     You are not a bug-fixing agent and you must not modify the repository source code.
   instance_template: |
@@ -25,6 +25,14 @@ agent:
     Every record in these files was generated from one or more traced test cases and then ranked with BM25 against the feature request text. These test cases are identified from test_patch that's associated with the patch that implements the feature.
     The lists are sorted from most promising to least promising by descending `bm25_score`.
     Higher-ranked items should usually be inspected earlier, but the candidate set does not guarantee 100 percent precision or 100 percent recall.
+    
+    Note that the evidence files are very long, so follow the following rulses when using them:
+    - Before reading an unfamiliar file, run `wc -l -c <path>`.
+    - Never use `cat` on Python or JSON files unless `wc -c` confirms the file is below 3000 bytes.
+    - Read at most 80 lines at a time with `sed -n '<start>,<end>p'`.
+    - Limit searches to 20 results using `rg ... | head -n 20`.
+    - For dynamic_evidence JSON, extract only the first 10 qualified_name values. Never print the complete JSON.
+    - If an output is truncated, do not repeat the same command. Narrow the path, symbol, line range, or JSON fields.
 
     Interpret the main fields as follows:
 
@@ -178,7 +186,7 @@ environment:
     TQDM_DISABLE: '1'
 model:
   observation_template: |
-    {%- if output.output | length < 10000 -%}
+    {%- if output.output | length < 3000 -%}
     {
       "returncode": {{ output.returncode }},
       "output": {{ output.output | tojson }}
@@ -187,13 +195,23 @@ model:
     {%- else -%}
     {
       "returncode": {{ output.returncode }},
-      "output_head": {{ output.output[:5000] | tojson }},
-      "output_tail": {{ output.output[-5000:] | tojson }},
-      "elided_chars": {{ output.output | length - 10000 }},
+      "output_head": {{ output.output[:1500] | tojson }},
+      "output_tail": {{ output.output[-1500:] | tojson }},
+      "elided_chars": {{ output.output | length - 3000 }},
       "warning": "Output too long."
       {%- if output.exception_info %}, "exception_info": {{ output.exception_info | tojson }}{% endif %}
     }
     {%- endif -%}
+
+    {%- set remaining_steps = step_limit - n_model_calls -%}
+    {%- if step_limit > 0 and remaining_steps > 0 and remaining_steps <= 10 %}
+
+    <IMPORTANT>
+    Only {{ remaining_steps }} model calls remain.
+    Stop exploring. Write and validate results.txt now, then submit with:
+    echo COMPLETE_TASK_AND_SUBMIT_FINAL_OUTPUT
+    </IMPORTANT>
+    {%- endif %}
   format_error_template: |
     {% if finish_reason is defined and finish_reason in ["length", "tool_calls"] -%}
     Your previous response reached the output token limit (finish_reason={{ finish_reason }}) before you produced a tool call, so it was cut off. Respond more concisely and finish with exactly one bash tool call. If you need to think more, do so briefly.

@@ -19,6 +19,13 @@ Use these inclusion rules:
 
  
 When inspecting files, never print large files. Limit the length of every command output. Prioritize inspecting targeted sections rather than whole files. Within each result array, rank items by their relevance to the feature and place more relevant items at front.
+
+Operational constraints for repository inspection:
+1. By default, search only non-test Python source files under "repo/<repo_name>".
+2. Do not search documentation, vendored code, generated files, minified assets, data files, or paths under directories such as "extern/" unless you have a specific reason to believe they are directly relevant to the feature implementation.
+3. For any search command, show at most 20 matches before narrowing the query further.
+4. For any file read, show at most 80 lines at a time and prefer targeted ranges over whole-file reads.
+5. If a command returns unexpectedly large or noisy output, refine the query before continuing instead of issuing another broad read.
  
 Do not modify any source code. Except for writing the required results file and using read-only evidence
 sources or tools explicitly authorized by the system instructions, do not access information outside the current work directory, either directly (such as changing directory or reading an absolute path) or indirectly (such as copying external files into the current directory or access then through a command line application/tool). You can only use information from the current work directory. 
