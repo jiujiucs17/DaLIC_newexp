@@ -19,7 +19,7 @@ args = parse_args()
 # read the text from prompts/task.txt
 task = Path("/opt/dalic/prompts/task.txt").read_text()
 config = (
-    "mini.yaml"
+    "/opt/dalic/prompts/baseline.yaml"
     if args.agent_version == "baseline"
     else "/opt/dalic/prompts/dalic.yaml"
 )
