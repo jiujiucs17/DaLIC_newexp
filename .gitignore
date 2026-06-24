@@ -18,6 +18,8 @@ dataset/dalic_ground_truth_check
 docker/mini-swe-agent.env
 docker/mini-swe-agent-baseline.env
 docker/mini-swe-agent-dalic.env
+docker/mini-swe-agent-original.env
 dataset/results_archive
 dataset/trad_methods_results
 .envrc
+*.pyc

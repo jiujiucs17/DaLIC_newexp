@@ -323,3 +323,4 @@ trace 又没有记录 self.__class__ 或 cls 的运行时类型，所以 exec tr
 
 Qwen/Qwen3.5-9B --host 0.0.0.0 --port 8000 --served-model-name local --gpu-memory-utilization 0.90 --max-model-len 32768 --reasoning-parser qwen3 --enable-auto-tool-choice --tool-call-parser qwen3_coder --api-key 
 7***4
+

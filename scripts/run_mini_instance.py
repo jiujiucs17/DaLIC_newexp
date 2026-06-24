@@ -7,7 +7,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--agent_version",
-        choices=("baseline", "dalic"),
+        choices=("baseline", "dalic", "original"),
         default="baseline",
         help="Select the mini-swe-agent prompt configuration.",
     )
@@ -18,11 +18,12 @@ args = parse_args()
 
 # read the text from prompts/task.txt
 task = Path("/opt/dalic/prompts/task.txt").read_text()
-config = (
-    "/opt/dalic/prompts/baseline.yaml"
-    if args.agent_version == "baseline"
-    else "/opt/dalic/prompts/dalic.yaml"
-)
+if args.agent_version == "original":
+    config = "mini.yaml"
+elif args.agent_version == "dalic":
+    config = "/opt/dalic/prompts/dalic_v2.yaml"
+else:
+    config = "/opt/dalic/prompts/baseline.yaml"
 
 subprocess.run([
     "mini",
