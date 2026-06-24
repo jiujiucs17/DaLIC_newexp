@@ -319,3 +319,7 @@ trace 又没有记录 self.__class__ 或 cls 的运行时类型，所以 exec tr
 或 cls 的实际类型（至少包括 __module__ 和 __qualname__），然后重新采集 trace；仅对
 现有 exec trace 做 AST 后处理无法补回这项运行时信息。本版本按已确认的选择保留最小
 实现，不使用 dep_tree，也不对缺失的 runtime class 作静态猜测。
+
+
+Qwen/Qwen3.5-9B --host 0.0.0.0 --port 8000 --served-model-name local --gpu-memory-utilization 0.90 --max-model-len 32768 --reasoning-parser qwen3 --enable-auto-tool-choice --tool-call-parser qwen3_coder --api-key 
+7***4

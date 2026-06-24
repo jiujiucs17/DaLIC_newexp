@@ -25,7 +25,7 @@ from pathlib import Path, PurePosixPath
 from tqdm import tqdm
 
 
-DEFAULT_MODEL_NAME = "Qwen_Qwen3.5-9B"
+DEFAULT_MODEL_NAME = "Qwen_Qwen3.5-4B"
 DEFAULT_WORKBENCH_PATH = Path("dataset/agent_workbench/dalic")
 CONTAINER_RESULTS_DIR = "/home/miniagent/.config/mini-swe-agent"
 ARTIFACT_NAMES = ("results.txt", "last_mini_run.traj.json")
