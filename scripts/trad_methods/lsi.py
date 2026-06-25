@@ -12,6 +12,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import Normalizer
+from tqdm import tqdm
 
 try:
     from . import vsm as base
@@ -19,7 +20,7 @@ except ImportError:
     import vsm as base
 
 
-N_COMPONENT = 200
+N_COMPONENT = 500
 
 
 def parse_args() -> argparse.Namespace:
@@ -73,28 +74,27 @@ def lsi_rank(query: str, documents: dict[str, str]) -> list[tuple[str, float]]:
         norm="l2",
     )
     document_term_matrix = vectorizer.fit_transform(documents[name] for name in names)
-    n_components = min(
-        N_COMPONENT,
-        document_term_matrix.shape[0] - 1,
-        document_term_matrix.shape[1] - 1,
-    )
-    if n_components < 1:
-        return [(name, 0.0) for name in names]
-
-    svd = TruncatedSVD(
-        n_components=n_components,
-        algorithm="randomized",
-        n_iter=7,
-        random_state=42,
-    )
-    lsa = make_pipeline(
-        svd,
-        Normalizer(copy=False),
-    )
-    document_vectors = lsa.fit_transform(document_term_matrix)
     query_term_vector = vectorizer.transform([query])
-    query_vector = lsa.transform(query_term_vector)
-    scores = linear_kernel(query_vector, document_vectors).ravel()
+    n_docs, n_terms = document_term_matrix.shape
+    max_rank = min(n_docs, n_terms)
+
+    if max_rank <= 2:
+        scores = linear_kernel(query_term_vector, document_term_matrix).ravel()
+    else:
+        n_components = max(2, min(N_COMPONENT, max_rank - 1))
+        svd = TruncatedSVD(
+            n_components=n_components,
+            algorithm="randomized",
+            n_iter=7,
+            random_state=42,
+        )
+        lsa = make_pipeline(
+            svd,
+            Normalizer(copy=False),
+        )
+        document_vectors = lsa.fit_transform(document_term_matrix)
+        query_vector = lsa.transform(query_term_vector)
+        scores = linear_kernel(query_vector, document_vectors).ravel()
 
     ranked = [(name, float(scores[index])) for index, name in enumerate(names)]
     ranked.sort(key=lambda item: (-item[1], item[0]))
@@ -146,7 +146,8 @@ def render_markdown(
         f"- Requested n_components: {N_COMPONENT}",
         (
             "- Actual n_components: "
-            "`min(N_COMPONENT, X.shape[0] - 1, X.shape[1] - 1)` per ranking"
+            "`max(2, min(N_COMPONENT, min(X.shape) - 1))` per ranking; "
+            "uses TF-IDF cosine when `min(X.shape) <= 2`"
         ),
         (
             "- Vectorizer: `TfidfVectorizer(tokenizer=tokens, "
@@ -222,12 +223,16 @@ def main() -> int:
     print(
         'Vectorizer=TfidfVectorizer(token_pattern=None, lowercase=False, sublinear_tf=True, norm="l2")'
     )
-    print('LSI=TruncatedSVD(algorithm="randomized", n_iter=7, random_state=42)+Normalizer')
+    print(
+        'LSI=TruncatedSVD(algorithm="randomized", n_iter=7, random_state=42)+Normalizer; '
+        'fallback=TF-IDF cosine when min(X.shape)<=2'
+    )
     print("Scoring=linear_kernel")
 
     truth_by_instance: dict[str, base.TruthMap] = {}
     candidates_by_instance: dict[str, base.EntityMap] = {}
-    for index, instance_id in enumerate(instance_ids, 1):
+    progress = tqdm(instance_ids, desc="lsi", unit="instance")
+    for instance_id in progress:
         truth_by_instance[instance_id] = base.truth_entities(truth_rows[instance_id])
         candidates_by_instance[instance_id] = direct_lsi_candidates(
             args.workbench / instance_id
@@ -236,11 +241,10 @@ def main() -> int:
             base.candidates_at(candidates_by_instance[instance_id], "all", None),
             base.truth_at(truth_by_instance[instance_id], "all"),
         )
-        print(
-            f"[{index:03d}/{len(instance_ids):03d}] {instance_id}: "
+        progress.set_postfix_str(
+            f"{instance_id}: "
             f"P/R/F1@Full={full_score.precision:.2%}/"
-            f"{full_score.recall:.2%}/{full_score.f1:.2%}",
-            flush=True,
+            f"{full_score.recall:.2%}/{full_score.f1:.2%}"
         )
 
     aggregate = base.aggregate_metrics(
