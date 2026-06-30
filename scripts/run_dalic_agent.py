@@ -25,7 +25,7 @@ from pathlib import Path, PurePosixPath
 from tqdm import tqdm
 
 
-DEFAULT_MODEL_NAME = "Qwen_Qwen3.5-4B"
+DEFAULT_MODEL_NAME = "Qwen_Qwen3.5-27B"
 DEFAULT_WORKBENCH_PATH = Path("dataset/agent_workbench/dalic")
 CONTAINER_RESULTS_DIR = "/home/miniagent/.config/mini-swe-agent"
 ARTIFACT_NAMES = ("results.txt", "last_mini_run.traj.json")
@@ -447,7 +447,7 @@ def main() -> None:
     try:
         progress = tqdm(instance_ids, desc="dalic", unit="instance")
         for instance_id in progress:
-            container_name = f"mini-fl-{instance_id}_dalic"
+            container_name = f"mini-fl-{instance_id}_dalic_{model_name}"
             instance_result_dir = results_root / instance_id
             instance_result_dir.mkdir(parents=True, exist_ok=True)
             logger.info("[%s] Starting dalic flow.", instance_id)

@@ -21,7 +21,7 @@ task = Path("/opt/dalic/prompts/task.txt").read_text()
 if args.agent_version == "original":
     config = "mini.yaml"
 elif args.agent_version == "dalic":
-    config = "/opt/dalic/prompts/dalic_v2.yaml"
+    config = "/opt/dalic/prompts/dalic_v1.yaml"
 else:
     config = "/opt/dalic/prompts/baseline.yaml"
 
