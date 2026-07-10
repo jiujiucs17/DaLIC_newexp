@@ -5,7 +5,7 @@
 #   --test
 #       default: False (run all selected instances; when enabled, randomly run at most 10)
 #   --selected_instances PATH
-#       default: None (do not filter instances; otherwise read instance_ids from TOML)
+#       default: "dataset/trace_completed_instance.toml"
 #   --workbench_path PATH
 #       default: dataset/agent_workbench/original
 
@@ -25,9 +25,10 @@ from pathlib import Path, PurePosixPath
 from tqdm import tqdm
 
 
-DEFAULT_MODEL_NAME = "DeepSeek-v4-flash"
+DEFAULT_MODEL_NAME = "DeepSeek-v4-pro"
 DEFAULT_WORKBENCH_PATH = Path("dataset/agent_workbench/original")
 CONTAINER_RESULTS_DIR = "/home/miniagent/.config/mini-swe-agent"
+SELECTED_INSTANCES_TOML = "dataset/trace_completed_instance.toml"
 ARTIFACT_NAMES = ("results.txt", "last_mini_run.traj.json")
 RESULTS_FIELDS = ("files", "classes", "functions")
 TEST_INSTANCE_COUNT = 10
@@ -44,7 +45,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(add_help=False)
     parser.add_argument("--model_name", default=DEFAULT_MODEL_NAME)
     parser.add_argument("--test", action="store_true")
-    parser.add_argument("--selected_instances", type=Path, default=None)
+    parser.add_argument("--selected_instances", type=Path, default=SELECTED_INSTANCES_TOML)
     parser.add_argument("--workbench_path", type=Path, default=DEFAULT_WORKBENCH_PATH)
     return parser.parse_args()
 
