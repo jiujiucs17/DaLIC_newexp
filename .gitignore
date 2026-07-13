@@ -1,4 +1,5 @@
 .DS_Store
+paper_writing
 dataset/.gt_source_cache
 dataset/vartracer_results
 scripts/__pycache__
