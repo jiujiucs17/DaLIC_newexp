@@ -28,7 +28,6 @@ from tqdm import tqdm
 DEFAULT_MODEL_NAME = "DeepSeek-v4-pro"
 DEFAULT_WORKBENCH_PATH = Path("dataset/agent_workbench/original")
 CONTAINER_RESULTS_DIR = "/home/miniagent/.config/mini-swe-agent"
-SELECTED_INSTANCES_TOML = "dataset/trace_completed_instance.toml"
 ARTIFACT_NAMES = ("results.txt", "last_mini_run.traj.json")
 RESULTS_FIELDS = ("files", "classes", "functions")
 TEST_INSTANCE_COUNT = 10
