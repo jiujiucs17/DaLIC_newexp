@@ -324,3 +324,107 @@ trace 又没有记录 self.__class__ 或 cls 的运行时类型，所以 exec tr
 Qwen/Qwen3.5-9B --host 0.0.0.0 --port 8000 --served-model-name local --gpu-memory-utilization 0.90 --max-model-len 32768 --reasoning-parser qwen3 --enable-auto-tool-choice --tool-call-parser qwen3_coder --api-key 
 7***4
 
+
+AGENT FINAL-OUTPUT RANKING EVALUATION (MAP/MRR)
+
+Purpose and implementation
+
+- The reproducible implementation is `scripts/analyze_agent_ranking.py`.
+- It evaluates the relevance ordering in the final JSON arrays produced by Original,
+  Baseline, and DALIC. This is different from the old runtime-evidence MRR/MAP
+  calculation in `scripts/analyze_paper_results.py`.
+- The script uses `scripts/evaluate.py` as the authoritative source of valid/failed
+  output status, but reads each valid `results.txt` directly so that the original
+  JSON-array order is preserved.
+- Default inputs are the 228-instance `dataset/trace_completed_instance.toml`
+  manifest, `dataset/swebench_feature_with_truth.jsonl`, and the Original,
+  Baseline, and DALIC folders under
+  `dataset/results_archive/agent_results`.
+- Run `python_venv/dalic-nexp/bin/python scripts/analyze_agent_ranking.py
+  --format markdown` for the full per-granularity tables and inferential results.
+  Use `--format json` for machine-readable results.
+
+Metric definitions
+
+- Ranking metrics are calculated separately for files, classes, and functions.
+  Instances with empty ground truth at a granularity are excluded from that
+  granularity's MAP/MRR denominator.
+- For a nonempty ground-truth set, average precision sums precision at every rank
+  occupied by a previously unseen ground-truth entity and divides by the full
+  ground-truth size. Missing ground-truth entities therefore reduce AP. MAP is
+  the macro mean of per-instance AP.
+- Reciprocal rank is the reciprocal of the first ground-truth entity's rank. It is
+  zero when no ground-truth entity occurs in a valid output. MRR is its macro mean.
+- Mean3 is the unweighted mean of the file, class, and function macro MAP or MRR
+  values. The ranking tests target DALIC-minus-Baseline differences in this
+  cross-granularity statistic.
+- These metrics summarize final-output ranking quality. MAP measures relevance
+  throughout the submitted ranking, while MRR measures how early the first
+  relevant result appears.
+
+Analysis scopes
+
+1. All instances: every manifest instance with nonempty ground truth at the
+   evaluated granularity is included. Missing, invalid, or failed output receives
+   AP=0 and RR=0.
+2. Pairwise common success: the common sets are calculated separately for
+   Original versus Baseline and DALIC versus Baseline. An instance is included
+   only when both methods in that comparison have valid outputs. The nonempty
+   ground-truth restriction is then applied separately at each granularity.
+   Qwen 27B has no Original-versus-Baseline result because Original was not run.
+
+All-instance Mean3 results (MAP/MRR; valid output count in parentheses)
+
+| Model | Original | Baseline | DALIC |
+|---|---:|---:|---:|
+| Qwen 4B | .3005/.3395 (107) | .3851/.4318 (149) | .6156/.6787 (174) |
+| Qwen 9B | .4828/.5269 (135) | .6026/.6827 (177) | .7351/.8293 (204) |
+| Qwen 27B | N/A | .6792/.7466 (183) | .8255/.9047 (214) |
+| GPT-5.4 | .8456/.9501 (228) | .8167/.9198 (228) | .8647/.9506 (228) |
+| DeepSeek-v4-flash | .7650/.8309 (196) | .8374/.9040 (217) | .8914/.9671 (226) |
+| DeepSeek-v4-pro | .8103/.8701 (208) | .8800/.9471 (227) | .8908/.9605 (226) |
+
+Pairwise common-success Mean3 results (MAP/MRR)
+
+| Comparison | Model | Common N | First method | Baseline |
+|---|---|---:|---:|---:|
+| Original vs Baseline | Qwen 4B | 90 | .6542/.7292 | .6554/.7271 |
+| Original vs Baseline | Qwen 9B | 120 | .8300/.9060 | .8161/.8977 |
+| Original vs Baseline | GPT-5.4 | 228 | .8456/.9501 | .8167/.9198 |
+| Original vs Baseline | DeepSeek-v4-flash | 195 | .8907/.9673 | .8938/.9643 |
+| Original vs Baseline | DeepSeek-v4-pro | 207 | .8902/.9564 | .8916/.9555 |
+| DALIC vs Baseline | Qwen 4B | 124 | .8248/.8946 | .6145/.6792 |
+| DALIC vs Baseline | Qwen 9B | 164 | .8260/.9341 | .7733/.8684 |
+| DALIC vs Baseline | Qwen 27B | 176 | .8911/.9638 | .8545/.9342 |
+| DALIC vs Baseline | GPT-5.4 | 228 | .8647/.9506 | .8167/.9198 |
+| DALIC vs Baseline | DeepSeek-v4-flash | 216 | .9018/.9787 | .8844/.9548 |
+| DALIC vs Baseline | DeepSeek-v4-pro | 225 | .8991/.9699 | .8848/.9523 |
+
+Statistical comparisons for DALIC versus Baseline
+
+- Point differences are calculated on paired instances. The 95% intervals use
+  20,000 paired bootstrap resamples of instances, and two-sided p values use
+  100,000 Monte Carlo sign-flip permutations. A single sign is shared across an
+  instance's granularities and metrics during a permutation.
+- Holm correction is applied separately in the all-instance and common-success
+  scopes. Each family contains 12 tests: six models times MAP and MRR.
+- In the all-instance scope, both metrics have Holm-adjusted p<.05 for Qwen 4B,
+  Qwen 9B, Qwen 27B, GPT-5.4, and DeepSeek-v4-flash. Neither does for
+  DeepSeek-v4-pro.
+- In the DALIC-versus-Baseline common-success scope, both metrics have
+  Holm-adjusted p<.05 for all three Qwen settings and GPT-5.4. Only MRR does for
+  DeepSeek-v4-flash, and neither does for DeepSeek-v4-pro.
+
+Conclusions from the current archive
+
+- In the all-instance scope, DALIC has the highest Mean3 MAP and MRR in every
+  model setting. For Qwen models, this difference includes DALIC's higher valid
+  completion rate and should not be interpreted as an isolated ranking effect.
+- On pairwise common-success instances, DALIC has higher Mean3 MAP and MRR than
+  Baseline for all six model settings. The direction is not uniform at every
+  granularity: Qwen 27B has slightly lower DALIC file MAP, and DeepSeek-v4-pro
+  has lower DALIC class MAP and MRR.
+- Original versus Baseline has no consistent MAP direction. Original has slightly
+  higher Mean3 MRR in all five available comparisons. The completion reminder
+  therefore improves submission reliability but does not show a corresponding
+  consistent improvement in final-output ranking on common successes.
