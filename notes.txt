@@ -348,83 +348,86 @@ Metric definitions
 
 - Ranking metrics are calculated separately for files, classes, and functions.
   Instances with empty ground truth at a granularity are excluded from that
-  granularity's MAP/MRR denominator.
+  granularity's standalone MAP/MRR denominator.
 - For a nonempty ground-truth set, average precision sums precision at every rank
   occupied by a previously unseen ground-truth entity and divides by the full
   ground-truth size. Missing ground-truth entities therefore reduce AP. MAP is
   the macro mean of per-instance AP.
 - Reciprocal rank is the reciprocal of the first ground-truth entity's rank. It is
   zero when no ground-truth entity occurs in a valid output. MRR is its macro mean.
-- Mean3 is the unweighted mean of the file, class, and function macro MAP or MRR
-  values. The ranking tests target DALIC-minus-Baseline differences in this
-  cross-granularity statistic.
+- Avg3 uses only the 171 instances whose file, class, and function ground truth
+  are all nonempty. For each eligible instance, file-, class-, and function-level
+  AP or reciprocal-rank scores are averaged first; the macro means of those
+  per-instance values are Avg3 MAP and Avg3 MRR.
 - These metrics summarize final-output ranking quality. MAP measures relevance
   throughout the submitted ranking, while MRR measures how early the first
   relevant result appears.
 
 Analysis scopes
 
-1. All instances: every manifest instance with nonempty ground truth at the
-   evaluated granularity is included. Missing, invalid, or failed output receives
-   AP=0 and RR=0.
+1. All instances: standalone granularity metrics use every instance with nonempty
+   ground truth at that granularity. Avg3 uses the 171 complete-ground-truth
+   instances. Missing, invalid, or failed output receives AP=0 and RR=0.
 2. Pairwise common success: the common sets are calculated separately for
    Original versus Baseline and DALIC versus Baseline. An instance is included
-   only when both methods in that comparison have valid outputs. The nonempty
-   ground-truth restriction is then applied separately at each granularity.
+   in Avg3 only when both methods have valid outputs and all three ground-truth
+   granularities are nonempty.
    Qwen 27B has no Original-versus-Baseline result because Original was not run.
 
-All-instance Mean3 results (MAP/MRR; valid output count in parentheses)
+All-instance Avg3 results (MAP/MRR over 171 eligible instances; total valid
+output count in parentheses)
 
 | Model | Original | Baseline | DALIC |
 |---|---:|---:|---:|
-| Qwen 4B | .3005/.3395 (107) | .3851/.4318 (149) | .6156/.6787 (174) |
-| Qwen 9B | .4828/.5269 (135) | .6026/.6827 (177) | .7351/.8293 (204) |
-| Qwen 27B | N/A | .6792/.7466 (183) | .8255/.9047 (214) |
-| GPT-5.4 | .8456/.9501 (228) | .8167/.9198 (228) | .8647/.9506 (228) |
-| DeepSeek-v4-flash | .7650/.8309 (196) | .8374/.9040 (217) | .8914/.9671 (226) |
-| DeepSeek-v4-pro | .8103/.8701 (208) | .8800/.9471 (227) | .8908/.9605 (226) |
+| Qwen 4B | .2878/.3315 (107) | .3634/.4142 (149) | .6089/.6793 (174) |
+| Qwen 9B | .4624/.5135 (135) | .6013/.6915 (177) | .7309/.8379 (204) |
+| Qwen 27B | N/A | .6759/.7526 (183) | .8208/.9119 (214) |
+| GPT-5.4 | .8382/.9543 (228) | .8102/.9279 (228) | .8522/.9506 (228) |
+| DeepSeek-v4-flash | .7646/.8374 (196) | .8316/.9077 (217) | .8832/.9690 (226) |
+| DeepSeek-v4-pro | .7978/.8670 (208) | .8681/.9459 (227) | .8795/.9603 (226) |
 
-Pairwise common-success Mean3 results (MAP/MRR)
+Pairwise common-success Avg3 results (MAP/MRR)
 
-| Comparison | Model | Common N | First method | Baseline |
+| Comparison | Model | Eligible N | First method | Baseline |
 |---|---|---:|---:|---:|
-| Original vs Baseline | Qwen 4B | 90 | .6542/.7292 | .6554/.7271 |
-| Original vs Baseline | Qwen 9B | 120 | .8300/.9060 | .8161/.8977 |
-| Original vs Baseline | GPT-5.4 | 228 | .8456/.9501 | .8167/.9198 |
-| Original vs Baseline | DeepSeek-v4-flash | 195 | .8907/.9673 | .8938/.9643 |
-| Original vs Baseline | DeepSeek-v4-pro | 207 | .8902/.9564 | .8916/.9555 |
-| DALIC vs Baseline | Qwen 4B | 124 | .8248/.8946 | .6145/.6792 |
-| DALIC vs Baseline | Qwen 9B | 164 | .8260/.9341 | .7733/.8684 |
-| DALIC vs Baseline | Qwen 27B | 176 | .8911/.9638 | .8545/.9342 |
-| DALIC vs Baseline | GPT-5.4 | 228 | .8647/.9506 | .8167/.9198 |
-| DALIC vs Baseline | DeepSeek-v4-flash | 216 | .9018/.9787 | .8844/.9548 |
-| DALIC vs Baseline | DeepSeek-v4-pro | 225 | .8991/.9699 | .8848/.9523 |
+| Original vs Baseline | Qwen 4B | 64 | .6353/.7205 | .6547/.7352 |
+| Original vs Baseline | Qwen 9B | 89 | .8161/.9062 | .8063/.8979 |
+| Original vs Baseline | GPT-5.4 | 171 | .8382/.9543 | .8102/.9279 |
+| Original vs Baseline | DeepSeek-v4-flash | 147 | .8846/.9688 | .8853/.9650 |
+| Original vs Baseline | DeepSeek-v4-pro | 154 | .8794/.9562 | .8761/.9504 |
+| DALIC vs Baseline | Qwen 4B | 92 | .8163/.8941 | .6086/.6819 |
+| DALIC vs Baseline | Qwen 9B | 124 | .8245/.9476 | .7639/.8710 |
+| DALIC vs Baseline | Qwen 27B | 135 | .8815/.9641 | .8414/.9298 |
+| DALIC vs Baseline | GPT-5.4 | 171 | .8522/.9506 | .8102/.9279 |
+| DALIC vs Baseline | DeepSeek-v4-flash | 162 | .8914/.9796 | .8778/.9581 |
+| DALIC vs Baseline | DeepSeek-v4-pro | 168 | .8892/.9715 | .8736/.9522 |
 
 Statistical comparisons for DALIC versus Baseline
 
-- Point differences are calculated on paired instances. The 95% intervals use
+- Point differences are calculated on paired Avg3-eligible instances. The 95% intervals use
   20,000 paired bootstrap resamples of instances, and two-sided p values use
   100,000 Monte Carlo sign-flip permutations. A single sign is shared across an
   instance's granularities and metrics during a permutation.
 - Holm correction is applied separately in the all-instance and common-success
   scopes. Each family contains 12 tests: six models times MAP and MRR.
-- In the all-instance scope, both metrics have Holm-adjusted p<.05 for Qwen 4B,
-  Qwen 9B, Qwen 27B, GPT-5.4, and DeepSeek-v4-flash. Neither does for
-  DeepSeek-v4-pro.
+- In the all-instance scope, both metrics have Holm-adjusted p<.05 for the three
+  Qwen settings and DeepSeek-v4-flash. Only MAP does for GPT-5.4, and neither
+  does for DeepSeek-v4-pro.
 - In the DALIC-versus-Baseline common-success scope, both metrics have
-  Holm-adjusted p<.05 for all three Qwen settings and GPT-5.4. Only MRR does for
-  DeepSeek-v4-flash, and neither does for DeepSeek-v4-pro.
+  Holm-adjusted p<.05 for Qwen 4B and Qwen 9B. Only MAP does for Qwen 27B and
+  GPT-5.4, and neither does for either DeepSeek setting.
 
 Conclusions from the current archive
 
-- In the all-instance scope, DALIC has the highest Mean3 MAP and MRR in every
-  model setting. For Qwen models, this difference includes DALIC's higher valid
+- In the all-instance scope, DALIC has higher Avg3 MAP and MRR than Baseline in
+  every model setting. Original has slightly higher GPT-5.4 Avg3 MRR. For Qwen
+  models, the DALIC-versus-Baseline difference includes DALIC's higher valid
   completion rate and should not be interpreted as an isolated ranking effect.
-- On pairwise common-success instances, DALIC has higher Mean3 MAP and MRR than
+- On pairwise common-success instances, DALIC has higher Avg3 MAP and MRR than
   Baseline for all six model settings. The direction is not uniform at every
-  granularity: Qwen 27B has slightly lower DALIC file MAP, and DeepSeek-v4-pro
-  has lower DALIC class MAP and MRR.
-- Original versus Baseline has no consistent MAP direction. Original has slightly
-  higher Mean3 MRR in all five available comparisons. The completion reminder
+  granularity: GPT-5.4 has slightly lower DALIC file MRR, and DeepSeek-v4-pro
+  has lower DALIC class MAP with tied class MRR.
+- Original versus Baseline has no consistent direction. Original has higher Avg3
+  MRR in four of five comparisons but lower Avg3 MAP and MRR for Qwen 4B. The completion reminder
   therefore improves submission reliability but does not show a corresponding
   consistent improvement in final-output ranking on common successes.

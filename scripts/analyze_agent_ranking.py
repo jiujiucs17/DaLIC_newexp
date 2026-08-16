@@ -13,10 +13,11 @@ Two scopes are reported:
   evaluated on their respective intersections of valid outputs.
 
 Instances with empty ground truth at a granularity are excluded from that
-granularity's ranking metrics.  Average precision divides by the full number
-of ground-truth entities, so relevant entities omitted from the submitted list
-reduce AP.  Reciprocal rank is zero when a valid output contains no relevant
-entity.
+granularity's standalone ranking metrics.  Avg3 MAP/MRR is stricter: an
+instance contributes only when its file, class, and function ground truth are
+all nonempty.  Average precision divides by the full number of ground-truth
+entities, so relevant entities omitted from the submitted list reduce AP.
+Reciprocal rank is zero when a valid output contains no relevant entity.
 
 For DALIC versus Baseline, the script also reports paired-bootstrap confidence
 intervals and two-sided Monte Carlo sign-flip tests. Holm correction is
@@ -202,6 +203,16 @@ def average_precision_and_reciprocal_rank(
     return average_precision, reciprocal_rank
 
 
+def has_complete_ground_truth(
+    evaluation: evaluator.InstanceEvaluation,
+) -> bool:
+    """Return whether all three granularities have nonempty ground truth."""
+    return all(
+        evaluation.ground_truth["total"][granularity]
+        for granularity in GRANULARITIES
+    )
+
+
 def summarize_method(
     *,
     archive: Path,
@@ -214,6 +225,7 @@ def summarize_method(
     values = {
         granularity: {"ap": [], "rr": []} for granularity in GRANULARITIES
     }
+    mean3_values: dict[str, list[float]] = {"ap": [], "rr": []}
     for instance_id in instance_ids:
         evaluation = evaluations[instance_id]
         ranked = None
@@ -224,6 +236,7 @@ def summarize_method(
                 f"Failure included in common-success scope: {method}/{model}/{instance_id}"
             )
 
+        instance_values: dict[str, tuple[float, float]] = {}
         for granularity in GRANULARITIES:
             ground_truth = evaluation.ground_truth["total"][granularity]
             if not ground_truth:
@@ -237,8 +250,19 @@ def summarize_method(
                         ranked[granularity], ground_truth
                     )
                 )
+            instance_values[granularity] = (average_precision, reciprocal_rank)
             values[granularity]["ap"].append(average_precision)
             values[granularity]["rr"].append(reciprocal_rank)
+
+        if has_complete_ground_truth(evaluation):
+            mean3_values["ap"].append(
+                sum(instance_values[g][0] for g in GRANULARITIES)
+                / len(GRANULARITIES)
+            )
+            mean3_values["rr"].append(
+                sum(instance_values[g][1] for g in GRANULARITIES)
+                / len(GRANULARITIES)
+            )
 
     summary: dict[str, Any] = {}
     for granularity in GRANULARITIES:
@@ -250,10 +274,9 @@ def summarize_method(
             "mrr": sum(reciprocal_ranks) / len(reciprocal_ranks),
         }
     summary["mean3"] = {
-        "map": sum(summary[g]["map"] for g in GRANULARITIES)
-        / len(GRANULARITIES),
-        "mrr": sum(summary[g]["mrr"] for g in GRANULARITIES)
-        / len(GRANULARITIES),
+        "n": len(mean3_values["ap"]),
+        "map": sum(mean3_values["ap"]) / len(mean3_values["ap"]),
+        "mrr": sum(mean3_values["rr"]) / len(mean3_values["rr"]),
     }
     return summary
 
@@ -267,14 +290,18 @@ def rank_score_matrix(
     evaluations: dict[str, evaluator.InstanceEvaluation],
     failure_zero: bool,
 ) -> np.ndarray:
-    """Return instance x granularity x (AP, RR), with empty truth as NaN."""
-    scores = np.full(
+    """Return complete-GT instance x granularity x (AP, RR) scores."""
+    scores = np.empty(
         (len(instance_ids), len(GRANULARITIES), len(RANKING_METRICS)),
-        np.nan,
         dtype=float,
     )
     for instance_index, instance_id in enumerate(instance_ids):
         evaluation = evaluations[instance_id]
+        if not has_complete_ground_truth(evaluation):
+            raise ValueError(
+                f"Avg3 ranking requires nonempty ground truth at all three "
+                f"granularities: {instance_id}"
+            )
         ranked = None
         if not evaluation.is_failure:
             ranked = load_ranked_predictions(archive, method, model, instance_id)
@@ -285,8 +312,6 @@ def rank_score_matrix(
 
         for granularity_index, granularity in enumerate(GRANULARITIES):
             ground_truth = evaluation.ground_truth["total"][granularity]
-            if not ground_truth:
-                continue
             if evaluation.is_failure:
                 scores[instance_index, granularity_index] = (0.0, 0.0)
             else:
@@ -300,14 +325,10 @@ def rank_score_matrix(
 
 
 def cross_granularity_statistic(values: np.ndarray) -> np.ndarray:
-    """Macro-average instances per granularity, then average granularities."""
-    finite = np.isfinite(values)
-    counts = finite.sum(axis=-3)
-    totals = np.nansum(values, axis=-3)
-    if np.any(counts == 0):
-        raise RuntimeError("A resample contains no defined score for a granularity")
-    granularity_means = totals / counts
-    return granularity_means.mean(axis=-2)
+    """Average complete-GT instances and the three granularities equally."""
+    if not np.all(np.isfinite(values)):
+        raise RuntimeError("Avg3 ranking received an undefined score")
+    return values.mean(axis=(-3, -2))
 
 
 def paired_ranking_inference(
@@ -317,7 +338,7 @@ def paired_ranking_inference(
     bootstrap_draws: int,
     permutation_draws: int,
 ) -> dict[str, Any]:
-    """Infer on DALIC-minus-Baseline cross-granularity MAP and MRR."""
+    """Infer on DALIC-minus-Baseline complete-case Avg3 MAP and MRR."""
     if delta.ndim != 3 or delta.shape[1:] != (
         len(GRANULARITIES),
         len(RANKING_METRICS),
@@ -388,17 +409,35 @@ def build_statistics(args: argparse.Namespace) -> dict[str, Any]:
         baseline_workbench,
         dalic_workbench,
     )
+    reference_evaluations = next(
+        model_evaluations
+        for method_evaluations in evaluations.values()
+        for model_evaluations in method_evaluations.values()
+    )
+    mean3_eligible_instances = sum(
+        has_complete_ground_truth(reference_evaluations[instance_id])
+        for instance_id in instance_ids
+    )
 
     payload: dict[str, Any] = {
         "method": {
             "manifest": str(manifest_path),
             "instances": len(instance_ids),
-            "empty_ground_truth": "excluded separately at each granularity",
+            "mean3_eligible_instances": mean3_eligible_instances,
+            "empty_ground_truth": (
+                "excluded separately from standalone granularity metrics"
+            ),
+            "mean3_eligibility": (
+                "only instances with nonempty file, class, and function ground truth"
+            ),
             "all_instances": "invalid, missing, or failed output scores zero",
             "common_success": "separate pairwise intersections for Original vs Baseline and DALIC vs Baseline",
             "average_precision_denominator": "full ground-truth size",
             "no_relevant_prediction": "AP=0 and RR=0",
-            "mean3": "unweighted mean of file, class, and function macro values",
+            "mean3": (
+                "macro mean of each eligible instance's unweighted file, class, "
+                "and function AP or reciprocal-rank scores"
+            ),
             "ranking_inference": "DALIC minus Baseline paired by instance",
             "bootstrap": (
                 f"{args.bootstrap_draws} paired instance resamples; percentile 95% CI"
@@ -426,6 +465,12 @@ def build_statistics(args: argparse.Namespace) -> dict[str, Any]:
             continue
         model_output: dict[str, Any] = {
             "available_methods": available,
+            "mean3_eligible_instances": sum(
+                has_complete_ground_truth(
+                    evaluations[available[0]][model][instance_id]
+                )
+                for instance_id in instance_ids
+            ),
             "valid_outputs": {
                 method: sum(
                     not evaluations[method][model][instance_id].is_failure
@@ -459,6 +504,12 @@ def build_statistics(args: argparse.Namespace) -> dict[str, Any]:
             comparison = {
                 "methods": [first_method, second_method],
                 "common_success_instances": len(common_ids),
+                "mean3_instances": sum(
+                    has_complete_ground_truth(
+                        evaluations[first_method][model][instance_id]
+                    )
+                    for instance_id in common_ids
+                ),
                 "nonempty_ground_truth": {
                     granularity: sum(
                         bool(
@@ -491,10 +542,16 @@ def build_statistics(args: argparse.Namespace) -> dict[str, Any]:
                 for instance_id in instance_ids
                 if not baseline_evaluations[instance_id].is_failure
                 and not dalic_evaluations[instance_id].is_failure
+                and has_complete_ground_truth(baseline_evaluations[instance_id])
+            ]
+            mean3_ids = [
+                instance_id
+                for instance_id in instance_ids
+                if has_complete_ground_truth(baseline_evaluations[instance_id])
             ]
             for scope_index, (scope, ids, failure_zero) in enumerate(
                 (
-                    ("all_instances", instance_ids, True),
+                    ("all_instances", mean3_ids, True),
                     ("common_success", common_ids, False),
                 )
             ):
@@ -562,11 +619,11 @@ def render_markdown(payload: dict[str, Any]) -> str:
     lines = [
         "# Agent final-output MAP/MRR",
         "",
-        "Each metric cell is `MAP / MRR`. Instances with empty ground truth at a granularity are excluded.",
+        "Each metric cell is `MAP / MRR`. Standalone granularity metrics exclude empty ground truth at that granularity. Avg3 includes only instances with nonempty file, class, and function ground truth.",
         "",
-        "## All instances; invalid or failed outputs score zero",
+        f"## All instances; Avg3 N={payload['method']['mean3_eligible_instances']}; invalid or failed outputs score zero",
         "",
-        "| Model | Setup (valid/total) | File | Class | Function | Mean3 |",
+        "| Model | Setup (valid/total) | File | Class | Function | Avg3 |",
         "|---|---|---:|---:|---:|---:|",
     ]
     total = payload["method"]["instances"]
@@ -596,8 +653,8 @@ def render_markdown(payload: dict[str, Any]) -> str:
             (
                 f"### {title}",
                 "",
-                "| Model | Setup | Common N (F/C/Fn) | File | Class | Function | Mean3 |",
-                "|---|---|---:|---:|---:|---:|---:|",
+                "| Model | Setup | Common N | Avg3 N | Nonempty N (F/C/Fn) | File | Class | Function | Avg3 |",
+                "|---|---|---:|---:|---:|---:|---:|---:|---:|",
             )
         )
         for model, model_output in payload["models"].items():
@@ -605,9 +662,8 @@ def render_markdown(payload: dict[str, Any]) -> str:
             if comparison is None:
                 continue
             nonempty = comparison["nonempty_ground_truth"]
-            denominator = (
-                f"{comparison['common_success_instances']} "
-                f"({nonempty['files']}/{nonempty['classes']}/{nonempty['functions']})"
+            nonempty_denominator = (
+                f"{nonempty['files']}/{nonempty['classes']}/{nonempty['functions']}"
             )
             for method in comparison["methods"]:
                 result = comparison["results"][method]
@@ -617,7 +673,9 @@ def render_markdown(payload: dict[str, Any]) -> str:
                         (
                             model,
                             DISPLAY_NAMES[method],
-                            denominator,
+                            str(comparison["common_success_instances"]),
+                            str(comparison["mean3_instances"]),
+                            nonempty_denominator,
                             format_metric(result["files"]),
                             format_metric(result["classes"]),
                             format_metric(result["functions"]),
