@@ -134,7 +134,12 @@ def paired_values(
     dalic: dict[str, evaluator.InstanceEvaluation],
     ids: list[str],
     failure_zero: bool,
-) -> tuple[dict[str, dict[str, float]], np.ndarray, dict[str, dict]]:
+) -> tuple[
+    dict[str, dict[str, float]],
+    np.ndarray,
+    dict[str, dict],
+    dict[str, np.ndarray],
+]:
     per_metric = {
         metric: {"baseline": [], "dalic": []}
         for metric in ("precision", "recall", "f1")
@@ -167,13 +172,20 @@ def paired_values(
         metric_means[metric] = summary
         metric_deltas[metric] = delta_array.mean(axis=1)
     decomposition = {metric: metric_means[metric] for metric in ("precision", "recall")}
-    return metric_means["f1"], metric_deltas["f1"], decomposition
+    decomposition_deltas = {
+        metric: metric_deltas[metric] for metric in ("precision", "recall")
+    }
+    return metric_means["f1"], metric_deltas["f1"], decomposition, decomposition_deltas
 
 
 def paired_model_statistics(evaluations: dict, instance_ids: list[str], draws: int) -> dict:
     output: dict[str, dict] = {}
     raw_p_all: dict[str, float] = {}
     raw_p_common: dict[str, float] = {}
+    raw_decomposition_p: dict[str, dict[str, float]] = {
+        "all_instances": {},
+        "common_success": {},
+    }
     for model_index, model in enumerate(MODELS):
         baseline = evaluations["baseline"][model]
         dalic = evaluations["dalic"][model]
@@ -184,13 +196,25 @@ def paired_model_statistics(evaluations: dict, instance_ids: list[str], draws: i
             if not baseline[instance_id].is_failure and not dalic[instance_id].is_failure
         ]
         model_output: dict[str, object] = {}
-        for scope, ids, failure_zero in (
+        for scope_index, (scope, ids, failure_zero) in enumerate((
             ("all_instances", instance_ids, True),
             ("common_success", common_ids, False),
-        ):
-            means, delta, decomposition = paired_values(baseline, dalic, ids, failure_zero)
+        )):
+            means, delta, decomposition, decomposition_deltas = paired_values(
+                baseline, dalic, ids, failure_zero
+            )
             ci = bootstrap_mean_ci(delta, rng, draws)
             p_value = sign_flip_p(delta, rng, 100_000)
+            decomposition_inference: dict[str, dict[str, float]] = {}
+            for metric_index, metric in enumerate(("precision", "recall")):
+                decomposition_rng = np.random.default_rng(
+                    1_042 + 100 * model_index + 10 * scope_index + metric_index
+                )
+                decomposition_p = sign_flip_p(
+                    decomposition_deltas[metric], decomposition_rng, 100_000
+                )
+                decomposition_inference[metric] = {"sign_flip_p": decomposition_p}
+                raw_decomposition_p[scope][f"{model}:{metric}"] = decomposition_p
             wins = int(np.count_nonzero(delta > 1e-12))
             losses = int(np.count_nonzero(delta < -1e-12))
             ties = len(delta) - wins - losses
@@ -198,6 +222,7 @@ def paired_model_statistics(evaluations: dict, instance_ids: list[str], draws: i
                 "n": len(ids),
                 "macro": means,
                 "macro_precision_recall": decomposition,
+                "precision_recall_inference": decomposition_inference,
                 "avg3_delta_ci_95": ci,
                 "sign_flip_p": p_value,
                 "wins_ties_losses": [wins, ties, losses],
@@ -228,6 +253,13 @@ def paired_model_statistics(evaluations: dict, instance_ids: list[str], draws: i
     for model in MODELS:
         output[model]["all_instances"]["holm_p_six_models"] = adjusted_all[model]
         output[model]["common_success"]["holm_p_six_models"] = adjusted_common[model]
+    for scope, raw_p_values in raw_decomposition_p.items():
+        adjusted = holm_adjust(raw_p_values)
+        for key, adjusted_p in adjusted.items():
+            model, metric = key.rsplit(":", 1)
+            output[model][scope]["precision_recall_inference"][metric][
+                "holm_p_12_tests"
+            ] = adjusted_p
     return output
 
 
@@ -457,6 +489,9 @@ def main() -> None:
             "bootstrap_seed_family": "42 + model index",
             "bootstrap_draws": args.bootstrap_draws,
             "permutation_draws": 100_000,
+            "precision_recall_permutation_seed_family": (
+                "1042 + 100 * model index + 10 * scope index + metric index"
+            ),
         },
         "paired_model_statistics": paired_model_statistics(evaluations, instance_ids, args.bootstrap_draws),
         "robustness": project_and_feature_statistics(rows, evaluations, instance_ids, args.bootstrap_draws),
