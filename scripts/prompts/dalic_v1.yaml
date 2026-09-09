@@ -236,4 +236,4 @@ model:
   context_length: 32768
   model_kwargs:
     drop_params: true
-    reasoning_effort: medium
+    reasoning_effort: none

@@ -16,3 +16,22 @@
 - Avoid the em dash character in papers, documentation, and articles.
 - Avoid compound modifiers with multiple hyphenated components. Rewrite them as plain phrases when possible.
 - Keep responses and manuscript edits focused on the requested scope.
+
+## ARS
+当前 ARS-Codex 已安装在：
+```
+~/.codex/plugins/cache/ars-codex/ars-codex/0.1.28/skills/academic-research-suite/
+```
+
+入口文件是：
+```
+~/.codex/plugins/cache/ars-codex/ars-codex/0.1.28/skills/academic-research-suite/SKILL.md
+```
+
+请重新读取该 SKILL.md，并从现在开始以这个路径作为 academic-research-suite 的当前有效安装位置。不要继续沿用之前“本地说明文件不存在”的判断。
+
+如果需要使用 ARS，请先读取上述 SKILL.md，再按其中的 workflow router 加载对应的 WORKFLOW.md。
+
+
+## Python venv
+如需使用python，请使用“python_venv/dalic-nexp”中专为本实验仓库准备的python venv。如果它缺少依赖，可以为它安装所需依赖。
