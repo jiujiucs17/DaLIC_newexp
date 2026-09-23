@@ -137,6 +137,10 @@ def four(a):
 
 def point(condition, ids, truth):
     m = matrices(condition, ids, truth)
+    complete_ground_truth_mask = np.asarray([
+        all(truth[i][g] for g in G) for i in ids
+    ], dtype=bool)
+    complete_ground_truth_avg3_f1 = m["f1"][complete_ground_truth_mask].mean(axis=1)
     metrics = {
         metric: dict(zip(FEATURES, map(float, four(m[metric]).mean(axis=0))))
         for metric in ("precision", "recall", "f1")
@@ -156,6 +160,10 @@ def point(condition, ids, truth):
         "membership_n": len(ids),
         "ranking_n": m["ranking_n"],
         "ranking_n_by_granularity": ranking_ns,
+        "complete_ground_truth": {
+            "n": int(complete_ground_truth_mask.sum()),
+            "avg3_f1": float(complete_ground_truth_avg3_f1.mean()),
+        },
         "metrics": metrics,
     }
 
@@ -206,11 +214,25 @@ def ranking_effect(later, earlier, ids, truth, key):
 def compare(later, earlier, ids, truth, key):
     a, b = matrices(later, ids, truth), matrices(earlier, ids, truth)
     ranking_ns = {g: sum(bool(truth[i][g]) for i in ids) for g in G}
+    complete_ground_truth_mask = np.asarray([
+        all(truth[i][g] for g in G) for i in ids
+    ], dtype=bool)
+    complete_ground_truth_delta = (
+        a["f1"][complete_ground_truth_mask]
+        - b["f1"][complete_ground_truth_mask]
+    ).mean(axis=1)
+    complete_ground_truth_effect = boot(
+        complete_ground_truth_delta, key + ":f1:complete_ground_truth"
+    )
     return {
         "membership_n": len(ids),
         "ranking_n": a["ranking_n"],
         "ranking_n_by_granularity": ranking_ns,
         "f1": boot(four(a["f1"] - b["f1"]), key + ":f1"),
+        "complete_ground_truth_f1": {
+            **complete_ground_truth_effect["files"],
+            "seed": complete_ground_truth_effect["seed"],
+        },
         "map": ranking_effect(later, earlier, ids, truth, key),
     }
 
@@ -341,6 +363,7 @@ def build():
             "completion":{"baseline_valid":int(bv.sum()),"dalic_valid":int(dv.sum()),
                           "both_valid":both,"b":bo,"c":do,"both_invalid":neither,
                           "effect":comp["files"],"seed":comp["seed"],"raw_p":cp},
+            "baseline_all":point(b,ids,truth),"dalic_all":point(d,ids,truth),
             "all":alle,"common":ce,
             "f1_test":{"n":len(ids),"observed":float((dm-bm).mean()),"raw_p":fp,"seed":fseed},
             "map_test":{"n":len(rid),"observed":float((dr-br).mean()),"raw_p":mp,"seed":mseed},
@@ -360,6 +383,9 @@ def pv(x): return f"{x:.5f}"
 def eff(x, feature="avg3"):
     y=x[feature]; return f"{pp(y['estimate'])} [{pp(y['ci_95'][0])}, {pp(y['ci_95'][1])}]"
 def pt(x, metric): return pct(x["metrics"][metric]["avg3"])
+def complete_f1(x): return pct(x["complete_ground_truth"]["avg3_f1"])
+def complete_eff(x):
+    return f"{pp(x['estimate'])} [{pp(x['ci_95'][0])}, {pp(x['ci_95'][1])}]"
 
 
 def render(data):
@@ -491,8 +517,53 @@ def render(data):
         if o is None: continue
         c=o["completion"]["files"]
         L.append(f"| {NAMES[model]} | {pp(c['estimate'])} [{pp(c['ci_95'][0])}, {pp(c['ci_95'][1])}] | {eff(o['effect']['f1'])} | {eff(o['effect']['map'])} |")
+    L += ["","### 8.5 Avg3 F1 on the complete-ground-truth cohort","",
+          "This sensitivity view restricts Avg3 F1 to the same fixed 170 instances used for Avg3 MAP: each instance has nonempty file, class, and function ground truth. Avg3 F1 is the unweighted mean of the three instance-level F1 values, followed by a macro average over the 170 instances. Invalid agent outputs score zero. The cohort is defined by ground truth and is therefore identical across methods and model configurations.","",
+          "Fixed-cutoff retrieval:","",
+          "| k | Static VSM | Static LSI | Static BM25 | Trace BM25 | Trace minus Static BM25 [95% CI] |",
+          "|---:|---:|---:|---:|---:|---:|"]
+    for k in KS:
+        rq1=data["rq1_static_trace"][str(k)]
+        vsm=data["rq2_static_dalic"][MODELS[0]]["fixed"]["static_vsm"][str(k)]["static"]
+        lsi=data["rq2_static_dalic"][MODELS[0]]["fixed"]["static_lsi"][str(k)]["static"]
+        L.append(
+            f"| {k} | {complete_f1(vsm)} | {complete_f1(lsi)} | "
+            f"{complete_f1(rq1['static'])} | {complete_f1(rq1['trace'])} | "
+            f"{complete_eff(rq1['effect']['complete_ground_truth_f1'])} |"
+        )
+    L += ["","Complete DALIC and RQ1 Trace BM25 comparisons:","",
+          "| Model | DALIC | Trace k=3 / DALIC difference [95% CI] | Matched Trace / DALIC difference [95% CI] |",
+          "|---|---:|---:|---:|"]
+    for model in MODELS:
+        r=data["rq1_trace_dalic"][model]
+        L.append(
+            f"| {NAMES[model]} | {complete_f1(r['dalic_all'])} | "
+            f"{complete_f1(r['trace_fixed_k3_all'])} / {complete_eff(r['fixed_k3_all_effect']['complete_ground_truth_f1'])} | "
+            f"{complete_f1(r['trace_matched'])} / {complete_eff(r['matched_effect']['complete_ground_truth_f1'])} |"
+        )
+    L += ["","RQ2 matched-length comparisons:","",
+          "| Model | DALIC | Static VSM / DALIC difference [95% CI] | Static LSI / DALIC difference [95% CI] | Static BM25 / DALIC difference [95% CI] |",
+          "|---|---:|---:|---:|---:|"]
+    for model in MODELS:
+        r=data["rq2_static_dalic"][model]
+        cells=[]
+        for method in STATIC:
+            x=r["matched"][method]
+            cells.append(
+                f"{complete_f1(x['static'])} / {complete_eff(x['effect']['complete_ground_truth_f1'])}"
+            )
+        L.append(f"| {NAMES[model]} | {complete_f1(r['dalic'])} | " + " | ".join(cells) + " |")
+    L += ["","RQ3 All Instances comparison on the fixed 170-instance cohort:","",
+          "| Model | Baseline | DALIC | DALIC minus Baseline [95% CI] |",
+          "|---|---:|---:|---:|"]
+    for model in MODELS:
+        r=data["rq3_baseline_dalic"][model]
+        L.append(
+            f"| {NAMES[model]} | {complete_f1(r['baseline_all'])} | "
+            f"{complete_f1(r['dalic_all'])} | {complete_eff(r['all']['complete_ground_truth_f1'])} |"
+        )
     z=data["metadata"]
-    L += ["","### 8.5 Reproducibility metadata","",
+    L += ["","### 8.6 Reproducibility metadata","",
           f"- Cohort: {z['cohort']}, {z['instances']} instances; all other archive entries are ignored.",
           f"- Avg3 ranking cohort: {z['ranking_instances']} instances.",
           "- Granularity ranking cohorts: "+", ".join(
@@ -507,8 +578,8 @@ def render(data):
           f"- DALIC prompt: {z['prompt']}; verified by {z['prompt_check']}.",
           f"- Generator: {z['script']}.",f"- Machine-readable output: {z['json']}.",
           f"- Manifest SHA-256: {z['manifest_sha256']}.",f"- Ground-truth SHA-256: {z['truth_sha256']}.","",
-          "### 8.6 Interpretation and validation boundary","",
-          "RQ1 and RQ2 intervals are estimation results, not formal hypothesis tests. RQ3 rejection decisions apply only to the three prespecified seven-test Holm families. Granularity-specific, Pairwise Common Success, and Original versus Baseline results remain descriptive.","",
+          "### 8.7 Interpretation and validation boundary","",
+          "RQ1 and RQ2 intervals are estimation results, not formal hypothesis tests. RQ3 rejection decisions apply only to the three prespecified seven-test Holm families. The complete-ground-truth Avg3 F1 sensitivity results, granularity-specific results, Pairwise Common Success results, and Original versus Baseline results remain descriptive.","",
           "Statistical fallacy scan: 11/11 categories checked. The primary All Instances scope avoids survivorship conditioning; Common Success is explicitly secondary. The separate prespecified Holm families address the relevant look-elsewhere risk. The remaining Simpson, ecological, Berkson, collider, base-rate, regression-to-the-mean, garden-of-forking-paths, causal-language, and reverse-causality patterns are not implicated by these paired benchmark contrasts.","",END]
     return "\n".join(L)+"\n"
 

@@ -26,7 +26,7 @@ from tqdm import tqdm
 
 
 DEFAULT_MODEL_NAME = "DeepSeek-v4-pro"
-DEFAULT_WORKBENCH_PATH = Path("dataset/agent_workbench/dalic")
+DEFAULT_WORKBENCH_PATH = Path("dataset/agent_workbench/dalic_vsm")
 CONTAINER_RESULTS_DIR = "/home/miniagent/.config/mini-swe-agent"
 ARTIFACT_NAMES = ("results.txt", "last_mini_run.traj.json")
 RESULTS_FIELDS = ("files", "classes", "functions")
@@ -54,7 +54,7 @@ def sanitize_model_name(model_name: str) -> str:
 
 
 def prepare_results_root(repo_root: Path, model_name: str) -> Path:
-    results_root = repo_root / "dataset" / "agent_results" / "dalic" / model_name
+    results_root = repo_root / "dataset" / "agent_results" / "dalic_vsm" / model_name
     if results_root.exists():
         shutil.rmtree(results_root)
     results_root.mkdir(parents=True, exist_ok=True)

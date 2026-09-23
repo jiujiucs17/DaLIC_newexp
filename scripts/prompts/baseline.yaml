@@ -160,4 +160,9 @@ model:
   context_length: 32768
   model_kwargs:
     drop_params: true
-    reasoning_effort: none
+    reasoning_effort: high
+    extra_body:
+      provider:
+        only: [baseten]
+        order: [baseten]
+        allow_fallbacks: false
