@@ -233,12 +233,5 @@ model:
     If you want to end the task, please issue the following command: `echo COMPLETE_TASK_AND_SUBMIT_FINAL_OUTPUT`
     without any other command.
     {%- endif %}
-  context_length: 32768
   model_kwargs:
     drop_params: true
-    reasoning_effort: high
-    extra_body:
-      provider:
-        only: [baseten]
-        order: [baseten]
-        allow_fallbacks: false

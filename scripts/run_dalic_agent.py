@@ -8,6 +8,8 @@
 #       default: None (do not filter instances; otherwise read instance_ids from TOML)
 #   --workbench_path PATH
 #       default: dataset/agent_workbench/dalic
+#   --resume
+#       default: False (preserve existing results and skip processed instances)
 
 from __future__ import annotations
 
@@ -46,6 +48,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--test", action="store_true")
     parser.add_argument("--selected_instances", type=Path, default=None)
     parser.add_argument("--workbench_path", type=Path, default=DEFAULT_WORKBENCH_PATH)
+    parser.add_argument("--resume", action="store_true")
+    parser.add_argument("--env_file", type=Path, default=Path("docker/mini-swe-agent-dalic.env"))
+    parser.add_argument("--config_yaml", type=str, default="dalic_v1.yaml")
     return parser.parse_args()
 
 
@@ -53,9 +58,9 @@ def sanitize_model_name(model_name: str) -> str:
     return model_name.replace("/", "_")
 
 
-def prepare_results_root(repo_root: Path, model_name: str) -> Path:
+def prepare_results_root(repo_root: Path, model_name: str, resume: bool) -> Path:
     results_root = repo_root / "dataset" / "agent_results" / "dalic_vsm" / model_name
-    if results_root.exists():
+    if results_root.exists() and not resume:
         shutil.rmtree(results_root)
     results_root.mkdir(parents=True, exist_ok=True)
     return results_root
@@ -267,14 +272,18 @@ def run_docker_instance(
     container_name: str,
     instance_result_dir: Path,
     logger: logging.Logger,
+    env_file: Path,
+    config_yaml: str,
 ) -> bool:
+    env_path = resolve_cli_path(repo_root, env_file)
+    config_name = Path(config_yaml).name
     command = [
         "docker",
         "run",
         "--name",
         container_name,
         "--env-file",
-        str(repo_root / "docker" / "mini-swe-agent-dalic.env"),
+        str(env_path),
         "-v",
         f"{workbench_dir / instance_id}:/workspace/instance:ro",
         "-v",
@@ -290,7 +299,8 @@ def run_docker_instance(
         "mini-swe-agent:2caffc56",
         "python",
         "/opt/dalic/run_mini_instance.py",
-        "--agent_version", "dalic"
+        "--config_yaml",
+        config_name,
     ]
     log_path = instance_result_dir / "docker_run.log"
 
@@ -412,6 +422,47 @@ def write_summary(
     (results_root / "summary.txt").write_text("\n".join(summary_lines) + "\n", encoding="utf-8")
 
 
+def load_resume_state(
+    results_root: Path,
+    instance_ids: list[str],
+    workbench_dir: Path,
+) -> tuple[set[str], int, list[str], dict[str, str]]:
+    summary_path = results_root / "summary.txt"
+    failed_instances: list[str] = []
+    failure_reasons: dict[str, str] = {}
+    selected_instance_ids = set(instance_ids)
+
+    if summary_path.exists():
+        section = ""
+        for line in summary_path.read_text(encoding="utf-8").splitlines():
+            if line == "failed_instances:":
+                section = "failed_instances"
+            elif line == "failure_reasons:":
+                section = "failure_reasons"
+            elif section == "failed_instances" and line != "None":
+                if line in selected_instance_ids:
+                    failed_instances.append(line)
+            elif section == "failure_reasons" and line != "None" and ": " in line:
+                instance_id, reason = line.split(": ", 1)
+                if instance_id in selected_instance_ids:
+                    failure_reasons[instance_id] = reason
+
+    processed_instances = set(failed_instances)
+    success_count = 0
+    for instance_id in instance_ids:
+        if instance_id in processed_instances:
+            continue
+        instance_result_dir = results_root / instance_id
+        if not all((instance_result_dir / name).is_file() for name in ARTIFACT_NAMES):
+            continue
+        repository_root = find_instance_repository_root(workbench_dir, instance_id)
+        if validate_results_file(instance_result_dir / "results.txt", repository_root) is None:
+            processed_instances.add(instance_id)
+            success_count += 1
+
+    return processed_instances, success_count, failed_instances, failure_reasons
+
+
 def main() -> None:
     args = parse_args()
     repo_root = get_repo_root().resolve()
@@ -422,7 +473,7 @@ def main() -> None:
         else None
     )
     model_name = sanitize_model_name(args.model_name)
-    results_root = prepare_results_root(repo_root, model_name)
+    results_root = prepare_results_root(repo_root, model_name, args.resume)
     logger = configure_logger(results_root / "dalic.log")
 
     instance_ids, test_seed = list_instance_ids(
@@ -437,20 +488,40 @@ def main() -> None:
     logger.info("Workbench path: %s", workbench_dir)
     logger.info("Selected instances path: %s", selected_instances_path)
     logger.info("Model name: %s", model_name)
+    logger.info("Env file: %s", args.env_file)
+    logger.info("Config YAML: %s", args.config_yaml)
     logger.info("Test mode: %s", args.test)
     if test_seed is not None:
         logger.info("Test mode random seed: %s", test_seed)
         logger.info("Test mode selected instances: %s", instance_ids)
     logger.info("Selected %s instances from %s", len(instance_ids), workbench_dir)
 
-    failed_instances: list[str] = []
-    failure_reasons: dict[str, str] = {}
-    success_count = 0
+    if args.resume:
+        processed_instances, success_count, failed_instances, failure_reasons = load_resume_state(
+            results_root,
+            instance_ids,
+            workbench_dir,
+        )
+        logger.info(
+            "Resume mode: skipping %s processed instances (%s successful, %s failed).",
+            len(processed_instances),
+            success_count,
+            len(failed_instances),
+        )
+    else:
+        processed_instances = set()
+        failed_instances = []
+        failure_reasons = {}
+        success_count = 0
     write_summary(results_root, success_count, failed_instances, failure_reasons)
 
     try:
         progress = tqdm(instance_ids, desc="dalic", unit="instance")
         for instance_id in progress:
+            if instance_id in processed_instances:
+                progress.set_postfix_str(f"{instance_id}: skipped (resume)", refresh=True)
+                continue
+
             container_name = f"mini-fl-{instance_id}_dalic_{model_name}"
             instance_result_dir = results_root / instance_id
             instance_result_dir.mkdir(parents=True, exist_ok=True)
@@ -470,6 +541,8 @@ def main() -> None:
                     container_name,
                     instance_result_dir,
                     logger,
+                    args.env_file,
+                    args.config_yaml,
                 ):
                     instance_success = False
                     instance_fail_reasons.append("docker run failed")

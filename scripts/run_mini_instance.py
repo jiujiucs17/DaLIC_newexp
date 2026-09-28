@@ -12,9 +12,15 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--agent_version",
-        choices=("baseline", "dalic", "original"),
+        choices=("baseline", "dalic", "original", "dalic-no-runtime"),
         default="baseline",
         help="Select the mini-swe-agent prompt configuration.",
+    )
+    parser.add_argument(
+        "--config_yaml",
+        type=str,
+        default=None,
+        help="Path or filename of the prompt YAML configuration.",
     )
     return parser.parse_args()
 
@@ -32,10 +38,20 @@ args = parse_args()
 
 # read the text from prompts/task.txt
 task = Path("/opt/dalic/prompts/task.txt").read_text()
-if args.agent_version == "original":
+if args.config_yaml:
+    candidate = Path(args.config_yaml)
+    if candidate.is_file():
+        config = str(candidate)
+    elif (Path("/opt/dalic/prompts") / args.config_yaml).is_file():
+        config = str(Path("/opt/dalic/prompts") / args.config_yaml)
+    else:
+        raise FileNotFoundError(f"Config YAML not found: {args.config_yaml}")
+elif args.agent_version == "original":
     config = "mini.yaml"
 elif args.agent_version == "dalic":
     config = "/opt/dalic/prompts/dalic_v1.yaml"
+elif args.agent_version == "dalic-no-runtime":
+    config = "/opt/dalic/prompts/dalic_no_runtime.yaml"
 else:
     config = "/opt/dalic/prompts/baseline.yaml"
 

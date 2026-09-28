@@ -11,7 +11,7 @@ agent:
     - `repo/<repo_name>` is the only repository checkout root.
 
     You may use bash commands and short helper scripts to inspect evidence and source code, but do not modify repository source files.
-
+    
     ## Recommended Workflow
 
     This workflow should be done step-by-step so that you can control context length and step usage.
@@ -169,12 +169,5 @@ model:
     If you want to end the task, please issue the following command: `echo COMPLETE_TASK_AND_SUBMIT_FINAL_OUTPUT`
     without any other command.
     {%- endif %}
-  context_length: 32768
   model_kwargs:
     drop_params: true
-    reasoning_effort: none
-    extra_body:
-      provider:
-        only: [baseten]
-        order: [baseten]
-        allow_fallbacks: false
