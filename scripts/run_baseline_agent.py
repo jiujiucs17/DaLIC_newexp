@@ -29,7 +29,7 @@ DEFAULT_MODEL_NAME = "DeepSeek-v4-pro"
 
 DEFAULT_WORKBENCH_PATH = Path("dataset/agent_workbench/baseline")
 CONTAINER_RESULTS_DIR = "/home/miniagent/.config/mini-swe-agent"
-SELECTED_INSTANCES_TOML = "dataset/trace_completed_instance.toml"
+SELECTED_INSTANCES_TOML = "dataset/trace_completed_instance_validated.toml"
 ARTIFACT_NAMES = ("results.txt", "last_mini_run.traj.json")
 RESULTS_FIELDS = ("files", "classes", "functions")
 TEST_INSTANCE_COUNT = 2
@@ -48,6 +48,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--test", action="store_true")
     parser.add_argument("--selected_instances", type=Path, default=SELECTED_INSTANCES_TOML)
     parser.add_argument("--workbench_path", type=Path, default=DEFAULT_WORKBENCH_PATH)
+    parser.add_argument("--resume", action="store_true")
     return parser.parse_args()
 
 
@@ -55,9 +56,9 @@ def sanitize_model_name(model_name: str) -> str:
     return model_name.replace("/", "_")
 
 
-def prepare_results_root(repo_root: Path, model_name: str) -> Path:
+def prepare_results_root(repo_root: Path, model_name: str, resume: bool = False) -> Path:
     results_root = repo_root / "dataset" / "agent_results" / "baseline" / model_name
-    if results_root.exists():
+    if results_root.exists() and not resume:
         shutil.rmtree(results_root)
     results_root.mkdir(parents=True, exist_ok=True)
     return results_root
@@ -414,6 +415,47 @@ def write_summary(
     (results_root / "summary.txt").write_text("\n".join(summary_lines) + "\n", encoding="utf-8")
 
 
+def load_resume_state(
+    results_root: Path,
+    instance_ids: list[str],
+    workbench_dir: Path,
+) -> tuple[set[str], int, list[str], dict[str, str]]:
+    summary_path = results_root / "summary.txt"
+    failed_instances: list[str] = []
+    failure_reasons: dict[str, str] = {}
+    selected_instance_ids = set(instance_ids)
+
+    if summary_path.exists():
+        section = ""
+        for line in summary_path.read_text(encoding="utf-8").splitlines():
+            if line == "failed_instances:":
+                section = "failed_instances"
+            elif line == "failure_reasons:":
+                section = "failure_reasons"
+            elif section == "failed_instances" and line != "None":
+                if line in selected_instance_ids:
+                    failed_instances.append(line)
+            elif section == "failure_reasons" and line != "None" and ": " in line:
+                instance_id, reason = line.split(": ", 1)
+                if instance_id in selected_instance_ids:
+                    failure_reasons[instance_id] = reason
+
+    processed_instances = set(failed_instances)
+    success_count = 0
+    for instance_id in instance_ids:
+        if instance_id in processed_instances:
+            continue
+        instance_result_dir = results_root / instance_id
+        if not all((instance_result_dir / name).is_file() for name in ARTIFACT_NAMES):
+            continue
+        repository_root = find_instance_repository_root(workbench_dir, instance_id)
+        if validate_results_file(instance_result_dir / "results.txt", repository_root) is None:
+            processed_instances.add(instance_id)
+            success_count += 1
+
+    return processed_instances, success_count, failed_instances, failure_reasons
+
+
 def main() -> None:
     args = parse_args()
     repo_root = get_repo_root().resolve()
@@ -424,7 +466,7 @@ def main() -> None:
         else None
     )
     model_name = sanitize_model_name(args.model_name)
-    results_root = prepare_results_root(repo_root, model_name)
+    results_root = prepare_results_root(repo_root, model_name, args.resume)
     logger = configure_logger(results_root / "baseline.log")
 
     instance_ids, test_seed = list_instance_ids(
@@ -445,15 +487,33 @@ def main() -> None:
         logger.info("Test mode selected instances: %s", instance_ids)
     logger.info("Selected %s instances from %s", len(instance_ids), workbench_dir)
 
-    failed_instances: list[str] = []
-    failure_reasons: dict[str, str] = {}
-    success_count = 0
+    if args.resume:
+        processed_instances, success_count, failed_instances, failure_reasons = load_resume_state(
+            results_root,
+            instance_ids,
+            workbench_dir,
+        )
+        logger.info(
+            "Resume mode: skipping %s processed instances (%s successful, %s failed).",
+            len(processed_instances),
+            success_count,
+            len(failed_instances),
+        )
+    else:
+        processed_instances = set()
+        failed_instances = []
+        failure_reasons = {}
+        success_count = 0
     write_summary(results_root, success_count, failed_instances, failure_reasons)
 
     try:
         progress = tqdm(instance_ids, desc="baseline", unit="instance")
         for instance_id in progress:
-            container_name = f"mini-fl-{instance_id}_baseline"
+            if instance_id in processed_instances:
+                progress.set_postfix_str(f"{instance_id}: skipped (resume)", refresh=True)
+                continue
+
+            container_name = f"mini-fl-{instance_id}_baseline_{model_name}"
             instance_result_dir = results_root / instance_id
             instance_result_dir.mkdir(parents=True, exist_ok=True)
             logger.info("[%s] Starting baseline flow.", instance_id)

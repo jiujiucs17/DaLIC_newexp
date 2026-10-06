@@ -22,11 +22,11 @@ agent:
     - `dynamic_evidence/class.json`: ranked class-level candidates.
     - `dynamic_evidence/function.json`: ranked function and property-level candidates.
 
-    Every record in these files was generated from one or more traced test cases and then ranked with BM25 against the feature request text. These test cases are identified from test_patch that's associated with the patch that implements the feature.
-    The lists are sorted from most promising to least promising by descending `bm25_score`.
+    Every record in these files was generated from one or more traced test cases and then ranked with VSM against the feature request text. These test cases are identified from test_patch that's associated with the patch that implements the feature.
+    The lists are sorted from most promising to least promising by descending `vsm_score`.
     Higher-ranked items should usually be inspected earlier, but the candidate set does not guarantee 100 percent precision or 100 percent recall.
     
-    Note that the evidence files are very long, so follow the following rulses when using them:
+    Note that the evidence files are very long, so follow the following rules when using them:
     - Before reading an unfamiliar file, run `wc -l -c <path>`.
     - Never use `cat` on Python or JSON files unless `wc -c` confirms the file is below 3000 bytes.
     - Read at most 80 lines at a time with `sed -n '<start>,<end>p'`.
@@ -40,7 +40,7 @@ agent:
       In `file.json`, this is a repository-relative file path such as `pkg/module.py`.
       In `class.json`, this is `<file_path>::<QualifiedClassName>`.
       In `function.json`, this is `<file_path>::<QualifiedFunctionName>` for module-level functions, or `<file_path>::<QualifiedClassName>.<QualifiedMethodName>` for class functions.
-    - `bm25_score`: lexical relevance score against the feature request text. Larger usually means more relevant.
+    - `vsm_score`: lexical relevance score against the feature request text. Larger usually means more relevant.
     - `test_case_count`: how many traced test cases touched this candidate.
     - `total_test_case_count`: how many traced test cases exist for this instance in total.
     - `test_cases`: the traced test case identifiers that touched this candidate.
@@ -68,7 +68,7 @@ agent:
     1. Read `problem_statement.txt` and briefly inspect the current directory layout.
     2. Start with `dynamic_evidence/file.json`, `dynamic_evidence/class.json`, and `dynamic_evidence/function.json`.
     3. Read evidence incrementally. Do not print an entire evidence file. First extract only a small batch such as the first 10 `qualified_name` values from one evidence file and analyze them.
-    4. For only the most promising candidates, inspect additional attributes such as `bm25_score`, `test_case_count`, `test_cases`, linked `classes`, linked `functions`, or the corresponding source snippets.
+    4. For only the most promising candidates, inspect additional attributes such as `vsm_score`, `test_case_count`, `test_cases`, linked `classes`, linked `functions`, or the corresponding source snippets.
     5. If confidence is still insufficient, move on to the next small batch of evidence entries instead of dumping the full file.
     6. Confirm likely change locations by reading only targeted sections of source files and, when useful, relevant tests as evidence.
     7. Build the final ranked `files`, `classes`, and `functions` lists, excluding tests from the final output even if they appeared in the evidence.

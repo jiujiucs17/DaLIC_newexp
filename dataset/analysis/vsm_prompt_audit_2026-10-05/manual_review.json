@@ -1,0 +1,1234 @@
+[
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-flash-0423-openrouter-alibaba/astropy__astropy-14042/last_mini_run.traj.json",
+    "command_index": 29,
+    "command_sha256": "8756e0397b3f718661d109ad76850cc1fd0da06c347ec3e913354e4c5dd90686",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 0
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-flash-0423-openrouter-alibaba/django__django-14725/last_mini_run.traj.json",
+    "command_index": 37,
+    "command_sha256": "d40d47fcf4a33c68e86a00fb72674c9069d044d2296e42495f5fc60e9d4e35f6",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 21
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-flash-0423-openrouter-alibaba/django__django-15669/last_mini_run.traj.json",
+    "command_index": 33,
+    "command_sha256": "d332616dd8ff938160143991a85c15e16a82aef54906a6438c40d77f496f2397",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 29
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-flash-0423-openrouter-alibaba/matplotlib__matplotlib-23348/last_mini_run.traj.json",
+    "command_index": 27,
+    "command_sha256": "b6d286584a15bdf6d75b88eb60b804c593cce2639326a4c36f953062ba3f7383",
+    "confirmed": false,
+    "reason": "Empty output after parsing line fragments; wrong field value was not observed.",
+    "initial_event_index": 31
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-flash-0423-openrouter-alibaba/matplotlib__matplotlib-23348/last_mini_run.traj.json",
+    "command_index": 29,
+    "command_sha256": "c5fbf58680e41acc604fa3035e1d8296beac0241a9cd9df80fbaee4f931cd836",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 33
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-flash-0423-openrouter-alibaba/matplotlib__matplotlib-25779/last_mini_run.traj.json",
+    "command_index": 26,
+    "command_sha256": "7db6443276d3244be4564aecead9206bac4a6a9ddcd79618b5f006a61c646e97",
+    "confirmed": false,
+    "reason": "Name filter returned no rows.",
+    "initial_event_index": 37
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-flash-0423-openrouter-alibaba/matplotlib__matplotlib-25779/last_mini_run.traj.json",
+    "command_index": 27,
+    "command_sha256": "f2f057d7fc402205b4aabf9a5f5aff19d6557c7656dd256da0ce80fcd4de08d6",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 38
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-flash-0423-openrouter-alibaba/matplotlib__matplotlib-25779/last_mini_run.traj.json",
+    "command_index": 37,
+    "command_sha256": "a4bb9be1acc9292aa09de4364545b5849559edb9d0fc38fb3b16bf29edee02ee",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 39
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-flash-0423-openrouter-alibaba/pydata__xarray-4966/last_mini_run.traj.json",
+    "command_index": 13,
+    "command_sha256": "49f6bcdc9a1aac45d2c46c46245c4fc6ba199eec80922cdd4aabdff22c354bb2",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 47
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-flash-0423-openrouter-alibaba/pydata__xarray-4966/last_mini_run.traj.json",
+    "command_index": 14,
+    "command_sha256": "fb390b52f62fead87a922f9eb0850cc093f84771722d45899c67585a8bd13088",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 48
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-flash-0423-openrouter-alibaba/pydata__xarray-4966/last_mini_run.traj.json",
+    "command_index": 15,
+    "command_sha256": "e9c0feee817236a25bf34725a8b8dbd937e4744b9cb3bc6dedce31b247e6f6e7",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 49
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-flash-0423-openrouter-alibaba/pytest-dev__pytest-5221/last_mini_run.traj.json",
+    "command_index": 37,
+    "command_sha256": "8dff06fedfbb3dbd0aaf402291132fe09a7079ba3ee6cdccbc0eecbe7ac44be7",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 57
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-flash-0423-openrouter-alibaba/pytest-dev__pytest-5221/last_mini_run.traj.json",
+    "command_index": 38,
+    "command_sha256": "1514375a237a997299baa066aad4fd6d08a5adb40d006c4c05b7bd51ab75238f",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 58
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-flash-0423-openrouter-alibaba/scikit-learn__scikit-learn-10899/last_mini_run.traj.json",
+    "command_index": 17,
+    "command_sha256": "4daedd3d625c663b130db76e3f11489caf5bd33a063f100083941d01b7b90113",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 62
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-flash-0423-openrouter-alibaba/scikit-learn__scikit-learn-10899/last_mini_run.traj.json",
+    "command_index": 19,
+    "command_sha256": "9effa030b8b42f283822aa61b67350a026ae04dab2df7f417c998ae965b4a767",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 64
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-flash-0423-openrouter-alibaba/scikit-learn__scikit-learn-10899/last_mini_run.traj.json",
+    "command_index": 20,
+    "command_sha256": "43dcaf646aa87ddbef9e50abd79125c864465c88fe067de8d66f82f494f3c35d",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 65
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-flash-0423-openrouter-alibaba/sphinx-doc__sphinx-7597/last_mini_run.traj.json",
+    "command_index": 11,
+    "command_sha256": "afcb6b27e0ab9a0de0ede2e81923c2b0582001f7aeea1dded726fca52a62df9d",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 73
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-flash-0423-openrouter-alibaba/sphinx-doc__sphinx-7597/last_mini_run.traj.json",
+    "command_index": 12,
+    "command_sha256": "8a8a88238fefa999541f4ae907bd8ff5c3a7ae3e7ff47040f8e1ea2b3ff32e5b",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 74
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-flash-0423-openrouter-alibaba/sphinx-doc__sphinx-7597/last_mini_run.traj.json",
+    "command_index": 13,
+    "command_sha256": "19eeff11e81b20c64f51473c7fb37b82d9a0ace77e6adbf7d21ae686b9647f7d",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 75
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-flash-0423-openrouter-alibaba/sympy__sympy-18256/last_mini_run.traj.json",
+    "command_index": 23,
+    "command_sha256": "6a9f9e673d51175cacb0a16890cdd9eb682020634b2d914b628b538a9a12c38b",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 93
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-flash-0423-openrouter-alibaba/sympy__sympy-18351/last_mini_run.traj.json",
+    "command_index": 58,
+    "command_sha256": "56f2b9e602ebe8313789a5db81e824f37458a942731f786b9c1d60e677feb693",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 96
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-flash-0423-openrouter-alibaba/sympy__sympy-22456/last_mini_run.traj.json",
+    "command_index": 56,
+    "command_sha256": "348951417cd4d5b84067fcef99aa22c63ece317eca4fa4f65828f2e6257466d3",
+    "confirmed": false,
+    "reason": "Formatting failure was masked by a fallback that printed names only.",
+    "initial_event_index": 98
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-flash-0423-openrouter-alibaba/sympy__sympy-22456/last_mini_run.traj.json",
+    "command_index": 57,
+    "command_sha256": "af97b743f3f92d92ec905d2a5fe6752be6a9cdbabd3c8bd87b33cec1e93208ff",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 99
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-pro-0423-32K-openrouter-alibaba/astropy__astropy-14628/last_mini_run.traj.json",
+    "command_index": 35,
+    "command_sha256": "f155ebc6fc3dd7f559131de315dedc32718d1b1c5cbb107d9d3c24e563b6b0ed",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 100
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-pro-0423-32K-openrouter-alibaba/django__django-12407/last_mini_run.traj.json",
+    "command_index": 29,
+    "command_sha256": "dc498e19a25eb07c33871412cdbef695beabf9e411fcf496fc456126d9c4cf5d",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 105
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-pro-0423-32K-openrouter-alibaba/django__django-12407/last_mini_run.traj.json",
+    "command_index": 30,
+    "command_sha256": "c912bbe7a252b28a586767ee92413c6fa2976308030681012cc6f9cb9b87264a",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 106
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-pro-0423-32K-openrouter-alibaba/django__django-12407/last_mini_run.traj.json",
+    "command_index": 31,
+    "command_sha256": "e2546ee5a999a7074741f16d244fc3caa87164928f3a1b01ea8b0359b41138f9",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 107
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-pro-0423-32K-openrouter-alibaba/django__django-12973/last_mini_run.traj.json",
+    "command_index": 12,
+    "command_sha256": "8b280a72b9d1d21edd0281c9bba03b887f0ee3e75c55400d001f888de08b1dbb",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 109
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-pro-0423-32K-openrouter-alibaba/django__django-12973/last_mini_run.traj.json",
+    "command_index": 13,
+    "command_sha256": "31d9981b6096448a869bc4375fcf70c805e68a5e25b09fda6e0f3e825164dd10",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 110
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-pro-0423-32K-openrouter-alibaba/django__django-12973/last_mini_run.traj.json",
+    "command_index": 14,
+    "command_sha256": "fe57a110de8354936100754c22ba0d3100c5cb8b25cbe001f997b70b0c8ac6d6",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 111
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-pro-0423-32K-openrouter-alibaba/django__django-13386/last_mini_run.traj.json",
+    "command_index": 17,
+    "command_sha256": "1aea719e97ffdb1e290c87f623ae2be82bcd81df93518958c30848d66a29c954",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 114
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-pro-0423-32K-openrouter-alibaba/django__django-15268/last_mini_run.traj.json",
+    "command_index": 27,
+    "command_sha256": "e3f33b81b4198ec1171fae71cee0c62a6dcd94c19e46308b78a5ac81dfba69cc",
+    "confirmed": false,
+    "reason": "Wrong path led to a fallback directory listing.",
+    "initial_event_index": 116
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-pro-0423-32K-openrouter-alibaba/django__django-15268/last_mini_run.traj.json",
+    "command_index": 29,
+    "command_sha256": "607aeb9daa51f40aa6358b579bb8fd6759fd392b41bf353465a5ce635a29c96b",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 117
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-pro-0423-32K-openrouter-alibaba/django__django-15268/last_mini_run.traj.json",
+    "command_index": 30,
+    "command_sha256": "ce5b171e384e41101d98b931929a377fb99fc99112f0938251409d0d711bcbfc",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 118
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-pro-0423-32K-openrouter-alibaba/django__django-15268/last_mini_run.traj.json",
+    "command_index": 39,
+    "command_sha256": "903b4ecc1e6aa6d6ba32c7107c0d052b7bb830425803edb1bae412b37e782bb5",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 119
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-pro-0423-32K-openrouter-alibaba/matplotlib__matplotlib-25779/last_mini_run.traj.json",
+    "command_index": 47,
+    "command_sha256": "f0e304adfbfe914b09d0cc5838c16fd803bb25e3f0265c6974e67bfa8b90561d",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 126
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-pro-0423-32K-openrouter-alibaba/psf__requests-1766/last_mini_run.traj.json",
+    "command_index": 26,
+    "command_sha256": "c7eb4c08a053d8c08d43bb3d9afc79d844c466266a89aa555386c8eb8ffdd3a2",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 127
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-pro-0423-32K-openrouter-alibaba/psf__requests-1766/last_mini_run.traj.json",
+    "command_index": 41,
+    "command_sha256": "6ae97536a4d8d6451cfb0d5a2565d41646fbd16445cf009d5fd9f98d9a58bd3a",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 129
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-pro-0423-32K-openrouter-alibaba/sphinx-doc__sphinx-7760/last_mini_run.traj.json",
+    "command_index": 35,
+    "command_sha256": "719d2a54a8c72aa7cf6b7e81df69f892d8f902f8480251c1aa589e265e59cea8",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 141
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-pro-0423-32K-openrouter-alibaba/sphinx-doc__sphinx-7760/last_mini_run.traj.json",
+    "command_index": 36,
+    "command_sha256": "e83ea65c0f0d5ffa6a472330f7bcb34201ac3e7e55d1fb5d7aa567ec47b71deb",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 142
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-pro-0423-32K-openrouter-alibaba/sphinx-doc__sphinx-8684/last_mini_run.traj.json",
+    "command_index": 25,
+    "command_sha256": "0dfac17e03f087c0d713ed5dd4795389e71e6ba6295b99845a092de029e69269",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 145
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-pro-0423-32K-openrouter-alibaba/sphinx-doc__sphinx-8684/last_mini_run.traj.json",
+    "command_index": 26,
+    "command_sha256": "1c5105809fdacc365699e3f05d86602f6a8c6697c27d03bfe0e561b2c06c9c7d",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 146
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-pro-0423-32K-openrouter-alibaba/sphinx-doc__sphinx-8684/last_mini_run.traj.json",
+    "command_index": 30,
+    "command_sha256": "077e2596b7a84664f0d720a3d1047a4b5159f151cff43e1c90575786ba15b48e",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 147
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-pro-0423-32K-openrouter-alibaba/sphinx-doc__sphinx-8684/last_mini_run.traj.json",
+    "command_index": 36,
+    "command_sha256": "917b3fd8956d8c0afd230c775e460ca5362d541b94e319b6aa9104a029920710",
+    "confirmed": false,
+    "reason": "Name filter returned no rows.",
+    "initial_event_index": 148
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-pro-0423-32K-openrouter-alibaba/sphinx-doc__sphinx-8684/last_mini_run.traj.json",
+    "command_index": 37,
+    "command_sha256": "2f68b0a354f74aa7d17998619c1f1473987c3bba488114607e3afbcb5f3389dd",
+    "confirmed": false,
+    "reason": "Name filter returned no rows.",
+    "initial_event_index": 149
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-pro-0423-openrouter-alibaba-run2/django__django-11742/last_mini_run.traj.json",
+    "command_index": 26,
+    "command_sha256": "f4a31d951edcd9bd3b9d18472ff6f9e561dc2b8d8e6c8672a2c3a508793ae441",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 162
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-pro-0423-openrouter-alibaba-run2/django__django-12419/last_mini_run.traj.json",
+    "command_index": 31,
+    "command_sha256": "453bf77862f7ba0eaaceb5e4284d7c3d597b240c07ea4a1e9d06f8a17166f0d0",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 164
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-pro-0423-openrouter-alibaba-run2/django__django-16819/last_mini_run.traj.json",
+    "command_index": 32,
+    "command_sha256": "f155ebc6fc3dd7f559131de315dedc32718d1b1c5cbb107d9d3c24e563b6b0ed",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 167
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-pro-0423-openrouter-alibaba-run2/scikit-learn__scikit-learn-25232/last_mini_run.traj.json",
+    "command_index": 50,
+    "command_sha256": "a87d24dc7aee1fb228a40633db80e8109035dd4f8cca66c7e4c98a350ce81281",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 187
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-pro-0423-openrouter-alibaba-run2/scikit-learn__scikit-learn-25232/last_mini_run.traj.json",
+    "command_index": 51,
+    "command_sha256": "7bccd275983c1ea7c3488a27550dc1555202718897cca8d5fb0b8a581678c63d",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 188
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/DeepSeek-v4-pro-0423-openrouter-alibaba-run2/sympy__sympy-16474/last_mini_run.traj.json",
+    "command_index": 51,
+    "command_sha256": "ac7e110bddb6c5eb85c9c9df599e6698693b3a7f3a9ea6b8e09458975fe6d6b4",
+    "confirmed": false,
+    "reason": "Name filter returned no rows.",
+    "initial_event_index": 198
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-27B-runpod-run1/django__django-12748/last_mini_run.traj.json",
+    "command_index": 28,
+    "command_sha256": "d64b811de29ecf18c5f625904be1b047205ab29e43ffdab661598f60c51c0a76",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 202
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-27B-runpod-run2/django__django-16899/last_mini_run.traj.json",
+    "command_index": 20,
+    "command_sha256": "0f75f953097249c9b9f9dbc10b5c5a072fd0788ea9155c0be242360e6b4cd9fa",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 207
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-27B-runpod-run2/django__django-16899/last_mini_run.traj.json",
+    "command_index": 25,
+    "command_sha256": "4bfbc16819062af943f4bcfbb0c9ab09f18d07dc3364c5d95e26d6152210b453",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 208
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-27B-runpod-run2/sympy__sympy-13173/last_mini_run.traj.json",
+    "command_index": 20,
+    "command_sha256": "ada5c42e19e8031ada7e2b09e42ddfec6f62fc70c0b4d6eb465cf6edc8167422",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 214
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-27B-runpod-run2/sympy__sympy-13173/last_mini_run.traj.json",
+    "command_index": 28,
+    "command_sha256": "17c50e442e3fc71002d8e0e933ea6368799f098611db473db0232041190ebb1f",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 215
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-27B-runpod-run3/sphinx-doc__sphinx-7760/last_mini_run.traj.json",
+    "command_index": 28,
+    "command_sha256": "0594cc94a555c660af84d391c0856bdec61388ab18c45c22f2cdaf32b0a618a0",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 217
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-27B-runpod-run3/sphinx-doc__sphinx-7760/last_mini_run.traj.json",
+    "command_index": 29,
+    "command_sha256": "ebe54fe126610abd42d591bcc17e7800c7f30a5b43494556573c06c4b165b3a8",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 218
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-27B-runpod-run3/sphinx-doc__sphinx-7760/last_mini_run.traj.json",
+    "command_index": 30,
+    "command_sha256": "2dc4b2d011b6ffc05de1327425a5c513225b28ff210ee33b20ed0637b351e0fb",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 219
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-4B-runpod-run1/django__django-13363/last_mini_run.traj.json",
+    "command_index": 30,
+    "command_sha256": "d8bc98ed40dac58a4a8143f2c930ed14e9cf4539c3f177af496404a01b90dc03",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 237
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-4B-runpod-run1/scikit-learn__scikit-learn-10982/last_mini_run.traj.json",
+    "command_index": 18,
+    "command_sha256": "8ae2fea3cba71005a5e408343138f2f2df6079460e7fc2845dbf026599df8f69",
+    "confirmed": false,
+    "reason": "jq was not installed.",
+    "initial_event_index": 256
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-4B-runpod-run1/scikit-learn__scikit-learn-14908/last_mini_run.traj.json",
+    "command_index": 38,
+    "command_sha256": "95b5334789e70daa9163a4e9de2a049fa0e202d6e78274c41a89239975d863d4",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 264
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-4B-runpod-run1/scikit-learn__scikit-learn-25638/last_mini_run.traj.json",
+    "command_index": 21,
+    "command_sha256": "9dc3200af54dd36c8cb2845ccd1b72fb4e2b4de52ab643e2ea05b2925d048663",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 265
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-4B-runpod-run1/sphinx-doc__sphinx-10481/last_mini_run.traj.json",
+    "command_index": 23,
+    "command_sha256": "78d17e9d6543359dc065ff945dc5e4fd874798572797fa0357c3afdbf0a4775b",
+    "confirmed": false,
+    "reason": "Empty jq pipeline with stderr suppressed; not confirmed as field-related.",
+    "initial_event_index": 266
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-4B-runpod-run1/sympy__sympy-16281/last_mini_run.traj.json",
+    "command_index": 11,
+    "command_sha256": "c56fa454f9ee7401aeea0c599eecf8af65a0ff352308e84170183d9ed69e73c1",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 274
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-4B-runpod-run2/django__django-11011/last_mini_run.traj.json",
+    "command_index": 8,
+    "command_sha256": "09b86633f37ce72aad47fe2c9226ae5b327e8b05ed571ec73d9c26e516bdc729",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 282
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-4B-runpod-run2/django__django-11011/last_mini_run.traj.json",
+    "command_index": 9,
+    "command_sha256": "9833ace0df387e4969c1c8d50956a1b8f6882a49101b5b536b110ffd1bbb5d87",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 283
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-4B-runpod-run2/django__django-11011/last_mini_run.traj.json",
+    "command_index": 10,
+    "command_sha256": "46eee75e018633e871d31d96d240c3a116a00ca55517d7bfab251ae37f579cda",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 284
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-4B-runpod-run2/django__django-11011/last_mini_run.traj.json",
+    "command_index": 11,
+    "command_sha256": "4f4f8289a33c6e54c02809c3570db00f0345584628794ccbfac1aca88aa718b9",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 285
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-4B-runpod-run2/matplotlib__matplotlib-24111/last_mini_run.traj.json",
+    "command_index": 23,
+    "command_sha256": "602b05851fe56d13acd3d5f7eeffd0fba60efaec2bc77f02b2cceb74dc8dd464",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 291
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-4B-runpod-run2/matplotlib__matplotlib-25779/last_mini_run.traj.json",
+    "command_index": 26,
+    "command_sha256": "c47be3a8e400dfcd1ede953be158e3db17992162bfad1d3b91f1d2daa60632bd",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 293
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-4B-runpod-run2/matplotlib__matplotlib-26024/last_mini_run.traj.json",
+    "command_index": 32,
+    "command_sha256": "91bb40bee531b279af715fde7366b2d70575d03d2c8d312cb37f1a9248384e1f",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 298
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-4B-runpod-run2/matplotlib__matplotlib-26024/last_mini_run.traj.json",
+    "command_index": 33,
+    "command_sha256": "a1cfb88e9e59a220844bfa36feefd73bd2ec35f9979191b2c8c55e95550b75ac",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 299
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-4B-runpod-run2/matplotlib__matplotlib-26024/last_mini_run.traj.json",
+    "command_index": 34,
+    "command_sha256": "c9412f773dc35c006272d586f3d09efff23e528c2afe5291fcb0e97444c50e49",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 300
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-4B-runpod-run2/pytest-dev__pytest-10343/last_mini_run.traj.json",
+    "command_index": 8,
+    "command_sha256": "1293f95191088d8604bed1efe44dfc19946ac3fd434e97781bf0edbe707b7298",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 303
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-4B-runpod-run2/pytest-dev__pytest-10343/last_mini_run.traj.json",
+    "command_index": 9,
+    "command_sha256": "f3a75600ef46a5f05b286be3211330839c45e38ecb51eec87ed6ebc570c35480",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 304
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-4B-runpod-run2/pytest-dev__pytest-10343/last_mini_run.traj.json",
+    "command_index": 10,
+    "command_sha256": "00ecd58b2ff9884db36bdbeb8c7cd2afe281c6af766c72f753ecd69c1481702c",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 305
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-4B-runpod-run2/pytest-dev__pytest-6116/last_mini_run.traj.json",
+    "command_index": 35,
+    "command_sha256": "6c240e8e321d8af4519b0b629f5238592bc5cfa58f06f6116e6d66084f7c8697",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 307
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-4B-runpod-run2/pytest-dev__pytest-8906/last_mini_run.traj.json",
+    "command_index": 10,
+    "command_sha256": "ac92691ef2b2497aed1488c94edf6b866cd78a6126937f2081f88c01fec80692",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 311
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-4B-runpod-run2/sphinx-doc__sphinx-7670/last_mini_run.traj.json",
+    "command_index": 36,
+    "command_sha256": "d390406b21f84472d314ae95746155edd465c44082f53da0154e3e070cf4fb23",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 316
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-4B-runpod-run2/sympy__sympy-18256/last_mini_run.traj.json",
+    "command_index": 30,
+    "command_sha256": "361e8b26e5b151fadf592e8a13c609ad1155a1d1b909af3d545cd40d065c5f1d",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 321
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-4B-runpod-run3/django__django-11727/last_mini_run.traj.json",
+    "command_index": 8,
+    "command_sha256": "0f464bf6ed382d6d200263ddf186d28412e8f9aa02691de7ab6987eaaf9304c0",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 327
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-4B-runpod-run3/django__django-15499/last_mini_run.traj.json",
+    "command_index": 5,
+    "command_sha256": "cfaad93177ca0a429e79545afb8f213f5e18eb7aef37990fd93cc495381fa42e",
+    "confirmed": false,
+    "reason": "jq was not installed.",
+    "initial_event_index": 336
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-4B-runpod-run3/django__django-15916/last_mini_run.traj.json",
+    "command_index": 33,
+    "command_sha256": "8753d6dfc7624022911a14af1804a951bcc69c01a77713064f3d5ce4fee9bd44",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 338
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-4B-runpod-run3/matplotlib__matplotlib-25746/last_mini_run.traj.json",
+    "command_index": 39,
+    "command_sha256": "48f8ade544249fbf70ab4edcc414d501b06f631bec311518a752a6441e6eccbd",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 342
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-4B-runpod-run3/pytest-dev__pytest-5980/last_mini_run.traj.json",
+    "command_index": 5,
+    "command_sha256": "a0ca66a38ce2169a91680dba42d60857d9a02448ef42624112156a30c7384476",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 351
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-4B-runpod-run3/pytest-dev__pytest-5980/last_mini_run.traj.json",
+    "command_index": 6,
+    "command_sha256": "63a18112a197c3df976b14f9c51101f068a820f535cacab33b78cdc5a33e4929",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 352
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-4B-runpod-run3/pytest-dev__pytest-5980/last_mini_run.traj.json",
+    "command_index": 7,
+    "command_sha256": "bc6e71631cf406bcde47a18d47c4a1b892bf5d4730abae335c030a6a1e5ee906",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 353
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-4B-runpod-run3/scikit-learn__scikit-learn-10899/last_mini_run.traj.json",
+    "command_index": 36,
+    "command_sha256": "5693de5aede5696f7219100a389e5db3df2de9ad18c28ac7d904872935535838",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 366
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-4B-runpod-run3/sphinx-doc__sphinx-10067/last_mini_run.traj.json",
+    "command_index": 34,
+    "command_sha256": "38c741ec20b03c764ffdcbd61694cb6461fefe504d97b8c34d136aaeec1e612d",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 372
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-4B-runpod-run3/sphinx-doc__sphinx-10067/last_mini_run.traj.json",
+    "command_index": 35,
+    "command_sha256": "d69bee1da728c53447f55591680e8aa9423ec5e004ed9d513f3eef715e35a481",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 373
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-4B-runpod-run3/sphinx-doc__sphinx-8125/last_mini_run.traj.json",
+    "command_index": 13,
+    "command_sha256": "ebd5537f82b2f4dfea44ea5f779ce40c49f0a8b4f79b7bc8ea1b0e1e0e33ed09",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 379
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-4B-runpod-run3/sphinx-doc__sphinx-8125/last_mini_run.traj.json",
+    "command_index": 14,
+    "command_sha256": "4094d3460e45838c087c2bd48923861204ea45b5c0a8a21a093d46e19cc2ed75",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 380
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-9B-runpod-run1-low/django__django-12484/last_mini_run.traj.json",
+    "command_index": 17,
+    "command_sha256": "05cf601aa80628f7fd31299502e57cd6b45174de550fbb6587a13f117f3128d5",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 397
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-9B-runpod-run1-low/pydata__xarray-4184/last_mini_run.traj.json",
+    "command_index": 29,
+    "command_sha256": "8912a9af5521ddec4d89db22270e92fe77b541f7bf9edf789fbe76ae3cdc234d",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 413
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-9B-runpod-run1-low/pydata__xarray-4184/last_mini_run.traj.json",
+    "command_index": 30,
+    "command_sha256": "37b953dfe80c9398c21c2ccafb70ea5357bd12591843ecaf446c9cfb9414844a",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 414
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-9B-runpod-run1-low/scikit-learn__scikit-learn-14012/last_mini_run.traj.json",
+    "command_index": 39,
+    "command_sha256": "16f322a2a43d459629c19620c83adeb6985825ef26c373bd6320f18a0d439396",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 429
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-9B-runpod-run1-low/sphinx-doc__sphinx-11109/last_mini_run.traj.json",
+    "command_index": 34,
+    "command_sha256": "d347851a4f3b31da45fa8cd6e26f8994afad0898e558aa727021ec73354cd86f",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 435
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-9B-runpod-run1-low/sphinx-doc__sphinx-8599/last_mini_run.traj.json",
+    "command_index": 12,
+    "command_sha256": "7789ae49ea1328bda348bab8baaa61d4bfa876e5876ac3fb906ab4a3d02fb9f4",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 441
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-9B-runpod-run1-low/sympy__sympy-12108/last_mini_run.traj.json",
+    "command_index": 19,
+    "command_sha256": "46b2a8e8aba7b48a59620f7141102a4c557755473a574a224622519050ed8076",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 450
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-9B-runpod-run2/django__django-11727/last_mini_run.traj.json",
+    "command_index": 4,
+    "command_sha256": "1cf09a5d32c52710cbc05e855a77c11d3ee49b3b7ed63e1a17782cc76f1529b9",
+    "confirmed": false,
+    "reason": "jq was not installed.",
+    "initial_event_index": 474
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-9B-runpod-run2/django__django-14559/last_mini_run.traj.json",
+    "command_index": 11,
+    "command_sha256": "b24acae91e6cbd1eed0cfda63052d57aebc689098b4ce538ded459f736a9b233",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 487
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-9B-runpod-run2/django__django-15671/last_mini_run.traj.json",
+    "command_index": 9,
+    "command_sha256": "6fcc0f1aba735a47821cbcf39e484e7fbf7f8dc42f626ac64e1f03ac1fab9423",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 497
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-9B-runpod-run2/django__django-15671/last_mini_run.traj.json",
+    "command_index": 10,
+    "command_sha256": "19dad7c5c60e849738e2c79f7c7076639d48fb802670e339cb5b4158128b0f76",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 498
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-9B-runpod-run2/django__django-15671/last_mini_run.traj.json",
+    "command_index": 11,
+    "command_sha256": "f550e3fe3c86c033a826c7604b41bcf3c09414d72e80a13095f763e1b8a44858",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 499
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-9B-runpod-run2/pytest-dev__pytest-5227/last_mini_run.traj.json",
+    "command_index": 29,
+    "command_sha256": "96baa469ce8719fb831c157758a4229fc741875be3ff0e183fa74238e50f73d8",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 509
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-9B-runpod-run2/sphinx-doc__sphinx-8599/last_mini_run.traj.json",
+    "command_index": 35,
+    "command_sha256": "e95ab6b545f9b27dc4ccd9f28e70afd7052699020c987cadd34ba08f42e09c80",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 522
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-9B-runpod-run2/sympy__sympy-12108/last_mini_run.traj.json",
+    "command_index": 39,
+    "command_sha256": "7efe5b7464f634f2d173b6c0fd7f751c33bfd33c8587d46f3b25a814364c1b93",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 524
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-9B-runpod-run2/sympy__sympy-21313/last_mini_run.traj.json",
+    "command_index": 5,
+    "command_sha256": "235f5b2604b7cf108221f89a0c0c4f07d62e1a268d11a3fbd4fbf24f1c1ba28d",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 535
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-9B-runpod-run3-low/django__django-12407/last_mini_run.traj.json",
+    "command_index": 17,
+    "command_sha256": "b8b86c420fc07af8696a598cefb4dcab47869e9713c0bf46b672c69de0406be4",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 547
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-9B-runpod-run3-low/django__django-12407/last_mini_run.traj.json",
+    "command_index": 29,
+    "command_sha256": "7edda85cefb637502c1e493b1d298b5503f9aff0507267f3e2adffb3bd0bdb0f",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 549
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-9B-runpod-run3-low/django__django-12419/last_mini_run.traj.json",
+    "command_index": 22,
+    "command_sha256": "d462485b820e88976db1c117280e089ebd82f49d54e08f6e8434d723cf67babb",
+    "confirmed": false,
+    "reason": "jq was not installed.",
+    "initial_event_index": 550
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-9B-runpod-run3-low/django__django-12771/last_mini_run.traj.json",
+    "command_index": 19,
+    "command_sha256": "437e0a30352b041a224a3eba0bbb787786a20200faaa7f3a5f3ae027f10a0689",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 554
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-9B-runpod-run3-low/django__django-14608/last_mini_run.traj.json",
+    "command_index": 26,
+    "command_sha256": "6cbec0bafe23530e063e6e8fdf98adaeab506da56ff3d2f178fd9dca767642ee",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 568
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-9B-runpod-run3-low/django__django-14608/last_mini_run.traj.json",
+    "command_index": 27,
+    "command_sha256": "d018ef969f70966a27317120191ffff782fc12ce68bec0791bcee3327268dfd4",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 569
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-9B-runpod-run3-low/django__django-14608/last_mini_run.traj.json",
+    "command_index": 28,
+    "command_sha256": "ee61632f8761f52916b09fd81ce2dbf0677f4a7fd5409ad671a1d9636f7f43d9",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 570
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-9B-runpod-run3-low/django__django-15161/last_mini_run.traj.json",
+    "command_index": 21,
+    "command_sha256": "542c34e59c5ad1b33d61d05bb057b3dbe804e66c93568e4c26827ce21a873b52",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 573
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-9B-runpod-run3-low/django__django-15268/last_mini_run.traj.json",
+    "command_index": 7,
+    "command_sha256": "4b897eaea3cff7fb6766292266ca127da53eb136114e375d0a0a174e4f6365b6",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 575
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-9B-runpod-run3-low/django__django-15268/last_mini_run.traj.json",
+    "command_index": 8,
+    "command_sha256": "294e6c87d2f0f6204d3f153e042be50b0b114095fd4f18e3788c48aa0b79147e",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 576
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-9B-runpod-run3-low/django__django-15268/last_mini_run.traj.json",
+    "command_index": 9,
+    "command_sha256": "0289054fe14a51fd4c0553426d2ebac442a8e09a31371913de07346912135fe8",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 577
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-9B-runpod-run3-low/matplotlib__matplotlib-21542/last_mini_run.traj.json",
+    "command_index": 37,
+    "command_sha256": "0b51bd5da6ae39a9035c4fc41bca3499c742f2e2b285eaa85ac683b0676d5043",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 578
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/Qwen35-9B-runpod-run3-low/pytest-dev__pytest-8055/last_mini_run.traj.json",
+    "command_index": 3,
+    "command_sha256": "b56d4ea7b8e062a8778e8c7bf144a8fb9251a61b73bb099a0e06d73c6f9420e9",
+    "confirmed": false,
+    "reason": "Fallback printed names only; no score value observed.",
+    "initial_event_index": 597
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/gpt54-0305-openai/astropy__astropy-14371/last_mini_run.traj.json",
+    "command_index": 10,
+    "command_sha256": "5e0dcd06799b76d393a719fa389057a158489972993ff6aa84a4c640889f8b97",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 639
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/gpt54-0305-openai/astropy__astropy-8747/last_mini_run.traj.json",
+    "command_index": 17,
+    "command_sha256": "535d4d2f87731d8da78ea09aa2783030ee0e8b960fd122f5056bed917a24712e",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 640
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/gpt54-0305-openai/django__django-11751/last_mini_run.traj.json",
+    "command_index": 16,
+    "command_sha256": "dc7673b84561c7bf4637fac778a3caf24e47fad6462918361903ebbfaf87a276",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 642
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/gpt54-0305-openai/django__django-11772/last_mini_run.traj.json",
+    "command_index": 12,
+    "command_sha256": "9de7e980e92f6c958856bf621de890da7430ff6ed311e269287268b01dd0001d",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 643
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/gpt54-0305-openai/django__django-11885/last_mini_run.traj.json",
+    "command_index": 20,
+    "command_sha256": "fb0b9dcf54183bfe08ef72b4b5bbbce4d1c81aee83daf1edb9946a83c781761d",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 644
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/gpt54-0305-openai/django__django-11894/last_mini_run.traj.json",
+    "command_index": 20,
+    "command_sha256": "2d7d0a5ac5a9fc3e81d58656c089c2aeb3cc10a273b11a474c479b6119a85f91",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 645
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/gpt54-0305-openai/django__django-12161/last_mini_run.traj.json",
+    "command_index": 18,
+    "command_sha256": "7f8b089fa07b07abfbd0a4e7a64198598c4d4513ec7a2e1adbc8c0fe508f9b03",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 646
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/gpt54-0305-openai/django__django-13115/last_mini_run.traj.json",
+    "command_index": 3,
+    "command_sha256": "4f53f9cf3071c1b8610a3efd4df6b755179890174ca2ac5a4ce17992d9850a29",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 647
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/gpt54-0305-openai/django__django-13710/last_mini_run.traj.json",
+    "command_index": 10,
+    "command_sha256": "9a3bb3cdb1ff10baa326661d6e012f6a43eccc86fee227c66ec772559a10413d",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 648
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/gpt54-0305-openai/django__django-14559/last_mini_run.traj.json",
+    "command_index": 17,
+    "command_sha256": "3a31916ec0ce9f7137776f548e3f0e8c644f17f42e78d390e9155e0caa620cce",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 650
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/gpt54-0305-openai/django__django-14916/last_mini_run.traj.json",
+    "command_index": 24,
+    "command_sha256": "242a3453edb73b2ca35075a15ff751f24e8de0d53a66ceb96bfceeb01148e878",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 651
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/gpt54-0305-openai/django__django-15103/last_mini_run.traj.json",
+    "command_index": 13,
+    "command_sha256": "c90fab5b33b419229bc309e2b1fc512631577bfb3de994294b078f4329c99507",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 652
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/gpt54-0305-openai/django__django-15108/last_mini_run.traj.json",
+    "command_index": 19,
+    "command_sha256": "74db22259363d68e9b48360bab22bdf3e2b87a88556200aa07df90dced389228",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 653
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/gpt54-0305-openai/django__django-15268/last_mini_run.traj.json",
+    "command_index": 20,
+    "command_sha256": "adcbb65de1b24038631dc49b8d5e39e37541698b2caa58fd98c387025290bd07",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 654
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/gpt54-0305-openai/django__django-15669/last_mini_run.traj.json",
+    "command_index": 27,
+    "command_sha256": "d7ea2d481b9eb1e9b3cbf1be1455fd29989d1fcbdcee110d2a19674b8da201ff",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 655
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/gpt54-0305-openai/django__django-15916/last_mini_run.traj.json",
+    "command_index": 12,
+    "command_sha256": "ee8ed02cb49c81f41326c35becb1b89c2eb8a3c08bc2014aa424f4d7bda60a04",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 656
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/gpt54-0305-openai/matplotlib__matplotlib-21542/last_mini_run.traj.json",
+    "command_index": 20,
+    "command_sha256": "8772f307448be740c1107f427139f9d6acd29b80504db7e70bec611486401bae",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 657
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/gpt54-0305-openai/matplotlib__matplotlib-24111/last_mini_run.traj.json",
+    "command_index": 14,
+    "command_sha256": "4f9bb3ab3cc294cf297fd116a0ccbdc968244b661b6c13c23e5b69050a3865ba",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 658
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/gpt54-0305-openai/pydata__xarray-4184/last_mini_run.traj.json",
+    "command_index": 22,
+    "command_sha256": "1e5d300575545a7e38754130b287d36e1415fd1dffe5362fd3931f6d90ed9795",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 661
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/gpt54-0305-openai/pydata__xarray-5126/last_mini_run.traj.json",
+    "command_index": 16,
+    "command_sha256": "535d4d2f87731d8da78ea09aa2783030ee0e8b960fd122f5056bed917a24712e",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 662
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/gpt54-0305-openai/pydata__xarray-5365/last_mini_run.traj.json",
+    "command_index": 14,
+    "command_sha256": "555f443c316bb896e5b9304d92e5aff4c4c15a944c6ecaf5343b64b375617b33",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 663
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/gpt54-0305-openai/pytest-dev__pytest-7499/last_mini_run.traj.json",
+    "command_index": 18,
+    "command_sha256": "b65a99b137c0ac8b75c5321bb44b5be0b11a2f52f827392b8e2672a3dbc85bda",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 665
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/gpt54-0305-openai/pytest-dev__pytest-9133/last_mini_run.traj.json",
+    "command_index": 16,
+    "command_sha256": "01ad6b3b03920a072562e99574a31b9db5a827441c18ee55f43f8847f4c0e014",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 666
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/gpt54-0305-openai/scikit-learn__scikit-learn-13174/last_mini_run.traj.json",
+    "command_index": 22,
+    "command_sha256": "68a9bac03912002c2352655b5791bb6421711815c138741dcd86f5e963757b8a",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 667
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/gpt54-0305-openai/scikit-learn__scikit-learn-25638/last_mini_run.traj.json",
+    "command_index": 11,
+    "command_sha256": "5c0ea29b6b37cc8d19b379a73ce76d1e55e37dc8bae773174a7df91560419e49",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 669
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/gpt54-0305-openai/sphinx-doc__sphinx-8658/last_mini_run.traj.json",
+    "command_index": 12,
+    "command_sha256": "5e9a8dd6e450af1843c3b391a2c8fdb37a4c563f12deca74fd8607c1f8942d60",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 670
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/gpt54-0305-openai/sphinx-doc__sphinx-9829/last_mini_run.traj.json",
+    "command_index": 21,
+    "command_sha256": "14c8b01931ed2b006b9b27c7dd0749cfccc57f691374bd49d7343a638c637ada",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 671
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/gpt54-0305-openai/sympy__sympy-12108/last_mini_run.traj.json",
+    "command_index": 23,
+    "command_sha256": "f2a9eaadf8de69f43980d3b0d8056095f3af175bdf2c45236ebbe75cc9e03cae",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 672
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/gpt54-0305-openai/sympy__sympy-12108/last_mini_run.traj.json",
+    "command_index": 25,
+    "command_sha256": "eae736dfb920b302f7558de0b8033d6fb1cb56ec4931d047d5e7601513e4b539",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 674
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/gpt54-0305-openai/sympy__sympy-16281/last_mini_run.traj.json",
+    "command_index": 20,
+    "command_sha256": "688f9d25883cd4317715f38d6cf79ede97efc7f79ab04fca66e52f35d4d5d5c3",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 675
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/gpt54-0305-openai/sympy__sympy-16474/last_mini_run.traj.json",
+    "command_index": 11,
+    "command_sha256": "78d3d8040f426305c7c5cb93cfaa64e8973c86b98505ea9cf997ebff1cf2c9b3",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 676
+  },
+  {
+    "source": "dataset/agent_results/dalic_vsm/gpt54-0305-openai/sympy__sympy-19601/last_mini_run.traj.json",
+    "command_index": 13,
+    "command_sha256": "48f7fc751e553d52189876a354264dbac4d24f095e5eaa44bb3d1691fcd5d416",
+    "confirmed": true,
+    "reason": "Command and output reviewed: missing bm25_score was printed as None, zero, N/A, empty string, ?, or unknown.",
+    "initial_event_index": 678
+  }
+]

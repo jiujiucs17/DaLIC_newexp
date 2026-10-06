@@ -1,42 +1,107 @@
 #!/usr/bin/env python3
-"""Automated chain runner for 27B no-runtime overnight runs (run1 -> run2 -> run3)."""
+"""Automated chain runner for consecutive Qwen-9B overnight runs (run1 -> run2 -> run3).
+
+Profiles:
+  baseline-qwen9b   (default) baseline agent, results in dataset/agent_results/baseline
+  dalic-vsm-qwen9b  DaLIC agent on the VSM workbench, results in dataset/agent_results/dalic_vsm
+
+Options:
+  --profile NAME    default: baseline-qwen9b
+  --fresh           delete existing result directories of the profile's runs once at
+                    start-up, then run them from scratch. Restart without --fresh to
+                    resume an interrupted chain.
+"""
 
 from __future__ import annotations
 
+import argparse
 import fcntl
 import hashlib
+import shutil
 import subprocess
 import sys
 import time
 import tomllib
+from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-RESULTS = ROOT / "dataset/agent_results/dalic_no_runtime"
 COHORT = ROOT / "dataset/trace_completed_instance_validated.toml"
 PYTHON = ROOT / "python_venv/dalic-nexp/bin/python"
-LOG = RESULTS / "overnight-chain-27b.log"
-LOCK = RESULTS / "overnight-chain-27b.lock"
-POLL_SECONDS = 15
-
-RUNNER = "scripts/run_dalic_agent_no_runtime.py"
 MINI = "scripts/run_mini_instance.py"
-PROMPT = "scripts/prompts/dalic_no_runtime.yaml"
-ENV_FILE = "docker/mini-swe-agent-dalic.env"
-EXPECTED_API_MODEL = "openai/Qwen3.5-27B"
+POLL_SECONDS = 15
+EXPECTED_API_MODEL = "openai/Qwen3.5-9B"
 
-RUN_MODELS = (
-    "Qwen35-27B-no-runtime-run1",
-    "Qwen35-27B-no-runtime-run2",
-    "Qwen35-27B-no-runtime-run3",
-)
+
+@dataclass(frozen=True)
+class Profile:
+    results: Path
+    log_name: str
+    runner: str
+    prompt: str
+    env_file: str
+    run_models: tuple[str, ...]
+    stale_runs: tuple[str, ...] = ()
+    extra_args: tuple[str, ...] = ()
+    extra_inputs: tuple[str, ...] = ()
+    # When set, every trajectory of a completed run must contain this text,
+    # and must not contain any of the forbidden texts.
+    prompt_marker: str | None = None
+    forbidden_markers: tuple[str, ...] = field(default_factory=tuple)
+
+
+PROFILES: dict[str, Profile] = {
+    "baseline-qwen9b": Profile(
+        results=ROOT / "dataset/agent_results/baseline",
+        log_name="overnight-chain-qwen9b",
+        runner="scripts/run_baseline_agent.py",
+        prompt="scripts/prompts/baseline.yaml",
+        env_file="docker/mini-swe-agent-baseline.env",
+        run_models=(
+            "Qwen35-9B-runpod-run1",
+            "Qwen35-9B-runpod-run2",
+            "Qwen35-9B-runpod-run3",
+        ),
+    ),
+    "dalic-vsm-qwen9b": Profile(
+        results=ROOT / "dataset/agent_results/dalic_vsm",
+        log_name="overnight-chain-dalic-vsm-qwen9b",
+        runner="scripts/run_dalic_agent.py",
+        prompt="scripts/prompts/dalic_v1-qwen-gpt.yaml",
+        env_file="docker/mini-swe-agent-qwen35-9B.env",
+        run_models=(
+            "Qwen35-9B-runpod-run1",
+            "Qwen35-9B-runpod-run2",
+            "Qwen35-9B-runpod-run3",
+        ),
+        stale_runs=(
+            "Qwen35-9B-runpod-run1-low",
+            "Qwen35-9B-runpod-run3-low",
+        ),
+        extra_args=(
+            "--workbench_path",
+            "dataset/agent_workbench/dalic_vsm",
+            "--env_file",
+            "docker/mini-swe-agent-qwen35-9B.env",
+            "--config_yaml",
+            "dalic_v1-qwen-gpt.yaml",
+        ),
+        extra_inputs=("scripts/prompts/task.txt",),
+        prompt_marker="ranked with VSM against the feature request text",
+        forbidden_markers=("ranked with BM25", "bm25_score"),
+    ),
+}
+
+P: Profile
+LOG: Path
+LOCK: Path
 
 
 def report(message: str) -> None:
     line = f"{datetime.now().astimezone().isoformat(timespec='seconds')} {message}"
     print(line, flush=True)
-    RESULTS.mkdir(parents=True, exist_ok=True)
+    P.results.mkdir(parents=True, exist_ok=True)
     with LOG.open("a", encoding="utf-8") as stream:
         stream.write(line + "\n")
 
@@ -66,7 +131,7 @@ def find_running_pid(model_name: str) -> int | None:
         try:
             pid = int(entry.name)
             args = cmdline(pid)
-            if RUNNER in args and "--model_name" in args:
+            if any(arg.endswith(P.runner) for arg in args) and "--model_name" in args:
                 idx = args.index("--model_name")
                 if idx + 1 < len(args) and args[idx + 1] == model_name:
                     return pid
@@ -83,28 +148,47 @@ def api_model(env_path: Path) -> str | None:
 
 
 def input_paths() -> tuple[Path, ...]:
-    return tuple(ROOT / name for name in (RUNNER, MINI, PROMPT, ENV_FILE)) + (COHORT,)
+    names = (P.runner, MINI, P.prompt, P.env_file, *P.extra_inputs)
+    return tuple(ROOT / name for name in names) + (COHORT,)
 
 
 def digest(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def prompt_check(model_name: str) -> bool:
+    """Reject runs whose trajectories were produced with a different prompt."""
+    if P.prompt_marker is None:
+        return True
+    target_dir = P.results / model_name
+    bad: list[str] = []
+    for traj in sorted(target_dir.glob("*/last_mini_run.traj.json")):
+        text = traj.read_text(encoding="utf-8", errors="replace")
+        if P.prompt_marker not in text or any(marker in text for marker in P.forbidden_markers):
+            bad.append(traj.parent.name)
+    if bad:
+        report(f"[{model_name}] prompt check failed for {len(bad)} trajectories, e.g. {bad[:3]}")
+        return False
+    return True
+
+
 def is_completed(model_name: str, selected_count: int) -> bool:
-    target_dir = RESULTS / model_name
-    log_path = target_dir / "dalic.log"
+    target_dir = P.results / model_name
+    log_path = target_dir / "baseline.log"
+    if not log_path.is_file():
+        log_path = target_dir / "dalic.log"
     summary_path = target_dir / "summary.txt"
     if not log_path.is_file() or not summary_path.is_file():
         return False
-    log_lines = log_path.read_text(encoding="utf-8").splitlines()
-    if not log_lines or "Run finished. success_count=" not in log_lines[-1]:
+    log_lines = [l for l in log_path.read_text(encoding="utf-8").splitlines() if l.strip()]
+    if not log_lines or not any("Run finished. success_count=" in line for line in log_lines[-5:]):
         return False
     summary_lines = summary_path.read_text(encoding="utf-8").splitlines()
     counts = dict(line.split(": ", 1) for line in summary_lines[:2] if ": " in line)
     success = int(counts.get("success_count", -1))
     failure = int(counts.get("failure_count", -1))
     report(f"[{model_name}] status check: {success} successful, {failure} failed, {selected_count} expected")
-    return success + failure == selected_count
+    return success + failure == selected_count and prompt_check(model_name)
 
 
 def wait_for_pid(pid: int, model_name: str) -> None:
@@ -118,35 +202,57 @@ def wait_for_pid(pid: int, model_name: str) -> None:
 def execute_run(model_name: str) -> int:
     command = [
         str(PYTHON),
-        RUNNER,
+        P.runner,
         "--model_name",
         model_name,
         "--selected_instances",
         str(COHORT),
+        *P.extra_args,
         "--resume",
     ]
     report(f"[{model_name}] starting runner: {' '.join(command)}")
-    console_log = RESULTS / f"{model_name}.console.log"
+    console_log = P.results / f"{model_name}.console.log"
     with console_log.open("w", encoding="utf-8") as stream:
         result = subprocess.run(command, cwd=ROOT, stdout=stream, stderr=subprocess.STDOUT, check=False)
     report(f"[{model_name}] runner exited with code {result.returncode}; console log: {console_log}")
     return result.returncode
 
 
-def run_pipeline() -> int:
+def remove_previous_results() -> None:
+    for model_name in (*P.run_models, *P.stale_runs):
+        if find_running_pid(model_name) is not None:
+            raise RuntimeError(f"[{model_name}] a runner is active; refusing to delete its results")
+        for path in (P.results / model_name, P.results / f"{model_name}.console.log"):
+            if path.is_dir():
+                shutil.rmtree(path)
+                report(f"[{model_name}] --fresh: removed {path}")
+            elif path.is_file():
+                path.unlink()
+                report(f"[{model_name}] --fresh: removed {path}")
+
+
+def run_pipeline(fresh: bool) -> int:
     if not PYTHON.is_file():
         raise RuntimeError(f"Python environment missing: {PYTHON}")
     selected = tomllib.loads(COHORT.read_text(encoding="utf-8"))["instance_ids"]
     selected_count = len(selected)
 
-    actual_model = api_model(ROOT / ENV_FILE)
+    actual_model = api_model(ROOT / P.env_file)
     if actual_model != EXPECTED_API_MODEL:
-        raise RuntimeError(f"API model in {ENV_FILE} is '{actual_model}', expected '{EXPECTED_API_MODEL}'")
+        raise RuntimeError(f"API model in {P.env_file} is '{actual_model}', expected '{EXPECTED_API_MODEL}'")
+
+    if P.prompt_marker is not None:
+        prompt_text = (ROOT / P.prompt).read_text(encoding="utf-8")
+        if P.prompt_marker not in prompt_text or any(m in prompt_text for m in P.forbidden_markers):
+            raise RuntimeError(f"{P.prompt} does not match the expected prompt marker '{P.prompt_marker}'")
+
+    if fresh:
+        remove_previous_results()
 
     snapshots = {path: digest(path) for path in input_paths()}
-    report(f"armed: consecutive runs {RUN_MODELS} on {selected_count} validated instances")
+    report(f"armed: consecutive runs {P.run_models} on {selected_count} validated instances")
 
-    for model_name in RUN_MODELS:
+    for model_name in P.run_models:
         # Check if code or environment changed
         if any(digest(p) != snapshots[p] for p in input_paths()):
             report(f"[{model_name}] aborted: files modified during execution")
@@ -169,23 +275,38 @@ def run_pipeline() -> int:
             report(f"[{model_name}] did not complete all {selected_count} instances; stopping chain")
             return 1
 
-    report("all 27B runs completed successfully")
+    report(f"all runs of profile completed successfully: {P.run_models}")
     return 0
 
 
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--profile", choices=sorted(PROFILES), default="baseline-qwen9b")
+    parser.add_argument("--fresh", action="store_true")
+    return parser.parse_args()
+
+
 def main() -> int:
-    RESULTS.mkdir(parents=True, exist_ok=True)
+    global P, LOG, LOCK
+    args = parse_args()
+    P = PROFILES[args.profile]
+    LOG = P.results / f"{P.log_name}.log"
+    LOCK = P.results / f"{P.log_name}.lock"
+    P.results.mkdir(parents=True, exist_ok=True)
     with LOCK.open("a", encoding="utf-8") as lock_stream:
         try:
             fcntl.flock(lock_stream, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError:
             raise RuntimeError("another overnight chain runner is already running") from None
-        return run_pipeline()
+        return run_pipeline(args.fresh)
 
 
 if __name__ == "__main__":
     try:
         sys.exit(main())
     except Exception as exc:
-        report(f"failed: {exc}")
+        if "P" in globals():
+            report(f"failed: {exc}")
+        else:
+            print(f"failed: {exc}", file=sys.stderr)
         sys.exit(1)
