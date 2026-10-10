@@ -7,7 +7,9 @@
 #   --selected_instances PATH
 #       default: None (do not filter instances; otherwise read instance_ids from TOML)
 #   --workbench_path PATH
-#       default: dataset/agent_workbench/dalic
+#       default: dataset/agent_workbench/dalic_vsm
+#   --results_base PATH
+#       default: dataset/agent_results/dalic_vsm
 #   --resume
 #       default: False (preserve existing results and skip processed instances)
 
@@ -29,6 +31,7 @@ from tqdm import tqdm
 
 DEFAULT_MODEL_NAME = "DeepSeek-v4-pro"
 DEFAULT_WORKBENCH_PATH = Path("dataset/agent_workbench/dalic_vsm")
+DEFAULT_RESULTS_BASE = Path("dataset/agent_results/dalic_vsm")
 CONTAINER_RESULTS_DIR = "/home/miniagent/.config/mini-swe-agent"
 ARTIFACT_NAMES = ("results.txt", "last_mini_run.traj.json")
 RESULTS_FIELDS = ("files", "classes", "functions")
@@ -48,6 +51,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--test", action="store_true")
     parser.add_argument("--selected_instances", type=Path, default=None)
     parser.add_argument("--workbench_path", type=Path, default=DEFAULT_WORKBENCH_PATH)
+    parser.add_argument("--results_base", type=Path, default=DEFAULT_RESULTS_BASE)
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--env_file", type=Path, default=Path("docker/mini-swe-agent-dalic.env"))
     parser.add_argument("--config_yaml", type=str, default="dalic_v1.yaml")
@@ -58,8 +62,13 @@ def sanitize_model_name(model_name: str) -> str:
     return model_name.replace("/", "_")
 
 
-def prepare_results_root(repo_root: Path, model_name: str, resume: bool) -> Path:
-    results_root = repo_root / "dataset" / "agent_results" / "dalic_vsm" / model_name
+def prepare_results_root(
+    repo_root: Path,
+    model_name: str,
+    resume: bool,
+    results_base: Path = DEFAULT_RESULTS_BASE,
+) -> Path:
+    results_root = resolve_cli_path(repo_root, results_base) / model_name
     if results_root.exists() and not resume:
         shutil.rmtree(results_root)
     results_root.mkdir(parents=True, exist_ok=True)
@@ -473,7 +482,7 @@ def main() -> None:
         else None
     )
     model_name = sanitize_model_name(args.model_name)
-    results_root = prepare_results_root(repo_root, model_name, args.resume)
+    results_root = prepare_results_root(repo_root, model_name, args.resume, args.results_base)
     logger = configure_logger(results_root / "dalic.log")
 
     instance_ids, test_seed = list_instance_ids(

@@ -20,5 +20,7 @@ docker/mini-swe-agent.env
 docker/mini-swe-agent-*.env
 dataset/results_archive
 dataset/trad_methods_results
+dataset/agent_results_backup
+dataset/analysis
 .envrc
 *.pyc

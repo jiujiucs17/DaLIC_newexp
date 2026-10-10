@@ -1,15 +1,19 @@
 #!/usr/bin/env python3
 # Options:
 #   --model_name TEXT
-#       default: Qwen_Qwen3.5-4B
+#       default: DeepSeek-v4-pro
 #   --test
 #       default: False (run all selected instances; when enabled, randomly run at most 10)
 #   --selected_instances PATH
-#       default: None (do not filter instances; otherwise read instance_ids from TOML)
+#       default: dataset/trace_completed_instance_validated.toml
 #   --workbench_path PATH
-#       default: dataset/agent_workbench/dalic
+#       default: dataset/agent_workbench/baseline
 #   --resume
 #       default: False (preserve existing results and skip processed instances)
+#   --env_file PATH
+#       default: docker/mini-swe-agent-dalic.env
+#   --config_yaml TEXT
+#       default: dalic_no_runtime.yaml
 
 from __future__ import annotations
 
@@ -29,6 +33,7 @@ from tqdm import tqdm
 
 DEFAULT_MODEL_NAME = "DeepSeek-v4-pro"
 DEFAULT_WORKBENCH_PATH = Path("dataset/agent_workbench/baseline")
+SELECTED_INSTANCES_TOML = Path("dataset/trace_completed_instance_validated.toml")
 CONTAINER_RESULTS_DIR = "/home/miniagent/.config/mini-swe-agent"
 ARTIFACT_NAMES = ("results.txt", "last_mini_run.traj.json")
 RESULTS_FIELDS = ("files", "classes", "functions")
@@ -46,9 +51,11 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(add_help=False)
     parser.add_argument("--model_name", default=DEFAULT_MODEL_NAME)
     parser.add_argument("--test", action="store_true")
-    parser.add_argument("--selected_instances", type=Path, default=None)
+    parser.add_argument("--selected_instances", type=Path, default=SELECTED_INSTANCES_TOML)
     parser.add_argument("--workbench_path", type=Path, default=DEFAULT_WORKBENCH_PATH)
     parser.add_argument("--resume", action="store_true")
+    parser.add_argument("--env_file", type=Path, default=Path("docker/mini-swe-agent-dalic.env"))
+    parser.add_argument("--config_yaml", type=str, default="dalic_no_runtime.yaml")
     return parser.parse_args()
 
 
@@ -270,14 +277,18 @@ def run_docker_instance(
     container_name: str,
     instance_result_dir: Path,
     logger: logging.Logger,
+    env_file: Path,
+    config_yaml: str,
 ) -> bool:
+    env_path = resolve_cli_path(repo_root, env_file)
+    config_name = Path(config_yaml).name
     command = [
         "docker",
         "run",
         "--name",
         container_name,
         "--env-file",
-        str(repo_root / "docker" / "mini-swe-agent-qwen35-9B.env"),
+        str(env_path),
         "-v",
         f"{workbench_dir / instance_id}:/workspace/instance:ro",
         "-v",
@@ -293,7 +304,8 @@ def run_docker_instance(
         "mini-swe-agent:2caffc56",
         "python",
         "/opt/dalic/run_mini_instance.py",
-        "--agent_version", "dalic-no-runtime",
+        "--config_yaml",
+        config_name,
     ]
     log_path = instance_result_dir / "docker_run.log"
 
@@ -481,6 +493,8 @@ def main() -> None:
     logger.info("Workbench path: %s", workbench_dir)
     logger.info("Selected instances path: %s", selected_instances_path)
     logger.info("Model name: %s", model_name)
+    logger.info("Env file: %s", args.env_file)
+    logger.info("Config YAML: %s", args.config_yaml)
     logger.info("Test mode: %s", args.test)
     if test_seed is not None:
         logger.info("Test mode random seed: %s", test_seed)
@@ -513,7 +527,7 @@ def main() -> None:
                 progress.set_postfix_str(f"{instance_id}: skipped (resume)", refresh=True)
                 continue
 
-            container_name = f"mini-fl-{instance_id}_dalic_{model_name}"
+            container_name = f"mini-fl-{instance_id}_dalic_no_runtime_{model_name}"
             instance_result_dir = results_root / instance_id
             instance_result_dir.mkdir(parents=True, exist_ok=True)
             logger.info("[%s] Starting dalic flow.", instance_id)
@@ -532,6 +546,8 @@ def main() -> None:
                     container_name,
                     instance_result_dir,
                     logger,
+                    args.env_file,
+                    args.config_yaml,
                 ):
                     instance_success = False
                     instance_fail_reasons.append("docker run failed")

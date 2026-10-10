@@ -8,6 +8,8 @@
 #       default: "dataset/trace_completed_instance.toml"
 #   --workbench_path PATH
 #       default: dataset/agent_workbench/baseline
+#   --env_file PATH
+#       default: docker/mini-swe-agent-baseline.env
 
 from __future__ import annotations
 
@@ -48,6 +50,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--test", action="store_true")
     parser.add_argument("--selected_instances", type=Path, default=SELECTED_INSTANCES_TOML)
     parser.add_argument("--workbench_path", type=Path, default=DEFAULT_WORKBENCH_PATH)
+    parser.add_argument("--env_file", type=Path, default=Path("docker/mini-swe-agent-baseline.env"))
     parser.add_argument("--resume", action="store_true")
     return parser.parse_args()
 
@@ -270,6 +273,7 @@ def run_docker_instance(
     container_name: str,
     instance_result_dir: Path,
     logger: logging.Logger,
+    env_file: Path,
 ) -> bool:
     command = [
         "docker",
@@ -277,7 +281,7 @@ def run_docker_instance(
         "--name",
         container_name,
         "--env-file",
-        str(repo_root / "docker" / "mini-swe-agent-baseline.env"),
+        str(resolve_cli_path(repo_root, env_file)),
         "-v",
         f"{workbench_dir / instance_id}:/workspace/instance:ro",
         "-v",
@@ -481,6 +485,7 @@ def main() -> None:
     logger.info("Workbench path: %s", workbench_dir)
     logger.info("Selected instances path: %s", selected_instances_path)
     logger.info("Model name: %s", model_name)
+    logger.info("Env file: %s", args.env_file)
     logger.info("Test mode: %s", args.test)
     if test_seed is not None:
         logger.info("Test mode random seed: %s", test_seed)
@@ -532,6 +537,7 @@ def main() -> None:
                     container_name,
                     instance_result_dir,
                     logger,
+                    args.env_file,
                 ):
                     instance_success = False
                     instance_fail_reasons.append("docker run failed")

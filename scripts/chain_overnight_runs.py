@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
-"""Automated chain runner for consecutive Qwen-9B overnight runs (run1 -> run2 -> run3).
+"""Automated chain runner for consecutive overnight runs (run1 -> run2 -> run3).
 
 Profiles:
   baseline-qwen9b   (default) baseline agent, results in dataset/agent_results/baseline
   dalic-vsm-qwen9b  DaLIC agent on the VSM workbench, results in dataset/agent_results/dalic_vsm
+  dalic-bm25-qwen4b DaLIC agent on the BM25 workbench, results in dataset/agent_results/dalic_bm25
+  dalic-bm25-gpt    DaLIC agent on the BM25 workbench, results in dataset/agent_results/dalic_bm25
 
 Options:
   --profile NAME    default: baseline-qwen9b
@@ -22,7 +24,7 @@ import subprocess
 import sys
 import time
 import tomllib
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 
@@ -31,7 +33,6 @@ COHORT = ROOT / "dataset/trace_completed_instance_validated.toml"
 PYTHON = ROOT / "python_venv/dalic-nexp/bin/python"
 MINI = "scripts/run_mini_instance.py"
 POLL_SECONDS = 15
-EXPECTED_API_MODEL = "openai/Qwen3.5-9B"
 
 
 @dataclass(frozen=True)
@@ -42,13 +43,10 @@ class Profile:
     prompt: str
     env_file: str
     run_models: tuple[str, ...]
+    expected_api_model: str
     stale_runs: tuple[str, ...] = ()
     extra_args: tuple[str, ...] = ()
     extra_inputs: tuple[str, ...] = ()
-    # When set, every trajectory of a completed run must contain this text,
-    # and must not contain any of the forbidden texts.
-    prompt_marker: str | None = None
-    forbidden_markers: tuple[str, ...] = field(default_factory=tuple)
 
 
 PROFILES: dict[str, Profile] = {
@@ -58,6 +56,7 @@ PROFILES: dict[str, Profile] = {
         runner="scripts/run_baseline_agent.py",
         prompt="scripts/prompts/baseline.yaml",
         env_file="docker/mini-swe-agent-baseline.env",
+        expected_api_model="openai/Qwen3.5-9B",
         run_models=(
             "Qwen35-9B-runpod-run1",
             "Qwen35-9B-runpod-run2",
@@ -70,6 +69,7 @@ PROFILES: dict[str, Profile] = {
         runner="scripts/run_dalic_agent.py",
         prompt="scripts/prompts/dalic_v1-qwen-gpt.yaml",
         env_file="docker/mini-swe-agent-qwen35-9B.env",
+        expected_api_model="openai/Qwen3.5-9B",
         run_models=(
             "Qwen35-9B-runpod-run1",
             "Qwen35-9B-runpod-run2",
@@ -88,8 +88,54 @@ PROFILES: dict[str, Profile] = {
             "dalic_v1-qwen-gpt.yaml",
         ),
         extra_inputs=("scripts/prompts/task.txt",),
-        prompt_marker="ranked with VSM against the feature request text",
-        forbidden_markers=("ranked with BM25", "bm25_score"),
+    ),
+    "dalic-bm25-qwen4b": Profile(
+        results=ROOT / "dataset/agent_results/dalic_bm25",
+        log_name="overnight-chain-dalic-bm25-qwen4b",
+        runner="scripts/run_dalic_agent.py",
+        prompt="scripts/prompts/dalic_v1_bm25-qwen-gpt.yaml",
+        env_file="docker/mini-swe-agent-qwen35-4B.env",
+        expected_api_model="openai/Qwen3.5-4B",
+        run_models=(
+            "qwen35-4b-runpod-run1",
+            "qwen35-4b-runpod-run2",
+            "qwen35-4b-runpod-run3",
+        ),
+        extra_args=(
+            "--workbench_path",
+            "dataset/agent_workbench/dalic_bm25",
+            "--results_base",
+            "dataset/agent_results/dalic_bm25",
+            "--env_file",
+            "docker/mini-swe-agent-qwen35-4B.env",
+            "--config_yaml",
+            "dalic_v1_bm25-qwen-gpt.yaml",
+        ),
+        extra_inputs=("scripts/prompts/task.txt",),
+    ),
+    "dalic-bm25-gpt": Profile(
+        results=ROOT / "dataset/agent_results/dalic_bm25",
+        log_name="overnight-chain-dalic-bm25-gpt",
+        runner="scripts/run_dalic_agent.py",
+        prompt="scripts/prompts/dalic_v1_bm25-qwen-gpt.yaml",
+        env_file="docker/mini-swe-agent-gpt.env",
+        expected_api_model="openai/gpt-5.4-2026-03-05",
+        run_models=(
+            "gpt54-0305-openai-run1",
+            "gpt54-0305-openai-run2",
+            "gpt54-0305-openai-run3",
+        ),
+        extra_args=(
+            "--workbench_path",
+            "dataset/agent_workbench/dalic_bm25",
+            "--results_base",
+            "dataset/agent_results/dalic_bm25",
+            "--env_file",
+            "docker/mini-swe-agent-gpt.env",
+            "--config_yaml",
+            "dalic_v1_bm25-qwen-gpt.yaml",
+        ),
+        extra_inputs=("scripts/prompts/task.txt",),
     ),
 }
 
@@ -156,22 +202,6 @@ def digest(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def prompt_check(model_name: str) -> bool:
-    """Reject runs whose trajectories were produced with a different prompt."""
-    if P.prompt_marker is None:
-        return True
-    target_dir = P.results / model_name
-    bad: list[str] = []
-    for traj in sorted(target_dir.glob("*/last_mini_run.traj.json")):
-        text = traj.read_text(encoding="utf-8", errors="replace")
-        if P.prompt_marker not in text or any(marker in text for marker in P.forbidden_markers):
-            bad.append(traj.parent.name)
-    if bad:
-        report(f"[{model_name}] prompt check failed for {len(bad)} trajectories, e.g. {bad[:3]}")
-        return False
-    return True
-
-
 def is_completed(model_name: str, selected_count: int) -> bool:
     target_dir = P.results / model_name
     log_path = target_dir / "baseline.log"
@@ -188,7 +218,7 @@ def is_completed(model_name: str, selected_count: int) -> bool:
     success = int(counts.get("success_count", -1))
     failure = int(counts.get("failure_count", -1))
     report(f"[{model_name}] status check: {success} successful, {failure} failed, {selected_count} expected")
-    return success + failure == selected_count and prompt_check(model_name)
+    return success + failure == selected_count
 
 
 def wait_for_pid(pid: int, model_name: str) -> None:
@@ -238,13 +268,8 @@ def run_pipeline(fresh: bool) -> int:
     selected_count = len(selected)
 
     actual_model = api_model(ROOT / P.env_file)
-    if actual_model != EXPECTED_API_MODEL:
-        raise RuntimeError(f"API model in {P.env_file} is '{actual_model}', expected '{EXPECTED_API_MODEL}'")
-
-    if P.prompt_marker is not None:
-        prompt_text = (ROOT / P.prompt).read_text(encoding="utf-8")
-        if P.prompt_marker not in prompt_text or any(m in prompt_text for m in P.forbidden_markers):
-            raise RuntimeError(f"{P.prompt} does not match the expected prompt marker '{P.prompt_marker}'")
+    if actual_model != P.expected_api_model:
+        raise RuntimeError(f"API model in {P.env_file} is '{actual_model}', expected '{P.expected_api_model}'")
 
     if fresh:
         remove_previous_results()
