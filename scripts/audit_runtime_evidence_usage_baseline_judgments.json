@@ -1,0 +1,992 @@
+{
+  "Qwen3.5-4B-a(main)/django__django-10737/chatcmpl-tool-9e1bcf0b23dec3ce": {
+    "command_sha256": "b77f096e5b8b80ba14de79ee88d9bd16246134d305f8a07b31e777d960b53747",
+    "runtime_observation": false,
+    "reason": "Shell wrapper performs static source searches or environment setup; it does not run tracing of repository entities.",
+    "output_sha256": "fbe0bdffe2c9ea14f4aa1e7ff31f4847e9f514d1f44dbe8b7288cd6250b327d3"
+  },
+  "Qwen3.5-4B-a(main)/django__django-11011/chatcmpl-tool-9c55fa3f2196e0f4": {
+    "command_sha256": "5b1eda234192e9c8e41e2a5a77a04e1931862b25360c12117241b9038870a77b",
+    "runtime_observation": false,
+    "reason": "Malformed shell/static search or result-writing command; no instrumentation output.",
+    "output_sha256": "23130d72f5adffc94be069d3aeb6046be55dd5e0705a1a3e2285db1b07a5e031"
+  },
+  "Qwen3.5-4B-a(main)/django__django-11011/chatcmpl-tool-a011d38eb3d18eb8": {
+    "command_sha256": "33b4aea02766d1b9b63d1f090d5ac2e99d1571ae5ba2b8f059ba2608b9192c63",
+    "runtime_observation": false,
+    "reason": "Malformed Python, result serialization, or non-Python heredoc; no executed implementation-entity observation.",
+    "output_sha256": "32ad51f4a4569cecef8224fe415df3576f60bdcb6a44902caf0d1c91bec844c8"
+  },
+  "Qwen3.5-4B-a(main)/django__django-11011/chatcmpl-tool-b11918fbff94c312": {
+    "command_sha256": "4cf172ca86d44cfeadc34d309ac401623228faf9ef17c60417e8f1e6d94865ba",
+    "runtime_observation": false,
+    "reason": "Output creation/validation utility; predicted names are not runtime observations.",
+    "output_sha256": "eff2906dc8f6d10da753f78c53bbb4c2fc0a1b4bc925c1ec535b5f42902a240a"
+  },
+  "Qwen3.5-4B-a(main)/django__django-11095/chatcmpl-tool-8aea3b0c7edfbf82": {
+    "command_sha256": "798b72586eebb971bb5d3d64249949dac9e19cdc3c27f1a91155811944057a78",
+    "runtime_observation": false,
+    "reason": "Malformed Python, result serialization, or non-Python heredoc; no executed implementation-entity observation.",
+    "output_sha256": "4593cde4683d9b4b762375fba6e87c5426f977f7af44cd12c85a849ba31fa1b9"
+  },
+  "Qwen3.5-4B-a(main)/django__django-11666/chatcmpl-tool-8d9d88de217a3a3f": {
+    "command_sha256": "a8c20d6f8c0ebf489f957aa32f198cc056b29947c4eb724cb39f039c16d5fc47",
+    "runtime_observation": false,
+    "reason": "Behavioral probe, reproduction, or helper fails; ordinary error tracebacks are not explicit implementation-entity observations.",
+    "output_sha256": "33048316b76633e1742915310f219fb691c0ee9f8628840ecbaf75d5eadb6d1f"
+  },
+  "Qwen3.5-4B-a(main)/django__django-11666/chatcmpl-tool-bca517bf639c05bb": {
+    "command_sha256": "be5d1cf92350d2c21372495a86a6d0a093cc4806889fadbdedd785455b15e802",
+    "runtime_observation": false,
+    "reason": "Standalone reproduction or ordinary behavioral check. Any locally defined function logs belong to the reproduction, not instrumented execution of repository implementation entities.",
+    "output_sha256": "0f8aa5c5b665897c543d9ff3f0cab1517c736fb559c7db9f905fc7ab06db4cae"
+  },
+  "Qwen3.5-4B-a(main)/django__django-11666/chatcmpl-tool-ab7b6839ce44ba20": {
+    "command_sha256": "eaaeb7b0ef679a0394ebc62307a2fd6149274287d5cf2857019279466a0775d9",
+    "runtime_observation": false,
+    "reason": "Standalone reproduction or ordinary behavioral check. Any locally defined function logs belong to the reproduction, not instrumented execution of repository implementation entities.",
+    "output_sha256": "657a341b184bb7baf48c25ea9b91dcb490cfea266514079474cb447ff1037e01"
+  },
+  "Qwen3.5-4B-a(main)/django__django-11829/chatcmpl-tool-b9f0c4956d54ba49": {
+    "command_sha256": "76f417378f30ccbb2a6817bce00fa067aec2efb4e5a081437a44d2d0254afe49",
+    "runtime_observation": false,
+    "reason": "Behavioral probe, reproduction, or helper fails; ordinary error tracebacks are not explicit implementation-entity observations.",
+    "output_sha256": "6740ff80f94e3361ed91a3c65ab08a3f23b7a713f68694a14ed6622733427a65"
+  },
+  "Qwen3.5-4B-a(main)/django__django-11829/chatcmpl-tool-bd4d8cdce887ed66": {
+    "command_sha256": "64d4f889dea0e6322474dec02cecb7d6f7c6226a14b3356028038d096fefaad2",
+    "runtime_observation": false,
+    "reason": "Standalone reproduction or ordinary behavioral check. Any locally defined function logs belong to the reproduction, not instrumented execution of repository implementation entities.",
+    "output_sha256": "c6bc533f937b586048784668a44b0ab2a8e8eb4a03c6f088361869bd5937e752"
+  },
+  "Qwen3.5-4B-a(main)/django__django-11829/chatcmpl-tool-9672d58fe291b971": {
+    "command_sha256": "cf68a4ceba150dee25bbc62895b3bc72d11a208bf4f9522f8667933ff3b23ca9",
+    "runtime_observation": false,
+    "reason": "Standalone reproduction or ordinary behavioral check. Any locally defined function logs belong to the reproduction, not instrumented execution of repository implementation entities.",
+    "output_sha256": "3b02d349af6a67bcbc06cfcc84d5b20fd8025b616a7a8ba584bf148b53ca0d7b"
+  },
+  "Qwen3.5-4B-a(main)/django__django-11829/chatcmpl-tool-bd079f6d054dfee8": {
+    "command_sha256": "4ac545eecad43e5d2ee3dd11e97f3f87217d1dbdfda468040d9e6083485728dc",
+    "runtime_observation": false,
+    "reason": "Standalone reproduction or ordinary behavioral check. Any locally defined function logs belong to the reproduction, not instrumented execution of repository implementation entities.",
+    "output_sha256": "a9f651cd6cf0712d9a97d928e9b8440cac6a26fae31a4c527b3cba9fd34ae6b6"
+  },
+  "Qwen3.5-4B-a(main)/django__django-11829/chatcmpl-tool-a18b5886cd980915": {
+    "command_sha256": "9c3c00dd33e1dc7113c76fa6de041bc7d689b6b3e69a6fafd774652dd709ea04",
+    "runtime_observation": false,
+    "reason": "Standalone reproduction or ordinary behavioral check. Any locally defined function logs belong to the reproduction, not instrumented execution of repository implementation entities.",
+    "output_sha256": "0e1ffe7bdb4f0472bd89e27ad1fd11e051acb66c071ad00c5b866d884762df5f"
+  },
+  "Qwen3.5-4B-a(main)/django__django-11829/chatcmpl-tool-b2603b31e2f9c02d": {
+    "command_sha256": "6abf7e19bce19319f58b57b471c55247e6afa097a4ca471304b0bf2d0cbfd21a",
+    "runtime_observation": false,
+    "reason": "Standalone reproduction or ordinary behavioral check. Any locally defined function logs belong to the reproduction, not instrumented execution of repository implementation entities.",
+    "output_sha256": "4081a194c7bb548f543d27e218bafd62fc66eea5a16ece2ebc15ff4dda04d9ea"
+  },
+  "Qwen3.5-4B-a(main)/django__django-11829/chatcmpl-tool-ba5b2301e1098026": {
+    "command_sha256": "7f0aa8d3a3c1a40ecf71cd23b8acd2d24b90fb5aea106556b8d0ccd23099d652",
+    "runtime_observation": false,
+    "reason": "Standalone reproduction or ordinary behavioral check. Any locally defined function logs belong to the reproduction, not instrumented execution of repository implementation entities.",
+    "output_sha256": "0ffd305da85342a0806b6c6bfc69ee403c0c35719d19502c743905783a7d23c2"
+  },
+  "Qwen3.5-4B-a(main)/django__django-11894/chatcmpl-tool-8a8cab5044a3d19f": {
+    "command_sha256": "adef0ae427a74fedb02c4bfe4679ef39655350275e9fe897a3081479f4943684",
+    "runtime_observation": false,
+    "reason": "Behavioral probe, reproduction, or helper fails; ordinary error tracebacks are not explicit implementation-entity observations.",
+    "output_sha256": "709448ae28b0008733f104e5047646a58e9d3e9703cf9af889cd3ce8e4e49866"
+  },
+  "Qwen3.5-4B-a(main)/django__django-12225/chatcmpl-tool-925ec77b36e4bfc4": {
+    "command_sha256": "47f85c09d0f588090284b67089727e781cefd8400e739267a73609aa0b3f9c3f",
+    "runtime_observation": false,
+    "reason": "Behavioral probe, reproduction, or helper fails; ordinary error tracebacks are not explicit implementation-entity observations.",
+    "output_sha256": "dc049ba7f371b45747e5f415102b824f9ac0763a406f48afe9feb1a4bac0d1af"
+  },
+  "Qwen3.5-4B-a(main)/django__django-12225/chatcmpl-tool-974e7425f4b0896a": {
+    "command_sha256": "d3e7162dfc0be6855795715e9ea14821199f1449a77156b2d406e5f75fdb9c37",
+    "runtime_observation": false,
+    "reason": "Malformed Python, result serialization, or non-Python heredoc; no executed implementation-entity observation.",
+    "output_sha256": "89699b2f0d5738b3d21d83e38b128574b0249ce4e94fa47d872a80b33c3b65ce"
+  },
+  "Qwen3.5-4B-a(main)/django__django-12225/chatcmpl-tool-ab22db33f82a00b3": {
+    "command_sha256": "b948f4e8e5db4bdece7f193afc48ff8ac9e6a6a8e41da14b7b6f4d632e885ab7",
+    "runtime_observation": false,
+    "reason": "Malformed Python, result serialization, or non-Python heredoc; no executed implementation-entity observation.",
+    "output_sha256": "bfd857501713f086dfe4da515589756a11c7bf9c64f04736b4d1e520cf96edcf"
+  },
+  "Qwen3.5-4B-a(main)/django__django-12225/chatcmpl-tool-a065a8236bd6ad6f": {
+    "command_sha256": "6311f42f049385092f7a6279278e41c5fe6867fea08ddcf4c6e86f28755b67e0",
+    "runtime_observation": false,
+    "reason": "Malformed Python, result serialization, or non-Python heredoc; no executed implementation-entity observation.",
+    "output_sha256": "a83dd97a256d7c317ce21d69590af5df6fe7010e88a1c9522b1e654b5c4c2bc2"
+  },
+  "Qwen3.5-4B-a(main)/django__django-12225/chatcmpl-tool-973d548376bc519c": {
+    "command_sha256": "1f719fb1050fad33991db44b6a5c7a013f77e4ac0f50a61137071560bb1a69ff",
+    "runtime_observation": false,
+    "reason": "Behavioral probe, reproduction, or helper fails; ordinary error tracebacks are not explicit implementation-entity observations.",
+    "output_sha256": "8ee63e334629cd8713f944ea028de8609203a5bfe09f7bf147c4113bc1689cc7"
+  },
+  "Qwen3.5-4B-a(main)/django__django-12225/chatcmpl-tool-821222a59102b13d": {
+    "command_sha256": "bcde2ae60d34e5dcfda21a1c71e2f1b0c3e309314ca879d249099158f044c0b2",
+    "runtime_observation": false,
+    "reason": "Helper performs source inspection, text editing, result writing, or behavioral reproduction; its output contains no trace of executed repository entities.",
+    "output_sha256": "eef3c35576858aad5366faffa2162a7a069324b253506d776bfb04933e21dca3"
+  },
+  "Qwen3.5-4B-a(main)/django__django-12281/chatcmpl-tool-9d3865c3fd22dc26": {
+    "command_sha256": "07d21c01a7be8d51d53c31fa6125ea1f35e2ce188fa758c25780b1fd63db81fe",
+    "runtime_observation": false,
+    "reason": "Malformed Python, result serialization, or non-Python heredoc; no executed implementation-entity observation.",
+    "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "Qwen3.5-4B-a(main)/django__django-12983/chatcmpl-tool-bbb4cb9910e6ba3f": {
+    "command_sha256": "b720a417029e9f1e823e7ebfd36e8eba0b239b34936df2662407e1f98c6e46c2",
+    "runtime_observation": false,
+    "reason": "Standalone reproduction or ordinary behavioral check. Any locally defined function logs belong to the reproduction, not instrumented execution of repository implementation entities.",
+    "output_sha256": "3f99c4341ce9debbebb4dbd61d7c014c3469c4a9dc179f17a83868d3b2ca1c94"
+  },
+  "Qwen3.5-4B-a(main)/django__django-12983/chatcmpl-tool-957fb45d9a15dbf9": {
+    "command_sha256": "731c2b28f7ffe8b9cbf5a0e6ed626d34d1713fe33eb315fe6fdff8447107bfcd",
+    "runtime_observation": false,
+    "reason": "Malformed Python, result serialization, or non-Python heredoc; no executed implementation-entity observation.",
+    "output_sha256": "e6ae291df27ba600519b86ccf3902206e5fe40355438fb2ef0f9a4f4d8e4e3c4"
+  },
+  "Qwen3.5-4B-a(main)/django__django-12983/chatcmpl-tool-a114aa5f64b1a4dc": {
+    "command_sha256": "6c4dd159a3f009625698bf56a0d64803dc4fdf00dc9fdd13ffd41c94cd009508",
+    "runtime_observation": false,
+    "reason": "Malformed Python, result serialization, or non-Python heredoc; no executed implementation-entity observation.",
+    "output_sha256": "8813877f4eb9ae7e24af0fc23fcd3c85b0af2464a8af5233c4086499342757bc"
+  },
+  "Qwen3.5-4B-a(main)/django__django-12983/chatcmpl-tool-943234f6a94bc949": {
+    "command_sha256": "78ebcda725f2459d4bcff523952f2282bc0deb63928089df64d1de353b3fa67d",
+    "runtime_observation": false,
+    "reason": "Malformed Python, result serialization, or non-Python heredoc; no executed implementation-entity observation.",
+    "output_sha256": "a27cd59e2d97333610d5af91fb907762800ec0a7fe3758fa490a34f7ab5d7d6b"
+  },
+  "Qwen3.5-4B-a(main)/django__django-12983/chatcmpl-tool-8ca520cf9870b36c": {
+    "command_sha256": "f8b4c71c2d1d3638524ede5fe477f50aad15467699afd2e66a70ae68428c152b",
+    "runtime_observation": false,
+    "reason": "Malformed Python, result serialization, or non-Python heredoc; no executed implementation-entity observation.",
+    "output_sha256": "30651f5068d36446821deb949f1f4d83c947385daac1f555fedc9586ed488d5f"
+  },
+  "Qwen3.5-4B-a(main)/django__django-14368/chatcmpl-tool-9cd3d198afb1f955": {
+    "command_sha256": "a6f2184ac20bd537acb595f5805080bc27908a423a0de17cd8bf55250ad888f7",
+    "runtime_observation": false,
+    "reason": "Helper performs source inspection, text editing, result writing, or behavioral reproduction; its output contains no trace of executed repository entities.",
+    "output_sha256": "007853952c22f04416e69a7e5c50462d1e93fabaf9d793f564fe45992adea1f6"
+  },
+  "Qwen3.5-4B-a(main)/django__django-14608/chatcmpl-tool-8e34e7cdcf1fc6c0": {
+    "command_sha256": "5a89c27e76e1a65f0b398e9a22886168e2f8d3d1d2b1b887efe57e1fa59d2811",
+    "runtime_observation": false,
+    "reason": "Behavioral probe, reproduction, or helper fails; ordinary error tracebacks are not explicit implementation-entity observations.",
+    "output_sha256": "33048316b76633e1742915310f219fb691c0ee9f8628840ecbaf75d5eadb6d1f"
+  },
+  "Qwen3.5-4B-a(main)/django__django-14608/chatcmpl-tool-8ccc819ab692319f": {
+    "command_sha256": "56aba838babfb2e9fd1cb2b02362ffa5580c8280af5ca8687ba22f421ae73a3c",
+    "runtime_observation": false,
+    "reason": "Behavioral probe, reproduction, or helper fails; ordinary error tracebacks are not explicit implementation-entity observations.",
+    "output_sha256": "2c70e3e3f75a760349788403bf48a59008154c534f0ce758926af98d378bd995"
+  },
+  "Qwen3.5-4B-a(main)/django__django-15316/chatcmpl-tool-9fc98f30a3ed40dd": {
+    "command_sha256": "41d0f18e02f9e20bfd56dbac7f59e9661dc27079e4f872af1c098929f92ca690",
+    "runtime_observation": false,
+    "reason": "Standalone reproduction or ordinary behavioral check. Any locally defined function logs belong to the reproduction, not instrumented execution of repository implementation entities.",
+    "output_sha256": "8c0ea34f5690afd3df754078fb1c7b7a5d7f4b46ce1f118a7822ae3d442f868e"
+  },
+  "Qwen3.5-4B-a(main)/django__django-15316/chatcmpl-tool-9a083008d4a9f7de": {
+    "command_sha256": "e1fa1a84335413ad2e345d1dbd750d6badaabe3be3561a40969cb27ab4f03a08",
+    "runtime_observation": false,
+    "reason": "Behavioral probe, reproduction, or helper fails; ordinary error tracebacks are not explicit implementation-entity observations.",
+    "output_sha256": "9ef22d9079716d8fdf0b044bc5f4f4ee44c6f099d195a1f76b60d5c1893b851a"
+  },
+  "Qwen3.5-4B-a(main)/django__django-15316/chatcmpl-tool-bf2f2dbfe1d303b2": {
+    "command_sha256": "d0fb0be656b9065af05618b2b64275469de8c5aab8241353180ad8f131c9c3b6",
+    "runtime_observation": false,
+    "reason": "Malformed Python, result serialization, or non-Python heredoc; no executed implementation-entity observation.",
+    "output_sha256": "15bc98985ece2c1d24759b23327c5f8f0ff97ef45feadd627cede558942b7ccf"
+  },
+  "Qwen3.5-4B-a(main)/django__django-15316/chatcmpl-tool-a1d90c89c28166ba": {
+    "command_sha256": "10cb8bf8d04730b9e25a8c44d7c402bb6942c269ab2333d154c63d05ac6e070f",
+    "runtime_observation": false,
+    "reason": "Behavioral probe, reproduction, or helper fails; ordinary error tracebacks are not explicit implementation-entity observations.",
+    "output_sha256": "6d85bb827dd1b817f5402b9fe7d0b8a5d8a8f2359455d363d491567e684e703b"
+  },
+  "Qwen3.5-4B-a(main)/django__django-15316/chatcmpl-tool-8b3f4fb2fbbd886b": {
+    "command_sha256": "dd4025e36b0e073c1c0197e8945bdaa581f0a0597f7708825adc7f1cb1165d01",
+    "runtime_observation": false,
+    "reason": "Malformed Python, result serialization, or non-Python heredoc; no executed implementation-entity observation.",
+    "output_sha256": "395ddfd6c48fe88ac48f9608a7b795e71f6b14786c966153b8e18557fb0ad8e9"
+  },
+  "Qwen3.5-4B-a(main)/django__django-15316/chatcmpl-tool-835ef636abe780a3": {
+    "command_sha256": "1f4529829f6b64eb862265cd77eef1222657656af98bea1aadd38353ac9c6b07",
+    "runtime_observation": false,
+    "reason": "Malformed Python, result serialization, or non-Python heredoc; no executed implementation-entity observation.",
+    "output_sha256": "a1fae9cf8ef37c09097500a0fd85e18658a902269109053d13115b464a71de7e"
+  },
+  "Qwen3.5-4B-a(main)/django__django-15316/chatcmpl-tool-bc3a35f09a9bd749": {
+    "command_sha256": "ac78d29f1b05930f3a7db9518f93ba53927113db533960ae9e624402e45f0dbd",
+    "runtime_observation": false,
+    "reason": "Standalone reproduction or ordinary behavioral check. Any locally defined function logs belong to the reproduction, not instrumented execution of repository implementation entities.",
+    "output_sha256": "35b08e38424e7219d13776251904def7cfbcc63d5e0516e96b1dd0d713069ede"
+  },
+  "Qwen3.5-4B-a(main)/django__django-15438/chatcmpl-tool-aa419134d1ae8d1e": {
+    "command_sha256": "a677ebe73fa8da3cdf9e8d6635ce8b282cadf43112f5a74ff7e80cbf61a15da5",
+    "runtime_observation": false,
+    "reason": "Malformed shell/static search or result-writing command; no instrumentation output.",
+    "output_sha256": "8e7fdee5e1b041d0c73a4bd4a3337a1bc330c064ea45fd22ae913f4290c1ed1e"
+  },
+  "Qwen3.5-4B-a(main)/django__django-15916/chatcmpl-tool-a7f83a610a4e7310": {
+    "command_sha256": "c8c5c3f3796f6a6db1302ff3125a4b0f2307333acda0cc13b0cd1d2c7bde1f49",
+    "runtime_observation": false,
+    "reason": "Malformed Python, result serialization, or non-Python heredoc; no executed implementation-entity observation.",
+    "output_sha256": "4c353acb4e76800e7b5d187d0c2926582137864f42e8e99a1157d07951f56266"
+  },
+  "Qwen3.5-4B-a(main)/django__django-16819/chatcmpl-tool-bf2c22bee2a78d2b": {
+    "command_sha256": "bc2922510e44332597e1095230662a92f8e1805b4b7b3efd1ce8c0ec44a5e221",
+    "runtime_observation": false,
+    "reason": "Behavioral probe, reproduction, or helper fails; ordinary error tracebacks are not explicit implementation-entity observations.",
+    "output_sha256": "72c278a3ac92dfb4afd8a4ebab4974d09b6dcb5ff93f66f0e47edd06fdbf7272"
+  },
+  "Qwen3.5-4B-a(main)/matplotlib__matplotlib-18869/chatcmpl-tool-b12df2808b0fea95": {
+    "command_sha256": "a7ef7e96599fbba229a133564ca6bbf301ca46200ff3be243176bc71a9b133ff",
+    "runtime_observation": false,
+    "reason": "Behavioral probe, reproduction, or helper fails; ordinary error tracebacks are not explicit implementation-entity observations.",
+    "output_sha256": "e494b889786a29158d51b90c3fecd2b549886a2caf2ff31dd78bbfa4e4a30177"
+  },
+  "Qwen3.5-4B-a(main)/matplotlib__matplotlib-23913/chatcmpl-tool-b3e22a76b1591e20": {
+    "command_sha256": "87bd57dce8a06ca2b9036505880b3d23fc75b8f13dd4cdcd28c45973f674d967",
+    "runtime_observation": false,
+    "reason": "Output creation/validation utility; predicted names are not runtime observations.",
+    "output_sha256": "8c637b94787bdd4357ab113ee789ce5b57ae37e55b3d6db67632e08693b46de1"
+  },
+  "Qwen3.5-4B-a(main)/matplotlib__matplotlib-25746/chatcmpl-tool-a2c085d5a2786384": {
+    "command_sha256": "f23bcf3de18ff63b18605685b9e4f9735cf7fe5cc4b4f5d7bf759ad3b9c22d79",
+    "runtime_observation": false,
+    "reason": "Malformed Python, result serialization, or non-Python heredoc; no executed implementation-entity observation.",
+    "output_sha256": "59fddd28ecce2073aebd09b360d0472379241142bd97a43b1a5c36c8e6c6e8a0"
+  },
+  "Qwen3.5-4B-a(main)/psf__requests-863/chatcmpl-tool-8dc05184d709f115": {
+    "command_sha256": "8ed29127c3acb1ac9de203763fc1ee667dca3889d0b18224084d58b00fd4c88d",
+    "runtime_observation": false,
+    "reason": "Behavioral probe, reproduction, or helper fails; ordinary error tracebacks are not explicit implementation-entity observations.",
+    "output_sha256": "1c26aca855559cfde82895ea78e6c591482f5a95764504f7c59ddf116825bfe5"
+  },
+  "Qwen3.5-4B-a(main)/pydata__xarray-4182/chatcmpl-tool-9277de3b1ce449da": {
+    "command_sha256": "28a71bf086a4277c9e32d43af0d8b58d84ee42e4c370d6517c0a91161368379a",
+    "runtime_observation": false,
+    "reason": "Malformed Python, result serialization, or non-Python heredoc; no executed implementation-entity observation.",
+    "output_sha256": "75b89ca9ae0e3c7d59e659944fa165915030e4e44bb0c1956636d39ed754eb8e"
+  },
+  "Qwen3.5-4B-a(main)/pytest-dev__pytest-11047/chatcmpl-tool-8c327148044017a7": {
+    "command_sha256": "27776f595c31a34f782490f8a037e45cce2c1b7ca2dfd69d52426e503a953568",
+    "runtime_observation": false,
+    "reason": "Behavioral probe, reproduction, or helper fails; ordinary error tracebacks are not explicit implementation-entity observations.",
+    "output_sha256": "ad0ff6888985fbf5b196440a306f64ab2d91c7f671506b41da932850e5ae7f54"
+  },
+  "Qwen3.5-4B-a(main)/pytest-dev__pytest-8422/chatcmpl-tool-93c6e0890f335f52": {
+    "command_sha256": "e4340004e3acd1e37844918b0f90606a7741a51029a458e82273cce436297959",
+    "runtime_observation": false,
+    "reason": "Standalone reproduction or ordinary behavioral check. Any locally defined function logs belong to the reproduction, not instrumented execution of repository implementation entities.",
+    "output_sha256": "b376d02ac11140cf479c8d8881566b1dfc63a9e8063d3878ad8947329a4b56e8"
+  },
+  "Qwen3.5-4B-a(main)/pytest-dev__pytest-8422/chatcmpl-tool-a7c3655b39a44f1b": {
+    "command_sha256": "41a5db069d8261e9eb1dc0c6c731433bc8fbafcc1ee1520fccf48bc4495fb140",
+    "runtime_observation": false,
+    "reason": "Behavioral probe, reproduction, or helper fails; ordinary error tracebacks are not explicit implementation-entity observations.",
+    "output_sha256": "581eb74c3e81c9f046e51eccf2a241dc1b13d42e762448cea42901fe70915c33"
+  },
+  "Qwen3.5-4B-a(main)/pytest-dev__pytest-8422/chatcmpl-tool-a1ce0e5785a5ad63": {
+    "command_sha256": "76c9a652ea245378e4d227a3a686b56324d86e63b9b11d876f861b3f92325886",
+    "runtime_observation": false,
+    "reason": "Behavioral probe, reproduction, or helper fails; ordinary error tracebacks are not explicit implementation-entity observations.",
+    "output_sha256": "440b49943df3774ee4cf7376b4735d09f1b20298aaa5d8cd1b2708f0aa289834"
+  },
+  "Qwen3.5-4B-a(main)/pytest-dev__pytest-8422/chatcmpl-tool-80f1444103f30774": {
+    "command_sha256": "9cc55c4ad20dee6601a33667cfd56c19786861f12f56e0ee80368cc231185594",
+    "runtime_observation": false,
+    "reason": "Standalone reproduction or ordinary behavioral check. Any locally defined function logs belong to the reproduction, not instrumented execution of repository implementation entities.",
+    "output_sha256": "a7fb9c6750a1ee9d1ccc0dd9cabfa29db798aa0e5c9d50315349e9d9479cc9b9"
+  },
+  "Qwen3.5-4B-a(main)/pytest-dev__pytest-8422/chatcmpl-tool-9f16f4f4e7aa939f": {
+    "command_sha256": "6065b927dd7609401d492c945e8fb4a0623201f29f2a9c1b24e933abe7bee27b",
+    "runtime_observation": false,
+    "reason": "Standalone reproduction or ordinary behavioral check. Any locally defined function logs belong to the reproduction, not instrumented execution of repository implementation entities.",
+    "output_sha256": "09570adb97c212c65a92838c108e2c81f64d43510e2d0064b5296e4399bbb754"
+  },
+  "Qwen3.5-4B-a(main)/pytest-dev__pytest-9956/chatcmpl-tool-970e5ffbdf907dd9": {
+    "command_sha256": "ba8566586c760a548e33c7ab67ac1e9e345636f3010b334ea8df7ce70a1cb414",
+    "runtime_observation": false,
+    "reason": "Helper performs source inspection, text editing, result writing, or behavioral reproduction; its output contains no trace of executed repository entities.",
+    "output_sha256": "6d9c90feb9436ee7d4313ae09f6df9e9bf1d6ff42243c168883eafed408734e5"
+  },
+  "Qwen3.5-4B-a(main)/scikit-learn__scikit-learn-10899/chatcmpl-tool-82b3712d3879334e": {
+    "command_sha256": "2f48bca8217a4f0ad225a17d73ad62e7fc31c8207f2b9d9887c0cd194c7e9034",
+    "runtime_observation": false,
+    "reason": "Behavioral probe, reproduction, or helper fails; ordinary error tracebacks are not explicit implementation-entity observations.",
+    "output_sha256": "1d577e2f05522e927d293d2cc9b3cceac0788ef096f097a08d712016c180f537"
+  },
+  "Qwen3.5-4B-a(main)/scikit-learn__scikit-learn-10899/chatcmpl-tool-9c7fcb01c5ae2c71": {
+    "command_sha256": "f9ccb78fb99c4c5491fe28c4ff383c3f993f464e66e1f53e9155b41b830bbc44",
+    "runtime_observation": false,
+    "reason": "Behavioral probe, reproduction, or helper fails; ordinary error tracebacks are not explicit implementation-entity observations.",
+    "output_sha256": "9278c27034e584e6220895d4622a18fdc009a4e1c321a05c277143f8c2267c84"
+  },
+  "Qwen3.5-4B-a(main)/scikit-learn__scikit-learn-25638/chatcmpl-tool-915f07c8acd3022f": {
+    "command_sha256": "4a8f995b211b3abe938362f2e0a9d42dc8c2eb8f6bf9e3d0b3ffb7789c6f2dc4",
+    "runtime_observation": false,
+    "reason": "Behavioral probe, reproduction, or helper fails; ordinary error tracebacks are not explicit implementation-entity observations.",
+    "output_sha256": "12261bf824f0b8a10c86492ce8f2a64f8f6dcb7e53c3cd59512c4edff2be49d2"
+  },
+  "Qwen3.5-4B-a(main)/scikit-learn__scikit-learn-25638/chatcmpl-tool-831826792eb04d2e": {
+    "command_sha256": "691098a67d6a07742d1b9b51fba7798cdb216a3a582c1fa9a349cf1cd1bf999c",
+    "runtime_observation": false,
+    "reason": "Behavioral probe, reproduction, or helper fails; ordinary error tracebacks are not explicit implementation-entity observations.",
+    "output_sha256": "485226f07a821a711c230aa972ed51efaf02dcb9be833580ea723835d3f4b317"
+  },
+  "Qwen3.5-4B-a(main)/scikit-learn__scikit-learn-25638/chatcmpl-tool-b901eef5007949d8": {
+    "command_sha256": "5a04100ef30c734aadc14360d9fb72da7914fb200eb2d3c2ec7ab958d8977be4",
+    "runtime_observation": false,
+    "reason": "Standalone reproduction or ordinary behavioral check. Any locally defined function logs belong to the reproduction, not instrumented execution of repository implementation entities.",
+    "output_sha256": "0aa0c024b93bd6e621d9017c2b59e2746b3af26bfafc5f6ab979e1ae84fcfca3"
+  },
+  "Qwen3.5-4B-a(main)/scikit-learn__scikit-learn-25638/chatcmpl-tool-aff1de6f30772f91": {
+    "command_sha256": "cd7b3194a00f4d050286a2b72a4d271863c03091f724bc669803231ab7751d4a",
+    "runtime_observation": false,
+    "reason": "Malformed Python, result serialization, or non-Python heredoc; no executed implementation-entity observation.",
+    "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "Qwen3.5-4B-a(main)/sphinx-doc__sphinx-8684/chatcmpl-tool-82a7e8b695d94532": {
+    "command_sha256": "438cbcaab8aafc28124aabcce75996214a168970c310462ec9c1215a94fe11dc",
+    "runtime_observation": false,
+    "reason": "Ordinary behavioral/import probe; no instrumentation identifies implementation entities exercised during execution.",
+    "output_sha256": "46d5cc89a0b02927d2103ee746e53290fa7c9bd2b6cd6c43d470c1219fa984d9"
+  },
+  "Qwen3.5-4B-a(main)/sympy__sympy-13091/chatcmpl-tool-94c4c29603e98abf": {
+    "command_sha256": "5bfa80b812b97bddd404d6fdd8e5fead11fdfc5584ee9b817e68d2b31fbd952e",
+    "runtime_observation": false,
+    "reason": "Malformed shell/static search or result-writing command; no instrumentation output.",
+    "output_sha256": "8e7fdee5e1b041d0c73a4bd4a3337a1bc330c064ea45fd22ae913f4290c1ed1e"
+  },
+  "Qwen3.5-4B-a(main)/sympy__sympy-13619/chatcmpl-tool-841c4d3aa9a62000": {
+    "command_sha256": "64aabbb4e1810fccdd92dcd2c46aab742579338bb88ed2c80472942acf354ad8",
+    "runtime_observation": false,
+    "reason": "Shell wrapper performs static source searches or environment setup; it does not run tracing of repository entities.",
+    "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "Qwen3.5-4B-a(main)/sympy__sympy-13619/chatcmpl-tool-8c53482484324be8": {
+    "command_sha256": "f16b667b60e1dd871e0044776d7dec943d06ecfcf608015da04e09aa4986275f",
+    "runtime_observation": false,
+    "reason": "Shell wrapper performs static source searches or environment setup; it does not run tracing of repository entities.",
+    "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "Qwen3.5-4B-a(main)/sympy__sympy-13619/chatcmpl-tool-a8abae928897c140": {
+    "command_sha256": "cba3e1afbe23f875ec5ea23281c365abec930694dac3b9d671eeb3c41b6522fe",
+    "runtime_observation": false,
+    "reason": "Shell wrapper performs static source searches or environment setup; it does not run tracing of repository entities.",
+    "output_sha256": "c96b4db16176d69c8be3b3f6a6ebae0026fe8c6c99f9b2031f8ba38c3d70ec54"
+  },
+  "Qwen3.5-4B-a(main)/sympy__sympy-13619/chatcmpl-tool-a9eb05761e3097f3": {
+    "command_sha256": "1d3492773978ba4cf759971ab6d6e7bc1004fde540e53a5aae8179ace060d211",
+    "runtime_observation": false,
+    "reason": "Shell wrapper performs static source searches or environment setup; it does not run tracing of repository entities.",
+    "output_sha256": "8f1d181ccb3161a8c04a706cc667efbd08e75b141998e817c8122a1becdffb49"
+  },
+  "Qwen3.5-4B-a(main)/sympy__sympy-13619/chatcmpl-tool-8ca04aded7671b3f": {
+    "command_sha256": "e28f6e65318b724a3cea3f8e47675cd545896a939b6594857a672520d7bd7dde",
+    "runtime_observation": false,
+    "reason": "Shell wrapper performs static source searches or environment setup; it does not run tracing of repository entities.",
+    "output_sha256": "f9011bdfafae352299076d96d31fa625e5a26496e36341b399d827fd73a40b80"
+  },
+  "Qwen3.5-4B-a(main)/sympy__sympy-13619/chatcmpl-tool-801cc49fc8cc9383": {
+    "command_sha256": "cafcb65a0e899156bd105ca5c17945826e7d9be2f706afc5bdd5e7df0fd556bb",
+    "runtime_observation": false,
+    "reason": "Shell wrapper performs static source searches or environment setup; it does not run tracing of repository entities.",
+    "output_sha256": "8f1d181ccb3161a8c04a706cc667efbd08e75b141998e817c8122a1becdffb49"
+  },
+  "Qwen3.5-4B-a(main)/sympy__sympy-13619/chatcmpl-tool-9c1d83eb7f5640b0": {
+    "command_sha256": "2d33172924b6279e65ec93b1277893a380cd1482d26369f9402a3841afbcf83e",
+    "runtime_observation": false,
+    "reason": "Shell wrapper performs static source searches or environment setup; it does not run tracing of repository entities.",
+    "output_sha256": "0b162af55267ce0076ed68a45d48ec10d9ce862f27a5caf5f6768eaa719bb5b4"
+  },
+  "Qwen3.5-4B-a(main)/sympy__sympy-13619/chatcmpl-tool-9ec2ae470da65c7d": {
+    "command_sha256": "311e47a86b03826fdda9a5f11834163531fd332bfb441e38fe3b51b4b08c852b",
+    "runtime_observation": false,
+    "reason": "Shell wrapper performs static source searches or environment setup; it does not run tracing of repository entities.",
+    "output_sha256": "e3596e8a6df70537caca2b9e11db609d608f71be2e1e82a5b4a70a3da73b57de"
+  },
+  "Qwen3.5-4B-a(main)/sympy__sympy-13619/chatcmpl-tool-8c8b7e85a7d05f4d": {
+    "command_sha256": "f1fac153735748423585c10f0096cf52f2c9bce5d333cc1e9412fa324541e689",
+    "runtime_observation": false,
+    "reason": "Shell wrapper performs static source searches or environment setup; it does not run tracing of repository entities.",
+    "output_sha256": "f126f494df6f627bd433aa20d13cb6d56c4affa9d221a1d1d85374c7a117a644"
+  },
+  "Qwen3.5-4B-a(main)/sympy__sympy-13619/chatcmpl-tool-9302aba789c52839": {
+    "command_sha256": "afea0d24e52c47338af81b557da9a9f82e9b117ea0d95c1654a13ae45a2a0fc1",
+    "runtime_observation": false,
+    "reason": "Shell wrapper performs static source searches or environment setup; it does not run tracing of repository entities.",
+    "output_sha256": "53842f3d7dc8c7699a1300855c08179f58c50bf0f8903229ee4a136fe0034a89"
+  },
+  "Qwen3.5-4B-a(main)/sympy__sympy-13619/chatcmpl-tool-b65f8a102fda6da1": {
+    "command_sha256": "da616dbecd0e338abbf9dd1e95188934a4c07a46d324da9f8b2d681553cef90c",
+    "runtime_observation": false,
+    "reason": "Shell wrapper performs static source searches or environment setup; it does not run tracing of repository entities.",
+    "output_sha256": "192f4a6de1fdc3bcd34759f0e669a40042ad60c283187bbb605620a4c9b966b5"
+  },
+  "Qwen3.5-4B-a(main)/sympy__sympy-13619/chatcmpl-tool-a9e143db62c025e0": {
+    "command_sha256": "41251fb48e398572eac4219a3bbf3a89e05ed55d2254255a7f85217ab2d2f6b5",
+    "runtime_observation": false,
+    "reason": "Shell wrapper performs static source searches or environment setup; it does not run tracing of repository entities.",
+    "output_sha256": "71231812f97500df656a300a0ca85759046318c693c2344b80fa39367029c1c6"
+  },
+  "Qwen3.5-4B-a(main)/sympy__sympy-13619/chatcmpl-tool-9155555416e98ca1": {
+    "command_sha256": "a506819f56be73c3b44509a04aef89d27b4954685dd02860f1645de25e3d432a",
+    "runtime_observation": false,
+    "reason": "Shell wrapper performs static source searches or environment setup; it does not run tracing of repository entities.",
+    "output_sha256": "f9734f094a205200479afb2b09090b02a8d8b9f34e195d5201371faea68ebf4c"
+  },
+  "Qwen3.5-4B-a(main)/sympy__sympy-13619/chatcmpl-tool-9bfdfe9675c5f622": {
+    "command_sha256": "740327af98c65f66a15289677b3af1a8ed1994aee82093ffb7976640a4d7283f",
+    "runtime_observation": false,
+    "reason": "Shell wrapper performs static source searches or environment setup; it does not run tracing of repository entities.",
+    "output_sha256": "caf81d3c5ab0f664dd0e832f058edc14e1a6bb85e6fe31e6df1e06b6d5016781"
+  },
+  "Qwen3.5-4B-a(main)/sympy__sympy-13619/chatcmpl-tool-a94c601b9fc41a69": {
+    "command_sha256": "0dc6783792b7d6a4b72cb3d836d64c0fa787e7b9c39e3760631999190510975d",
+    "runtime_observation": false,
+    "reason": "Shell wrapper performs static source searches or environment setup; it does not run tracing of repository entities.",
+    "output_sha256": "f8a9dfbddd583e75ae4b7099b86747029449304f0f28a341f150470570d6e522"
+  },
+  "Qwen3.5-4B-a(main)/sympy__sympy-13619/chatcmpl-tool-b875de183491edc4": {
+    "command_sha256": "8b073ba5d8f170505497267fa339a523d135a000f3744745d476eba2ca428e4c",
+    "runtime_observation": false,
+    "reason": "Shell wrapper performs static source searches or environment setup; it does not run tracing of repository entities.",
+    "output_sha256": "0ae15c81cac4b50e68486c9f05dcfde921eab272da8fba7b8c975bb0a389972b"
+  },
+  "Qwen3.5-4B-a(main)/sympy__sympy-13619/chatcmpl-tool-bb832d459fc261f0": {
+    "command_sha256": "7b107e8eb9c61da7e4e8f8ab31cdbe359b1b3fad607a8442e553fe07fc0a31d9",
+    "runtime_observation": false,
+    "reason": "Shell wrapper performs static source searches or environment setup; it does not run tracing of repository entities.",
+    "output_sha256": "a985de300c0eabeef91153a2a729a350f23fe3a1228f870f4f7386f8bc702e38"
+  },
+  "Qwen3.5-4B-a(main)/sympy__sympy-13619/chatcmpl-tool-8d52ae34a9117f7b": {
+    "command_sha256": "352426a22a49844809b0a889bc1a39640a5061607a50342043da938a8f671a32",
+    "runtime_observation": false,
+    "reason": "Shell wrapper performs static source searches or environment setup; it does not run tracing of repository entities.",
+    "output_sha256": "e4e6b79b54f8dd4819b95101ab54aef9a655aeadf3d87cf06b5694c8f1b7f324"
+  },
+  "Qwen3.5-4B-a(main)/sympy__sympy-13619/chatcmpl-tool-a3dead55d8512783": {
+    "command_sha256": "649857b8e595d69a65206d184f8d53cfacbe3bfe5f094d711d40ca441f17e7bd",
+    "runtime_observation": false,
+    "reason": "Shell wrapper performs static source searches or environment setup; it does not run tracing of repository entities.",
+    "output_sha256": "130894b12f2b110fea53b2b7fbca85410960a8ec277f12f7a39a1cecb281ce13"
+  },
+  "Qwen3.5-4B-a(main)/sympy__sympy-13619/chatcmpl-tool-becfc458c1cd3d79": {
+    "command_sha256": "dcb7d4690068fe380c9bb333158b37997de7b2460368a25814d0ac67449c97df",
+    "runtime_observation": false,
+    "reason": "Shell wrapper performs static source searches or environment setup; it does not run tracing of repository entities.",
+    "output_sha256": "eab660c846b6cab88102c577db84545dbcdbf8c87864f1bfc4f7b2dfd9fbca14"
+  },
+  "Qwen3.5-4B-a(main)/sympy__sympy-13619/chatcmpl-tool-a5a713ac5c0471c2": {
+    "command_sha256": "6a1c42438ce9e72669da9280399d11e4b35677dab0e5b26606279ffd3ad36782",
+    "runtime_observation": false,
+    "reason": "Shell wrapper performs static source searches or environment setup; it does not run tracing of repository entities.",
+    "output_sha256": "7d37394fe0a9d5bf6f00fe4d6da0511b3e141e0763c98ef9c9ee4a8cf5481f8e"
+  },
+  "Qwen3.5-4B-a(main)/sympy__sympy-13619/chatcmpl-tool-b141ef2c96df71ea": {
+    "command_sha256": "361c6a5445e6a9decbd8c68e891ab31dde56395e5c8a5fec2b761d3447c4c957",
+    "runtime_observation": false,
+    "reason": "Shell wrapper performs static source searches or environment setup; it does not run tracing of repository entities.",
+    "output_sha256": "b3c6d06b7aa7ae525ba868ea16b130ae0098fb75bc5ea2431f11b086c8e0dd8a"
+  },
+  "Qwen3.5-4B-a(main)/sympy__sympy-13619/chatcmpl-tool-91b4c1205499fa65": {
+    "command_sha256": "6fcb5bb8a9359778d5760a4fbdf2e7344be458c7ef92355e2bde1135c4e67d87",
+    "runtime_observation": false,
+    "reason": "Shell wrapper performs static source searches or environment setup; it does not run tracing of repository entities.",
+    "output_sha256": "acc14b4ea23555a3e4122aed5725358bad49fe23798dd099036bb0d03de4128f"
+  },
+  "Qwen3.5-4B-a(main)/sympy__sympy-13619/chatcmpl-tool-bf09608920819a10": {
+    "command_sha256": "2d483e982027ac701e21d9b28679c26940441b91f1c2c92d4f37f8b7934b3472",
+    "runtime_observation": false,
+    "reason": "Shell wrapper performs static source searches or environment setup; it does not run tracing of repository entities.",
+    "output_sha256": "48f993735b1f60629a7c28e14512e5f4ec1824d2606d7ad2d4ee4fcd31916f9a"
+  },
+  "Qwen3.5-4B-a(main)/sympy__sympy-13619/chatcmpl-tool-aa131658b9eb7454": {
+    "command_sha256": "0db5550df871f1544cc16d9f37439f13a0dd3de16829b4e491dd4ca4e7e5c2e0",
+    "runtime_observation": false,
+    "reason": "Shell wrapper performs static source searches or environment setup; it does not run tracing of repository entities.",
+    "output_sha256": "ffeb0cf89ea92646234a8360668768c7db192e367e53485a5aee5ac1cd299d37"
+  },
+  "Qwen3.5-4B-a(main)/sympy__sympy-13619/chatcmpl-tool-91210df86da5a81f": {
+    "command_sha256": "a16d258362326e61a7f01d544e792a2c7e50e75b417a7663c63cc3fa0fa5bfd2",
+    "runtime_observation": false,
+    "reason": "Shell wrapper performs static source searches or environment setup; it does not run tracing of repository entities.",
+    "output_sha256": "fc0021d0bcba1f7c6e68ac3a5d43aa0ba899f619f02beb640ed3683a890c4156"
+  },
+  "Qwen3.5-4B-a(main)/sympy__sympy-13619/chatcmpl-tool-91492c936c8dac81": {
+    "command_sha256": "fb9fbc8e854dc71ec2570d27e219616a7efbe4816fdb86eb0903c532d2aabf9c",
+    "runtime_observation": false,
+    "reason": "Shell wrapper performs static source searches or environment setup; it does not run tracing of repository entities.",
+    "output_sha256": "8734a5f1e844a4e97ce760961eb47056ef4ebc9ac6202a15d1206c67f844d935"
+  },
+  "Qwen3.5-4B-a(main)/sympy__sympy-13619/chatcmpl-tool-9e970e59006ff37f": {
+    "command_sha256": "de889670a2c7b3c0dd2dff12e7a274d2f782fd9785ae44e4369dbcdba902a4eb",
+    "runtime_observation": false,
+    "reason": "Shell wrapper performs static source searches or environment setup; it does not run tracing of repository entities.",
+    "output_sha256": "81ffe1deec932f0bcd101c91f57a095355679a7762d6f38d4aad706b6cc381b6"
+  },
+  "Qwen3.5-4B-a(main)/sympy__sympy-13619/chatcmpl-tool-ab8a0a174de3eaa5": {
+    "command_sha256": "7af2f667637fedb4031027c08183600fc231a7b57c2a3a73813c423d460de56c",
+    "runtime_observation": false,
+    "reason": "Shell wrapper performs static source searches or environment setup; it does not run tracing of repository entities.",
+    "output_sha256": "e437e466b73db84274de46155f38ab95e39c98a9aef7e3347fc0f59141ffcaae"
+  },
+  "Qwen3.5-4B-a(main)/sympy__sympy-13619/chatcmpl-tool-86ccb0c886901fd4": {
+    "command_sha256": "841843b9aff31c008d1a3b0c03ba3df74ec1d18dc641b52dc1360781964f0684",
+    "runtime_observation": false,
+    "reason": "Shell wrapper performs static source searches or environment setup; it does not run tracing of repository entities.",
+    "output_sha256": "ecd9630d9200acd430543b7e93272fb62d955a83822aefc3ae8a8f6b488e8d61"
+  },
+  "Qwen3.5-4B-a(main)/sympy__sympy-15286/chatcmpl-tool-b7521f19be693caf": {
+    "command_sha256": "94af73062d0ebf859be1a432e4ef39003e10f3ca18cce3511f68f3d38c11cf5e",
+    "runtime_observation": false,
+    "reason": "Helper performs source inspection, text editing, result writing, or behavioral reproduction; its output contains no trace of executed repository entities.",
+    "output_sha256": "95889b1f430317cb930d843f73fde34eb9e1ba678bf28368f4ea635baafe20c2"
+  },
+  "Qwen3.5-4B-a(main)/sympy__sympy-16474/chatcmpl-tool-886d9f65bb49d5b8": {
+    "command_sha256": "9c96f05fe5c8e4f74c09f0652fa2a25546bfb4d97f5160f310f379bf54c2c846",
+    "runtime_observation": false,
+    "reason": "Malformed Python, result serialization, or non-Python heredoc; no executed implementation-entity observation.",
+    "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "Qwen3.5-4B-a(main)/sympy__sympy-16988/chatcmpl-tool-8736339ed40ceb1d": {
+    "command_sha256": "f1ff98e5e74b377bb301c76ae25ca1f52038ba22a0ddb1a6dde7f11a54e96630",
+    "runtime_observation": false,
+    "reason": "Malformed Python, result serialization, or non-Python heredoc; no executed implementation-entity observation.",
+    "output_sha256": "7ee6ba25eafa7b56c4dfd0080838040a541ef97f8025a51936d911cdea287389"
+  },
+  "Qwen35-9B/django__django-11772/chatcmpl-tool-b54e9d7c14f44fe8": {
+    "command_sha256": "beb710efc40689e27a9ffabeab6464ea2bf9500630a25bccaf2524e984cd6ab6",
+    "runtime_observation": false,
+    "reason": "Standalone reproduction or ordinary behavioral check. Any locally defined function logs belong to the reproduction, not instrumented execution of repository implementation entities.",
+    "output_sha256": "9cdf744c9eae01415ac5054b747f215b626da51c3e717f8dd17edb5870ddffdb"
+  },
+  "Qwen35-9B/django__django-11772/chatcmpl-tool-a5b8b0e8a19ba997": {
+    "command_sha256": "517bdf3408c6b3ddf579be8784e54fd17eeb201c1c47eb827f47830bf8387391",
+    "runtime_observation": false,
+    "reason": "Standalone reproduction or ordinary behavioral check. Any locally defined function logs belong to the reproduction, not instrumented execution of repository implementation entities.",
+    "output_sha256": "9700ca9a0d894ede2890ff41d133c6f5e2677cbee11ed182a67685b06148993c"
+  },
+  "Qwen35-9B/django__django-12132/chatcmpl-tool-9eef34a27b3f4648": {
+    "command_sha256": "bda5f1711aaea406a65650fc83e9f188cfaca4cfc0d0c3b42edf2b7ff5b6c609",
+    "runtime_observation": false,
+    "reason": "Standalone reproduction or ordinary behavioral check. Any locally defined function logs belong to the reproduction, not instrumented execution of repository implementation entities.",
+    "output_sha256": "bb3ea1dca0cc0d0b8969422f541a4a8fe7718018821ee6038bb7982fff9d3799"
+  },
+  "Qwen35-9B/django__django-12281/chatcmpl-tool-94212ad8fab29771": {
+    "command_sha256": "f6ab885a589e3007d13c6d967f60586b56152b86766bcca6bc61510a9a809bc0",
+    "runtime_observation": false,
+    "reason": "Behavioral probe, reproduction, or helper fails; ordinary error tracebacks are not explicit implementation-entity observations.",
+    "output_sha256": "b4f0a47babaee191e0b044baaca845a7e11dd0bbfbe9e5cedceabfe353ede41e"
+  },
+  "Qwen35-9B/django__django-15316/chatcmpl-tool-9475b24b4e7ccfff": {
+    "command_sha256": "0080a66bd657e466d7aa85fdb92bba04fabf20a7c59edcc3965b64730e847879",
+    "runtime_observation": false,
+    "reason": "Standalone reproduction or ordinary behavioral check. Any locally defined function logs belong to the reproduction, not instrumented execution of repository implementation entities.",
+    "output_sha256": "250d13f8e2e58e79af7e4a4ee7609f22aeb5f5f8cb71a5dddfd967f6db669ce2"
+  },
+  "Qwen35-9B/django__django-15316/chatcmpl-tool-a615eedb43ab9d21": {
+    "command_sha256": "5f604e69fef0e11edd08a7c66327888e8b82eadf71a5a87bf76e6587b4139193",
+    "runtime_observation": false,
+    "reason": "Malformed Python, result serialization, or non-Python heredoc; no executed implementation-entity observation.",
+    "output_sha256": "56b04081ebeb14c3f97c29f3ffac814020f4d33d0ccee885726153a1bbe300bf"
+  },
+  "Qwen35-9B/django__django-15400/chatcmpl-tool-84cf5e1929326974": {
+    "command_sha256": "5d0fb4ceaec5c90c3437cf0df1026ed5112bf227d80b1a6329f75535fa9ac43d",
+    "runtime_observation": false,
+    "reason": "Ordinary behavioral/import probe; no instrumentation identifies implementation entities exercised during execution.",
+    "output_sha256": "0a1ad100e57fb93ce1465e46a90a793f941b7eba71a6e6452bd10f2be542b3fd"
+  },
+  "Qwen35-9B/matplotlib__matplotlib-24111/chatcmpl-tool-a14c1a9691fe7ad0": {
+    "command_sha256": "4ca9fbc2835f5bcb45dfce961ea230c767c129754a3d1d197ff475065d03cd8b",
+    "runtime_observation": false,
+    "reason": "Malformed shell/static search or result-writing command; no instrumentation output.",
+    "output_sha256": "8e7fdee5e1b041d0c73a4bd4a3337a1bc330c064ea45fd22ae913f4290c1ed1e"
+  },
+  "Qwen35-9B/psf__requests-863/chatcmpl-tool-afba1138890cebf3": {
+    "command_sha256": "e1086b2cafd10fb70427dfd54ba819bab7cc9aa7905529849ff768ecb7090e30",
+    "runtime_observation": false,
+    "reason": "Malformed shell/static search or result-writing command; no instrumentation output.",
+    "output_sha256": "8e7fdee5e1b041d0c73a4bd4a3337a1bc330c064ea45fd22ae913f4290c1ed1e"
+  },
+  "Qwen35-9B/psf__requests-863/chatcmpl-tool-b27cc5c8be406e7c": {
+    "command_sha256": "9488ef465b0e87809193e85e6a8a7c5ca6f61e78971ef557f90adb0c167fd705",
+    "runtime_observation": false,
+    "reason": "Behavioral probe, reproduction, or helper fails; ordinary error tracebacks are not explicit implementation-entity observations.",
+    "output_sha256": "ddf255ad9de8560e29c699f8a59d8db9560a2f437549fe461afa73fa2ee97a9d"
+  },
+  "Qwen35-9B/psf__requests-863/chatcmpl-tool-b03b16f2587cb646": {
+    "command_sha256": "1ef56afbbaa40c91dc6c31a248a87365aa94253d3f2a4616a8a55e123e4ed488",
+    "runtime_observation": false,
+    "reason": "Behavioral probe, reproduction, or helper fails; ordinary error tracebacks are not explicit implementation-entity observations.",
+    "output_sha256": "7657ce3c2eeca2ce094d040c59ab9673e2d3e6631e2d4273388fc1af8086721a"
+  },
+  "Qwen35-9B/pydata__xarray-3812/chatcmpl-tool-9d0c4b278f1f0086": {
+    "command_sha256": "77eb1c4441194e07e2117a8c91263cb8dd23435adc1f07b966e0cc9d8fae5ff7",
+    "runtime_observation": false,
+    "reason": "Malformed Python, result serialization, or non-Python heredoc; no executed implementation-entity observation.",
+    "output_sha256": "9dfeb6c374b8633e055ae6d767a55df522cd706767b296f8b1912115dcdc7766"
+  },
+  "Qwen35-9B/pylint-dev__pylint-4970/chatcmpl-tool-98dca7726cd315c3": {
+    "command_sha256": "779be7f09171a4bb8d8686d8d4437d8e8ce51821f306f9d641d752530416741a",
+    "runtime_observation": false,
+    "reason": "Helper performs source inspection, text editing, result writing, or behavioral reproduction; its output contains no trace of executed repository entities.",
+    "output_sha256": "fa7c5820f95528132b20fb2ae2e96aebb29171afe2f6e4b9a586a5806a3ba68c"
+  },
+  "Qwen35-9B/pytest-dev__pytest-7499/chatcmpl-tool-b4406457b155e1f6": {
+    "command_sha256": "3d46be4ba11fde9e65a6116c6c03f3151317cbd722f0fe38ff72020d9914f122",
+    "runtime_observation": false,
+    "reason": "Malformed shell/static search or result-writing command; no instrumentation output.",
+    "output_sha256": "47d663ded146c52f7ac4f8caaf9549bc1f7db6d6c65eeb495086513b643c2196"
+  },
+  "Qwen35-9B/scikit-learn__scikit-learn-10899/chatcmpl-tool-bba41334b1c52417": {
+    "command_sha256": "72c5a8c99f959ec17a5041c13aa0b67f770ff240de5062fc728f053049f0446b",
+    "runtime_observation": false,
+    "reason": "Behavioral probe, reproduction, or helper fails; ordinary error tracebacks are not explicit implementation-entity observations.",
+    "output_sha256": "1d577e2f05522e927d293d2cc9b3cceac0788ef096f097a08d712016c180f537"
+  },
+  "Qwen35-9B/scikit-learn__scikit-learn-10899/chatcmpl-tool-9abd518445a2e1df": {
+    "command_sha256": "350f5052c09b578bbf0ee45570bd027ebc9f7f5490cdd77aed25b30e2d76e261",
+    "runtime_observation": false,
+    "reason": "Behavioral probe, reproduction, or helper fails; ordinary error tracebacks are not explicit implementation-entity observations.",
+    "output_sha256": "56da3a9d7d2ecf5ee079a55e5b53b685d7dcda6dc7dab0ac2b38865eac4d57e7"
+  },
+  "Qwen35-9B/scikit-learn__scikit-learn-10899/chatcmpl-tool-bb4b881549acf178": {
+    "command_sha256": "fbe6678b1c521f8a622f34d1a21094ae6306a62bfedadfc6e38d6be3069dcead",
+    "runtime_observation": false,
+    "reason": "Behavioral probe, reproduction, or helper fails; ordinary error tracebacks are not explicit implementation-entity observations.",
+    "output_sha256": "f7823a81fdf483e54ef34218b7a81302c16e788ce0cb886bfbb115615ffd4228"
+  },
+  "Qwen35-9B/scikit-learn__scikit-learn-15512/chatcmpl-tool-981d7e5e42855878": {
+    "command_sha256": "07d233f595926ef0c5e7585f1e9fe15e903c40a3f2dae0448db20ed27b594cbc",
+    "runtime_observation": false,
+    "reason": "Behavioral probe, reproduction, or helper fails; ordinary error tracebacks are not explicit implementation-entity observations.",
+    "output_sha256": "93b415668edc251fe3b669e1262387aad3fffe5b6268ef634886432c79b3a30e"
+  },
+  "Qwen35-9B/sphinx-doc__sphinx-8125/chatcmpl-tool-823edcd37c16123b": {
+    "command_sha256": "1bb0c1932dcbc4ef598ba5ff07900f7d8599b072c0c0e7e0a077b64d2e27f73b",
+    "runtime_observation": false,
+    "reason": "Module-member introspection; it does not identify entities exercised by feature execution.",
+    "output_sha256": "4003dd24bbad11611b6501fa233a8c5dd2c84077fc8b30cdecade2c9d50f1d78"
+  },
+  "Qwen35-9B/sympy__sympy-16474/chatcmpl-tool-802c953b5c292ad7": {
+    "command_sha256": "5a72bd60f29baa5737abdec34b826b15421b44822a8ea4bff26c043c96ad286a",
+    "runtime_observation": false,
+    "reason": "Malformed shell/static search or result-writing command; no instrumentation output.",
+    "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "Qwen3.5-27B/django__django-11829/chatcmpl-tool-b8268db0d51b2aa6": {
+    "command_sha256": "8ec0eb62c7128aaabfa11145b48695f35c1e6d8949e8bac09471dd65d9270a68",
+    "runtime_observation": false,
+    "reason": "Behavioral probe, reproduction, or helper fails; ordinary error tracebacks are not explicit implementation-entity observations.",
+    "output_sha256": "6740ff80f94e3361ed91a3c65ab08a3f23b7a713f68694a14ed6622733427a65"
+  },
+  "Qwen3.5-27B/django__django-15916/chatcmpl-tool-89066be02a245167": {
+    "command_sha256": "048aa90cea52c345f65ea83515d5e1881239f8986e5bdfe509d4bc310ca45e52",
+    "runtime_observation": false,
+    "reason": "Behavioral probe, reproduction, or helper fails; ordinary error tracebacks are not explicit implementation-entity observations.",
+    "output_sha256": "b40d8b57cbe2d96470fe16cdc65ab4471f14e7715201988e3247fabac770ce36"
+  },
+  "Qwen3.5-27B/django__django-15916/chatcmpl-tool-bc70a7eff84fd204": {
+    "command_sha256": "fccc4131c36805323034649fec48b90047f539e9359076a7070210b1f2cfe083",
+    "runtime_observation": false,
+    "reason": "Behavioral probe, reproduction, or helper fails; ordinary error tracebacks are not explicit implementation-entity observations.",
+    "output_sha256": "64cfe6d74df778ef812223165b68f12ab5503e3e026d0ae21d70a317ee345858"
+  },
+  "Qwen3.5-27B/matplotlib__matplotlib-21542/chatcmpl-tool-91bc5e76204b1ef6": {
+    "command_sha256": "c27df713934d0ebf3d2d376b4ea576e7e3932f76029ac4b37f8f5906e9f86714",
+    "runtime_observation": false,
+    "reason": "Standalone reproduction or ordinary behavioral check. Any locally defined function logs belong to the reproduction, not instrumented execution of repository implementation entities.",
+    "output_sha256": "4d0ba686c8a2d3ef574880ff0364c3fe96e9f1f8bb8da71b29a9dcdbab228fb1"
+  },
+  "Qwen3.5-27B/psf__requests-1766/chatcmpl-tool-97a3b4894d2ae399": {
+    "command_sha256": "2a4954bb5693b43a5c7a68c0eb025693fe62327d54a10e01ef6a3658934567db",
+    "runtime_observation": false,
+    "reason": "Behavioral probe, reproduction, or helper fails; ordinary error tracebacks are not explicit implementation-entity observations.",
+    "output_sha256": "bd84225d5556410b69365041d2f51e47527a5a271ef888d517342e40a94d0254"
+  },
+  "Qwen3.5-27B/pytest-dev__pytest-11047/chatcmpl-tool-af035fe08a404d7c": {
+    "command_sha256": "9f117b98d37072e34867d7b8c259af576742ab8d36a7d11439e2480e525cb396",
+    "runtime_observation": false,
+    "reason": "Behavioral probe, reproduction, or helper fails; ordinary error tracebacks are not explicit implementation-entity observations.",
+    "output_sha256": "1d5c56a02185dab67dd19dbc04bad8be5e09a0ca93b4f53109f32e8abdf84c3f"
+  },
+  "Qwen3.5-27B/pytest-dev__pytest-11047/chatcmpl-tool-90bd82d827090e1e": {
+    "command_sha256": "00dd13d89169d32a5ffdb54d880e84e0a176c49054e3594184acb880f5fa29e3",
+    "runtime_observation": false,
+    "reason": "Checks date/time formatting or a standalone formatter reproduction; no implementation-entity trace.",
+    "output_sha256": "0854e0cbe7d1932b6f2c16e37d30270396e7dc1aeba21eb3dea6e4d8e918154a"
+  },
+  "Qwen3.5-27B/pytest-dev__pytest-11047/chatcmpl-tool-a388f7c941b2cc63": {
+    "command_sha256": "80d9c170ed196d82103c5f522c2ace56a2c3d9fca0e1047fa0f717c772683bb8",
+    "runtime_observation": false,
+    "reason": "Checks date/time formatting or a standalone formatter reproduction; no implementation-entity trace.",
+    "output_sha256": "d0ce5a43bd31bdaece1d620dd8c3eee346b92909cb08f8406700de63675dfdee"
+  },
+  "gpt54-0305-openai-a(main)/django__django-13447/call_WqPbwgEnm71nDtshpiLNz3Bh": {
+    "command_sha256": "f324662b1905a997bbb703cfc7389a8a8d742273ba5271b71faf3863c846e08d",
+    "runtime_observation": false,
+    "reason": "Malformed shell/static search or result-writing command; no instrumentation output.",
+    "output_sha256": "8e7fdee5e1b041d0c73a4bd4a3337a1bc330c064ea45fd22ae913f4290c1ed1e"
+  },
+  "gpt54-0305-openai-a(main)/scikit-learn__scikit-learn-25638/call_0WKKhYDr2ewfaySCrbe2hcEp": {
+    "command_sha256": "6a64dc66517e5f2cf7fb092560296a88f4549588c351a0d746c21bb242c5cc9e",
+    "runtime_observation": false,
+    "reason": "Malformed Python, result serialization, or non-Python heredoc; no executed implementation-entity observation.",
+    "output_sha256": "7d7c0f756296ffe89d607fe0bbc5f326c31272ad00e667af9c406124c4dc0617"
+  },
+  "gpt54-0305-openai-a(main)/sympy__sympy-12108/call_po3Cn4dVUa6ainSguXg2HJlk": {
+    "command_sha256": "e11e5eacaa2e04cc9b10616f2173a6b4907443d58e81d966c9b0108c48f3ff12",
+    "runtime_observation": false,
+    "reason": "Malformed Python, result serialization, or non-Python heredoc; no executed implementation-entity observation.",
+    "output_sha256": "9f3493ba6787a8f5b22ca0f9bba88bfd291a304e78c9605fa9b5bb359eb6a5b0"
+  },
+  "DeepSeek-v4-flash-0423/django__django-11514/call_00_dDUQpu8RF5R3TyJYSpfy1417": {
+    "command_sha256": "386baf5653d0fd7801d6a50c9be1809105b82c93973781be70dd2725d2c90c67",
+    "runtime_observation": false,
+    "reason": "Ordinary behavioral/import probe; no instrumentation identifies implementation entities exercised during execution.",
+    "output_sha256": "60c62a7eac4ce86ecfeff3fd2502c5320dd037ec7b795b2957b6adaba8872df1"
+  },
+  "DeepSeek-v4-flash-0423/django__django-11772/call_02_e2xgvZ5ogvFjFCujmwmr0595": {
+    "command_sha256": "b79c6ed1e916cd96471aee92aa52a1a3070560fcae85693871bc46d1363224ee",
+    "runtime_observation": false,
+    "reason": "Standalone reproduction or ordinary behavioral check. Any locally defined function logs belong to the reproduction, not instrumented execution of repository implementation entities.",
+    "output_sha256": "23336cc8b8682571f813a24315662486c9d3b84c9c2a665064655915ec6d1632"
+  },
+  "DeepSeek-v4-flash-0423/django__django-12748/call_01_G1fmSlTPvqsjWYFpw6VX3705": {
+    "command_sha256": "bfc998a5e9413bce29f3059e74e57cdc825cb3931ad3e48322fefb05c29e35a7",
+    "runtime_observation": false,
+    "reason": "Malformed shell/static search or result-writing command; no instrumentation output.",
+    "output_sha256": "8e7fdee5e1b041d0c73a4bd4a3337a1bc330c064ea45fd22ae913f4290c1ed1e"
+  },
+  "DeepSeek-v4-flash-0423/django__django-15916/call_00_ET_NzfkvWlj29d38nfVHOUN4181": {
+    "command_sha256": "d8ba6cf815122f4b54a9d7ac556d1a00442a293adf8040c9c5a33fad457ed3e6",
+    "runtime_observation": false,
+    "reason": "Behavioral probe, reproduction, or helper fails; ordinary error tracebacks are not explicit implementation-entity observations.",
+    "output_sha256": "0f250be7d795024a07d55bf4a34a573dbff246fa673e23128161aeed0144efe0"
+  },
+  "DeepSeek-v4-flash-0423/django__django-15916/call_00_JdWOQgsyLZ6RBYnKUd7K8774": {
+    "command_sha256": "d256a43911b7a2fdfb9f9168c625be0ef2c1e2b425f82b628eff5f85babef992",
+    "runtime_observation": false,
+    "reason": "Checks form fields, widgets, callback attributes, or configuration; no executed-entity trace.",
+    "output_sha256": "2441f05459ad7a0b0df39846d75b6c62a5e34c29c805ab13847e6c365f01cee9"
+  },
+  "DeepSeek-v4-flash-0423/django__django-15916/call_00_Se7V3Hrxt1k09MgGWuLc9598": {
+    "command_sha256": "8ddc3a616ebaaa02214c7fbde1ee059de0101bbf01159f114713a112cdde5edc",
+    "runtime_observation": false,
+    "reason": "Checks form fields, widgets, callback attributes, or configuration; no executed-entity trace.",
+    "output_sha256": "8425c9926b4169654c6275eedf19eda9cf610fb0e97a0c8fa1656047d74b5306"
+  },
+  "DeepSeek-v4-flash-0423/django__django-15916/call_00_fkKwH48xnxVPwgEA261i2312": {
+    "command_sha256": "d605ccd2e55a63ca4a0cf6e33dbe1a61529d114ae25756e82a1152881a8d25ae",
+    "runtime_observation": false,
+    "reason": "Checks form fields, widgets, callback attributes, or configuration; no executed-entity trace.",
+    "output_sha256": "326d7d1a29c73d37e2f535f8369947d070c35ef7fae810a053c4b094ed1c67d4"
+  },
+  "DeepSeek-v4-flash-0423/django__django-15916/call_00_Y6Lg4yQZZcPnrMR3TUSU5304": {
+    "command_sha256": "24240615fb4bb2360c65368e67ed5a6f2eb5a23265a6b2c870a89c3b64a303bc",
+    "runtime_observation": false,
+    "reason": "Checks form fields, widgets, callback attributes, or configuration; no executed-entity trace.",
+    "output_sha256": "1904aec42024e9366a37aa4a7cd71f83540c6a01684d5f26154d99887c35546d"
+  },
+  "DeepSeek-v4-flash-0423/django__django-15916/call_00_jRqRwyJBWdGjhkJxHrq19346": {
+    "command_sha256": "08da513ea989850b0c8ac2adfd1888b89d927349ebf4679c9f63c2b13eea47dd",
+    "runtime_observation": false,
+    "reason": "Checks form fields, widgets, callback attributes, or configuration; no executed-entity trace.",
+    "output_sha256": "b12ef9d4a6bbcda09d5f5fb823f1cc71284e340749102d2a5b07fd657f6b6672"
+  },
+  "DeepSeek-v4-flash-0423/matplotlib__matplotlib-18869/call_00_4lCn68o4r3qCbmO4wJ5i9765": {
+    "command_sha256": "c62ddbb185c91be3dd2fa549a9e27a90c9c574813421846d540c0b6e519f841c",
+    "runtime_observation": false,
+    "reason": "Malformed Python, result serialization, or non-Python heredoc; no executed implementation-entity observation.",
+    "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "DeepSeek-v4-flash-0423/pytest-dev__pytest-10343/call_00_S3fC7i1jogeQQIPV2WG88309": {
+    "command_sha256": "9f3c41254f80c89c24a33b36f6dcbf0abeea992785589e92e63b35a73925d910",
+    "runtime_observation": false,
+    "reason": "Behavioral probe, reproduction, or helper fails; ordinary error tracebacks are not explicit implementation-entity observations.",
+    "output_sha256": "c60c0ba25026c88d64e3c2276eead467d37411c5acf07b3d110df415573893fb"
+  },
+  "DeepSeek-v4-flash-0423/pytest-dev__pytest-8428/call_00_rgoNZ0Z5AnghxUvWmsVA0307": {
+    "command_sha256": "867257cf1e083ee47630455e8003eb612e888d4637c7295c0821dda35c7de86b",
+    "runtime_observation": false,
+    "reason": "Behavioral probe, reproduction, or helper fails; ordinary error tracebacks are not explicit implementation-entity observations.",
+    "output_sha256": "c318a3695b2de7d7a616ff6685bd4c646c2cc132d4cb39f5633dec96952923c2"
+  },
+  "DeepSeek-v4-flash-0423/pytest-dev__pytest-8428/call_00_phCxcE9tV1v5lHVtBF5x7693": {
+    "command_sha256": "e85a72a80bb8c96708637b38f9b36409ae3f3fba397d88c070329d6603fe0337",
+    "runtime_observation": false,
+    "reason": "Checks warnings emitted by mark/fixture behavior; does not record executed implementation entities.",
+    "output_sha256": "cd35834d22d4c37c12a9dbbd9e2e918a50761d3ce83d8c712e3966ce25c63998"
+  },
+  "DeepSeek-v4-flash-0423/pytest-dev__pytest-8428/call_00_5BQq2pSBwdbzZNe28rhR1811": {
+    "command_sha256": "2bab49867c7ca9666aca769755451bf82af4afe52e76828d6fc5898abe8a3027",
+    "runtime_observation": false,
+    "reason": "Checks warnings emitted by mark/fixture behavior; does not record executed implementation entities.",
+    "output_sha256": "b65fb7221b9a636b359b2d777fa0731674499ec4a74ebe3c6185a2c87e3ea440"
+  },
+  "DeepSeek-v4-flash-0423/scikit-learn__scikit-learn-13087/call_00_t05nPcADwiLcYOE1hWV04993": {
+    "command_sha256": "03eaf6e017624cb3e90c3e7624bb1df84dbaf426a8f03ee9001dec179a684e11",
+    "runtime_observation": false,
+    "reason": "Behavioral probe, reproduction, or helper fails; ordinary error tracebacks are not explicit implementation-entity observations.",
+    "output_sha256": "ceb9affef5e84bd38ba9af79603f2823c555dcc4c2f32f57bf19bef44faff6bc"
+  },
+  "DeepSeek-v4-flash-0423/sympy__sympy-13091/call_00_XbVY83avFJSkQ4gEs9p20482": {
+    "command_sha256": "2c49cb3fe68ea8261f7035f48961224e4c7943fa0734eaf6bffefe9434a46372",
+    "runtime_observation": false,
+    "reason": "Standalone reproduction or ordinary behavioral check. Any locally defined function logs belong to the reproduction, not instrumented execution of repository implementation entities.",
+    "output_sha256": "322c541c11e43803403a3bff3bd70796634042d93ffe8bbf0f1127f206b0289c"
+  },
+  "DeepSeek-v4-flash-0423/sympy__sympy-13091/call_00_8iU8joSvB4YoxHhXND9O0077": {
+    "command_sha256": "6d53bf4236e9084285b67daf5fce8a0f5c1ba4ca5805c42ba2b7a202229b8e5d",
+    "runtime_observation": false,
+    "reason": "Standalone reproduction or ordinary behavioral check. Any locally defined function logs belong to the reproduction, not instrumented execution of repository implementation entities.",
+    "output_sha256": "7f499f931d96f33d705a8612922bec8d60a92c8558e20a745d73e29005357b0c"
+  },
+  "DeepSeek-v4-flash-0423/sympy__sympy-13091/call_00_ric05ZdzcWtySiceZmcJ3301": {
+    "command_sha256": "eceea9e3565676865a3de84b6b126a6dc2c1b8030853c4f6f88297eb143c4b58",
+    "runtime_observation": false,
+    "reason": "Standalone reproduction or ordinary behavioral check. Any locally defined function logs belong to the reproduction, not instrumented execution of repository implementation entities.",
+    "output_sha256": "0a9781bcd94c1fe07a52e83be97bc2242b07f96932617d39b66184698c3eb00f"
+  },
+  "DeepSeek-v4-flash-0423/sympy__sympy-13091/call_00_wTnvPpP3ydYO5EsABPWp0779": {
+    "command_sha256": "daf7ebbacf11e4f0f22e83ba2128e70d85cb869c0287aab6d02c4a753588060d",
+    "runtime_observation": false,
+    "reason": "Standalone reproduction or ordinary behavioral check. Any locally defined function logs belong to the reproduction, not instrumented execution of repository implementation entities.",
+    "output_sha256": "cf39febb26fd8f3063dc73cd4f0c98ff1b92f60bb1c1acf7939e465a6ce78bf6"
+  },
+  "DeepSeek-v4-flash-0423/sympy__sympy-13091/call_00_Wnsw1FIej58lcnzrBSsS5008": {
+    "command_sha256": "feae91f1c15752d560ecc8742d5b72ccb3f8b1b71d722bf554b6f58048d4768f",
+    "runtime_observation": false,
+    "reason": "Standalone reproduction or ordinary behavioral check. Any locally defined function logs belong to the reproduction, not instrumented execution of repository implementation entities.",
+    "output_sha256": "de8dadde0eb4067bcc8dd279c4844f2c57dff3bf9eb32c55f6bca61f4c8d295e"
+  },
+  "DeepSeek-v4-flash-0423/sympy__sympy-13619/call_00_YKW2P3vJgQ0pZAbsPhK71044": {
+    "command_sha256": "da39647f46728d0c89772b81971457830fe210e40a61ad9c173c6e705eb5715d",
+    "runtime_observation": false,
+    "reason": "Standalone reproduction or ordinary behavioral check. Any locally defined function logs belong to the reproduction, not instrumented execution of repository implementation entities.",
+    "output_sha256": "e7b06b2cbbdc6af541a5b9019bbf2e3c844dcc6094f1dfafb641b77525cf6f42"
+  },
+  "DeepSeek-v4-flash-0423/sympy__sympy-16221/call_00_0l1zUPPMDZdYquAVMJAS0436": {
+    "command_sha256": "7adb7b8b4d3ecd6c3d77cfadd79d235aa1b9a802373b0ce92ad44219e2ba0b96",
+    "runtime_observation": true,
+    "reason": "Wraps the repository printer._print, executes doprint, and successfully logs actual runtime types and dispatch method names. The trajectory later reaches its call limit; observation counting includes invalid trajectories.",
+    "output_sha256": "072c6756c0a8c765870bfb286a999bb5f3cab5a99fb00a8903206ef8889eb466"
+  },
+  "DeepSeek-v4-flash-0423/sympy__sympy-19016/call_00_j2n9zR5Em7HNj1l8o6gT8100": {
+    "command_sha256": "5197450aa95ef6cb64d8a80d6f534dfd2aab1606ba0b32588a253c2659404375",
+    "runtime_observation": false,
+    "reason": "AST inspection of source text identifies declarations statically, not executed entities.",
+    "output_sha256": "207737169151b6541e4c0b5826e975e80b0b4072b4e2c3fe45e5885c7d0bfd5b"
+  },
+  "DeepSeek-v4-flash-0423/sympy__sympy-22456/call_00_UQib3BGzuLrBSRsdiYHL6942": {
+    "command_sha256": "23230cb281fe6b4106ef6404c52ca5fbb2939cdfcce8d3f544933338f1c9ec77",
+    "runtime_observation": false,
+    "reason": "Behavioral probe, reproduction, or helper fails; ordinary error tracebacks are not explicit implementation-entity observations.",
+    "output_sha256": "ca4dc0092908233aa922c9ec2d867186ce9359145295b5d880db24b64ff1c89c"
+  },
+  "DeepSeek-v4-flash-0423/sympy__sympy-22456/call_00_8hZf97NpE7lopDOubQTy5158": {
+    "command_sha256": "5d2a0bf6d2391aea78005787d25cab50d3f22eff0c8b11af86228e993f0332b5",
+    "runtime_observation": false,
+    "reason": "Changes attributes and checks object values/reconstruction behavior; no trace of executed implementation entities.",
+    "output_sha256": "d9451afd42f43f953df22a0f6fac010cb9bdcfa0fbe90630ff96379be8bf1ca5"
+  },
+  "DeepSeek-v4-flash-0423/sympy__sympy-22456/call_00_k84uCp7SwrUtGWRAnElI7938": {
+    "command_sha256": "c3057e0a0ac3c3456c021a037f18bf9ee0a3b83fbe72d1738dc32e2d42e33677",
+    "runtime_observation": false,
+    "reason": "Changes attributes and checks object values/reconstruction behavior; no trace of executed implementation entities.",
+    "output_sha256": "5170c30d29ff83015e5a32fc765393846b1717ad6060186a3a2453dc0af23339"
+  },
+  "DeepSeek-v4-flash-0423/sympy__sympy-22456/call_00_yXd3fXYt21MX8oZGtMOG1364": {
+    "command_sha256": "7c0d91fe45b0e0ee83fea41b7f1aad49ec90ee8227c18632411829430d9f419c",
+    "runtime_observation": false,
+    "reason": "Changes attributes and checks object values/reconstruction behavior; no trace of executed implementation entities.",
+    "output_sha256": "be91776eb7c5e8259e6e0018507228d3e0caf2a8d20f67caff58d2dae45ba62c"
+  },
+  "DeepSeek-v4-pro-0423/django__django-11772/call_abecf2af0e1b431c9042b099": {
+    "command_sha256": "f6815f7b9c57437dad31cd024ad7cc298d3dfa73c0dfda488547f8d461c48920",
+    "runtime_observation": false,
+    "reason": "Standalone reproduction or ordinary behavioral check. Any locally defined function logs belong to the reproduction, not instrumented execution of repository implementation entities.",
+    "output_sha256": "84cd67bb09be6e2dfffe172a8089e0aad3ab834af86afd0292c9bdd8e813c843"
+  },
+  "DeepSeek-v4-pro-0423/pydata__xarray-4184/call_e936ddc0a04046efa054fd1d": {
+    "command_sha256": "ebab445651072d526c1369a37869450d7559d24110b919e1d78f150baa7af12a",
+    "runtime_observation": false,
+    "reason": "Behavioral probe, reproduction, or helper fails; ordinary error tracebacks are not explicit implementation-entity observations.",
+    "output_sha256": "f3ad52417cee287800da9cc88e3abefde64c91cc34e2ca9d5a5ccfcbe99847e6"
+  },
+  "DeepSeek-v4-pro-0423/pydata__xarray-4184/call_1aca3c2a147143f98c7ab37d": {
+    "command_sha256": "379a86ca75172eecf0e508d815ac65536d7708d78b849447472d7f18859862b1",
+    "runtime_observation": false,
+    "reason": "Compatibility attribute changes and dataframe/array output checks; no implementation-entity trace.",
+    "output_sha256": "9d313068d4cb5d45686cd75b57cc22ce78bd90e9565ed8ef1e0240b0c31cbea3"
+  },
+  "DeepSeek-v4-pro-0423/sympy__sympy-11794/call_5110202699214e6e9785ef5f": {
+    "command_sha256": "82659cdf44b71b07d87d4d9e0b6bd684c037bac337b4680ce5e5115b10df41a5",
+    "runtime_observation": false,
+    "reason": "Behavioral probe, reproduction, or helper fails; ordinary error tracebacks are not explicit implementation-entity observations.",
+    "output_sha256": "b3dfa3aeadb9a651d226329702d98894a460459462400a4544dd1dbf32df982b"
+  },
+  "DeepSeek-v4-pro-0423/sympy__sympy-14166/call_99407c42f8d94ae69e4bad71": {
+    "command_sha256": "60a30495b5e6052f973b374d240829bb4346e5271bdf6b43f2cf2371f7cebfa7",
+    "runtime_observation": false,
+    "reason": "Behavioral probe, reproduction, or helper fails; ordinary error tracebacks are not explicit implementation-entity observations.",
+    "output_sha256": "0f7ceed90392a6fc5460742f4544d9b66e37551b620be8e0373fda8dc1a634a0"
+  },
+  "DeepSeek-v4-pro-0423-32K/django__django-15651/chatcmpl-tool-95299abaa5f844cd954b89237697fc31": {
+    "command_sha256": "02e24a4f23f87bbde2112805f29b212494816d0fb4c87b3019cb10e6b821b558",
+    "runtime_observation": false,
+    "reason": "Malformed Python, result serialization, or non-Python heredoc; no executed implementation-entity observation.",
+    "output_sha256": "96cded3a1375c98aa4edb430267bc90e71a2308c5ee355dae7ef7bbeff708abd"
+  },
+  "DeepSeek-v4-pro-0423-32K/pylint-dev__pylint-4970/chatcmpl-tool-a31bb5624ab0463198b0a20eb9266a7d": {
+    "command_sha256": "b1b25fb58d574e995e987cb1a950e05260b65507f045e51dd5402f3099188bbe",
+    "runtime_observation": false,
+    "reason": "Behavioral probe, reproduction, or helper fails; ordinary error tracebacks are not explicit implementation-entity observations.",
+    "output_sha256": "badd1bc50b3ebc8654b60198726899128c1fa9537a576e9f295f1532492e18ca"
+  },
+  "DeepSeek-v4-pro-0423-32K/sympy__sympy-13091/chatcmpl-tool-57ef7ad95ace4cd1b1fb1ca25b99498e": {
+    "command_sha256": "a66f80c91c89a31d11ba9fe143a3af50ced03ec25592b03c156a46108563056c",
+    "runtime_observation": false,
+    "reason": "AST inspection of source text identifies declarations statically, not executed entities.",
+    "output_sha256": "5331aab60bbeff83319936fb4b8171bf170916093e6537709a94ac0b3fb8fe2a"
+  },
+  "DeepSeek-v4-pro-0423-32K/sympy__sympy-13091/chatcmpl-tool-986238e6c2054139b83fe96d92f72b28": {
+    "command_sha256": "8a5d624352534e49277266258c53c3b251837e8ddc522cd2d08a5396e75d25d9",
+    "runtime_observation": false,
+    "reason": "AST inspection of source text identifies declarations statically, not executed entities.",
+    "output_sha256": "a7d9e7e21029d33db2b044be1959658245e61282cf48b132003b39e65beb3842"
+  },
+  "DeepSeek-v4-pro-0423-32K/sympy__sympy-13091/chatcmpl-tool-64ab95e900934ad6bb4f1d11e1ad1a8f": {
+    "command_sha256": "73cd6706fee9447b77a0737dafa2af7c1becfb9ef8b296168e486eeb3644c379",
+    "runtime_observation": false,
+    "reason": "AST inspection of source text identifies declarations statically, not executed entities.",
+    "output_sha256": "5331aab60bbeff83319936fb4b8171bf170916093e6537709a94ac0b3fb8fe2a"
+  },
+  "DeepSeek-v4-pro-0423-32K/sympy__sympy-13091/chatcmpl-tool-734b1fb5162c496f93a5f1efb3137761": {
+    "command_sha256": "565bafb82d63adf5e0f42c97e24e2ba6ea5338665228cef76ecfe2c47cfd939f",
+    "runtime_observation": false,
+    "reason": "AST inspection of source text identifies declarations statically, not executed entities.",
+    "output_sha256": "5331aab60bbeff83319936fb4b8171bf170916093e6537709a94ac0b3fb8fe2a"
+  },
+  "DeepSeek-v4-pro-0423-32K/sympy__sympy-13091/chatcmpl-tool-2a2237c5fec94962a46c358b4b653b35": {
+    "command_sha256": "51cf8a37beeeaad5febfdea8b9350115592479a65305bbf2d97df8dd64260a3f",
+    "runtime_observation": false,
+    "reason": "AST inspection of source text identifies declarations statically, not executed entities.",
+    "output_sha256": "7e77f90a78af8cdcb217da488179d8f1e90deaf0b2aa5d3c8c32dfd591fa9f91"
+  },
+  "DeepSeek-v4-pro-0423-32K/sympy__sympy-14166/chatcmpl-tool-e8cc0005876744f2bcbc665a5ae81153": {
+    "command_sha256": "9ad31950c955a3066de97cceae32d073984b93d85e3d803d06a8d9921078d4d8",
+    "runtime_observation": false,
+    "reason": "Behavioral probe, reproduction, or helper fails; ordinary error tracebacks are not explicit implementation-entity observations.",
+    "output_sha256": "a9bcd0345a27c78a15cf4b9e7add8655808f095ecf872352851d2f4a17a01d38"
+  }
+}
