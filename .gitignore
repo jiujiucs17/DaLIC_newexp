@@ -24,5 +24,6 @@ dataset/agent_results_backup
 dataset/analysis
 .envrc
 *.pyc
-replication package
+replication_package
 analysis
+replication_package.zip
