@@ -1,15 +1,18 @@
 #!/usr/bin/env python3
-"""Score agent runs (run), compare two runs (compare), or summarize RQ1-RQ3 (paper).
+"""Evaluate REAL-FL, Baseline and no-runtime runs using one scoring implementation.
 
 run writes evaluation.json and evaluation.txt. compare consumes two run JSON
 files and writes comparison.json/txt with --output-dir, or prints JSON otherwise.
 Old invocations without a subcommand still select run. All evaluation logic is
-contained here; compare and paper load NumPy lazily for resampling.
+contained here; compare and paper load NumPy lazily for resampling. Paper mode
+recomputes the main VSM comparisons, ablation and repeated-run statistics from
+the released data. Restore the patched repositories before scoring raw runs.
 """
 
 from __future__ import annotations
 
 import argparse
+import csv
 import gzip
 import hashlib
 import json
@@ -21,10 +24,14 @@ from pathlib import Path, PurePosixPath
 from typing import Any
 
 
-DEFAULT_INPUT_PATH = Path("dataset/swebench_feature_with_truth.jsonl")
-DEFAULT_SELECTED_INSTANCES_PATH = Path("dataset/trace_completed_instance_validated.toml")
+CODE_ROOT = Path(__file__).resolve().parents[1]
+PACKAGED = (CODE_ROOT.parent / "Experiment Data/Benchmark data").is_dir()
+DATA_ROOT = CODE_ROOT.parent / "Experiment Data" if PACKAGED else CODE_ROOT / "dataset"
+BENCHMARK_ROOT = DATA_ROOT / "Benchmark data" if PACKAGED else DATA_ROOT
+DEFAULT_INPUT_PATH = BENCHMARK_ROOT / "swebench_feature_with_truth.jsonl"
+DEFAULT_SELECTED_INSTANCES_PATH = BENCHMARK_ROOT / "trace_completed_instance_validated.toml"
 DEFAULT_WORKBENCH_PATH = Path("dataset/agent_workbench/baseline")
-DEFAULT_RESULT_FOLDER = Path("dataset/agent_results/baseline/Qwen_Qwen3.5-9B")
+DEFAULT_RESULT_FOLDER = DATA_ROOT / "agent_results/baseline/Qwen35-9B"
 GRANULARITIES = ("files", "classes", "functions")
 CHANGE_TYPES = ("added", "edited", "total")
 FEATURES = (*GRANULARITIES, "avg3")
@@ -34,15 +41,50 @@ BOOTSTRAP_DRAWS = 20_000
 PERMUTATION_DRAWS = 100_000
 BOOTSTRAP_SEED = 20260910
 PERMUTATION_SEED = 20260911
-PAPER_MODELS = (
-    "Qwen_Qwen3.5-4B", "Qwen_Qwen3.5-9B", "Qwen_Qwen3.5-27B",
-    "GPT_5-4", "DeepSeek-v4-flash", "DeepSeek-v4-pro", "DS-v4-pro_32k_think_full",
-)
+# One mapping for all conditions. Names also bind the published random seeds.
+# The released Baseline run C directory has an uppercase B; its historical
+# model label is retained below so its confidence intervals remain reproducible.
+PAPER_RUNS = {
+    "Qwen3.5-4B": {
+        "dalic_vsm": "Qwen35-4B-a(main)", "baseline": "Qwen3.5-4B-a(main)",
+        "dalic_no_runtime": "Qwen35-4B-no-runtime",
+        "repeats": {"dalic_vsm": ("Qwen35-4B-b", "Qwen35-4B-c"),
+                    "baseline": ("Qwen35-4B-b", "Qwen35-4B-c")},
+    },
+    "Qwen3.5-9B": {
+        "dalic_vsm": "Qwen35-9B", "baseline": "Qwen35-9B",
+        "dalic_no_runtime": "Qwen35-9B-no-runtime",
+    },
+    "Qwen3.5-27B": {
+        "dalic_vsm": "Qwen35-27B", "baseline": "Qwen3.5-27B",
+        "dalic_no_runtime": "Qwen35-27B-no-runtime",
+    },
+    "GPT-5.4": {
+        "dalic_vsm": "gpt54-0305-openai-a(main)", "baseline": "gpt54-0305-openai-a(main)",
+        "dalic_no_runtime": "gpt54-0305-openai",
+        "repeats": {"dalic_vsm": ("gpt54-0305-openai-b", "gpt54-0305-openai-c"),
+                    "baseline": ("gpt54-0305-openai-b", "gpt54-0305-openai-c")},
+    },
+    "DeepSeek-v4-Flash": {
+        "dalic_vsm": "DeepSeek-v4-flash-0423", "baseline": "DeepSeek-v4-flash-0423",
+        "dalic_no_runtime": "DeepSeek-v4-flash-0423",
+    },
+    "DeepSeek-v4-Pro": {
+        "dalic_vsm": "DeepSeek-v4-pro-0423", "baseline": "DeepSeek-v4-pro-0423",
+        "dalic_no_runtime": "DeepSeek-v4-pro-0423",
+    },
+    "DeepSeek-v4-Pro-32K": {
+        "dalic_vsm": "DeepSeek-v4-pro-0423-32K", "baseline": "DeepSeek-v4-pro-0423-32K",
+        "dalic_no_runtime": "DeepSeek-v4-pro-0423-32K",
+    },
+}
+PAPER_MODELS = tuple(PAPER_RUNS)
+RUN_LABEL_ALIASES = {("baseline", "Qwen35-4B-c"): "Qwen35-4b-c"}
 STATIC_METHODS = ("static_vsm", "static_lsi", "static_bm25")
 PAPER_CUTOFFS = (3, 5, 10, 20)
 RETRIEVAL_LABELS = {
     "static_vsm": "Static VSM", "static_lsi": "Static LSI",
-    "static_bm25": "Static BM25", "trace_bm25": "Trace BM25",
+    "static_bm25": "Static BM25", "trace_vsm": "Trace VSM",
 }
 
 
@@ -75,10 +117,8 @@ class MacroMetricTotals:
 
 
 def get_repo_root() -> Path:
-    for candidate in [Path(__file__).resolve().parent, *Path(__file__).resolve().parents]:
-        if (candidate / "dataset").is_dir() and (candidate / "scripts").is_dir():
-            return candidate
-    raise RuntimeError("Could not locate repo root from script path.")
+    # Never discover a parent development checkout outside this package.
+    return CODE_ROOT
 
 
 def positive_int(value: str) -> int:
@@ -114,7 +154,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     run.add_argument("--result-folder", "--result_folder", type=Path, default=DEFAULT_RESULT_FOLDER)
     run.add_argument("--method", help="Defaults to the result directory's parent name.")
     run.add_argument("--model", help="Defaults to the result directory name.")
-    run.add_argument("--output-dir", type=Path, help="Defaults to the result directory.")
+    run.add_argument("--output-dir", type=Path,
+                     help="Defaults to the result directory for custom runs, or dataset/evaluation/runs for archived runs.")
     compare = modes.add_parser("compare", help="Compare two run-mode evaluation.json files.")
     compare.add_argument("--baseline", required=True, type=Path)
     compare.add_argument("--candidate", required=True, type=Path,
@@ -132,14 +173,13 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     paper.add_argument("--selected-instances", "--selected_instances", type=Path,
                        default=repo_root / DEFAULT_SELECTED_INSTANCES_PATH)
     paper.add_argument("--agent-results-root", type=Path,
-                       default=repo_root / "dataset/results_archive/agent_results")
+                       default=DATA_ROOT / "agent_results")
     paper.add_argument("--rankings-root", type=Path,
-                       default=repo_root / "dataset/trad_methods_results/rankings")
-    paper.add_argument("--baseline-workbench", type=Path, default=repo_root / "dataset/agent_workbench/baseline")
-    paper.add_argument("--dalic-workbench", type=Path, default=repo_root / "dataset/agent_workbench/dalic")
-    paper.add_argument("--models", nargs="+", default=list(PAPER_MODELS),
-                       help="Explicit model directories; defaults to the paper's seven configurations. "
-                            "All requested models must exist. Each Holm family uses this list.")
+                       default=DATA_ROOT / "trad_methods_results/rankings")
+    paper.add_argument("--workbench-path", type=Path, default=repo_root / DEFAULT_WORKBENCH_PATH,
+                       help="Restored patched repositories, shared by all three conditions.")
+    paper.add_argument("--models", nargs="+", choices=PAPER_MODELS, default=list(PAPER_MODELS),
+                       help="Human-readable model names from PAPER_RUNS. Subsets change Holm family sizes.")
     paper.add_argument("--output-dir", type=Path, default=repo_root / "dataset/evaluation/paper")
     paper.add_argument("--bootstrap-draws", type=positive_int, default=BOOTSTRAP_DRAWS)
     paper.add_argument("--permutation-draws", type=positive_int, default=PERMUTATION_DRAWS)
@@ -1081,6 +1121,10 @@ def render_compare_text(report: dict) -> str:
 
 def write_report(report: dict, text: str, output_dir: Path, stem: str) -> None:
     output_dir = output_dir.expanduser().resolve()
+    protected = [DATA_ROOT] if PACKAGED else [DATA_ROOT / p for p in (
+        "agent_results", "results_archive", "trad_methods_results")]
+    if any(output_dir.is_relative_to(p.resolve()) for p in protected):
+        raise ValueError("Evaluation output must be outside the input archives")
     output_dir.mkdir(parents=True, exist_ok=True)
     (output_dir / f"{stem}.json").write_text(
         json.dumps(report, indent=2, sort_keys=True, allow_nan=False) + "\n", encoding="utf-8",
@@ -1121,7 +1165,8 @@ def run_command(args: argparse.Namespace) -> None:
     report, evaluations, skipped = run_from_paths(
         result_folder, args.workbench_path, truth,
         method=args.method if args.method is not None else result_folder.parent.name,
-        model=args.model if args.model is not None else result_folder.name,
+        model=args.model if args.model is not None else RUN_LABEL_ALIASES.get(
+            (args.method or result_folder.parent.name, result_folder.name), result_folder.name),
         sources={"manifest": source_file(args.selected_instances), "truth": source_file(args.input)},
     )
     lines = ["Primary metrics: total ground truth; instance macro averages.",
@@ -1130,7 +1175,13 @@ def run_command(args: argparse.Namespace) -> None:
         lines.extend([f"[{name}]", *summary_lines(scope), ""])
     lines.extend(["Legacy membership diagnostics (micro and added/edited are not the primary metrics):",
                   render_evaluation_text(result_folder, evaluations, skipped)])
-    write_report(report, "\n".join(lines), args.output_dir or result_folder, "evaluation")
+    protected = [DATA_ROOT] if PACKAGED else [DATA_ROOT / p for p in (
+        "agent_results", "results_archive", "trad_methods_results")]
+    archived = any(result_folder.is_relative_to(p.resolve()) for p in protected)
+    default_output = (CODE_ROOT / "dataset/evaluation/runs" / report["metadata"]["method"] / result_folder.name
+                      if archived else result_folder)
+    output_dir = args.output_dir or default_output
+    write_report(report, "\n".join(lines), output_dir, "evaluation")
 
 
 def compare_command(args: argparse.Namespace) -> None:
@@ -1164,7 +1215,7 @@ def holm_adjust(raw_p: dict[str, float]) -> dict[str, float]:
 
 def load_retrieval_rankings(root: Path, ids: list[str]) -> tuple[dict, dict]:
     rankings, sources = {}, {}
-    for method in (*STATIC_METHODS, "trace_bm25"):
+    for method in (*STATIC_METHODS, "trace_vsm"):
         rankings[method], sources[method] = {}, {}
         for instance_id in ids:
             path = root / method / f"{instance_id}.json.gz"
@@ -1213,168 +1264,279 @@ def matched_cutoffs(dalic_records: list[dict]) -> dict:
     }
 
 
+def adjust_paper_family(comparisons: list[dict], family: str) -> dict:
+    """One Holm family per metric and declared comparison set."""
+    adjusted = {}
+    for metric in ("completion", "f1", "map"):
+        raw = {p["id"]: p["report"]["tests"][metric]["raw_p"] for p in comparisons}
+        adjusted[metric] = holm_adjust(raw)
+        for pair in comparisons:
+            value = adjusted[metric][pair["id"]]
+            pair["report"]["tests"][metric].update({
+                "holm_p": value, "reject": value <= .05, "family_size": len(comparisons),
+                "family": family + ":" + metric,
+            })
+            pair["report"]["metadata"]["multiple_testing"] = (
+                f"{family}: separate {len(comparisons)}-comparison Holm families for completion, F1 and MAP"
+            )
+    return adjusted
+
+
 def build_paper_report(
-    agents: dict, rankings: dict, truth: dict, *, models: list[str],
+    agents: dict, rankings: dict, truth: dict, *, models: list[str], repeated_runs: dict | None = None,
     bootstrap_draws: int = BOOTSTRAP_DRAWS, permutation_draws: int = PERMUTATION_DRAWS,
     bootstrap_seed: int = BOOTSTRAP_SEED, permutation_seed: int = PERMUTATION_SEED,
 ) -> dict:
-    if not models or len(models) != len(set(models)):
-        raise ValueError("Paper models must be a nonempty list without duplicates")
+    if not models or len(models) != len(set(models)) or any(m not in PAPER_RUNS for m in models):
+        raise ValueError("Paper models must be distinct names from PAPER_RUNS")
     ids = sorted(truth)
-    if not ids or not any(all(truth[i]["total"][g] for g in GRANULARITIES) for i in ids):
-        raise ValueError("Paper mode requires at least one instance eligible for Avg3 MAP")
+    canonical_ids = load_selected_instance_ids(DEFAULT_SELECTED_INSTANCES_PATH)
+    if set(ids) != canonical_ids or len(ids) != 226:
+        raise ValueError("Paper mode requires the complete validated 226-instance benchmark")
+    ranking_counts = {g: sum(bool(truth[i]["total"][g]) for i in ids) for g in GRANULARITIES}
+    ranking_counts["avg3"] = sum(all(truth[i]["total"][g] for g in GRANULARITIES) for i in ids)
+    if ranking_counts != {"files": 226, "classes": 172, "functions": 217, "avg3": 170}:
+        raise ValueError("Ground-truth ranking cohorts differ from the released benchmark")
     for model in models:
-        left, right = aligned_records(agents["baseline"][model], agents["dalic"][model])
-        if [r["instance_id"] for r in left] != ids:
-            raise ValueError(f"Agent cohort differs from paper cohort for {model}")
-        for method, records in (("baseline", left), ("dalic", right)):
-            metadata = agents[method][model]["metadata"]
-            if metadata["method"] != method or metadata["model"] != model:
-                raise ValueError(f"Agent metadata disagrees with paper configuration: {method}/{model}")
-            for r in records:
-                if r["ground_truth"] != {
-                    c: {g: sorted(truth[r["instance_id"]][c][g]) for g in GRANULARITIES}
-                    for c in CHANGE_TYPES
-                }:
+        for method in ("baseline", "dalic_vsm", "dalic_no_runtime"):
+            run = agents[method][model]
+            if run["metadata"]["method"] != method or run["metadata"]["model"] != PAPER_RUNS[model][method]:
+                raise ValueError(f"Run metadata differs from the paper condition: {method}/{model}")
+            if [r["instance_id"] for r in run["instances"]] != ids:
+                raise ValueError(f"Agent cohort differs from the benchmark: {method}/{model}")
+            for record in run["instances"]:
+                expected = {c: {g: sorted(truth[record["instance_id"]][c][g]) for g in GRANULARITIES}
+                            for c in CHANGE_TYPES}
+                if record["ground_truth"] != expected:
                     raise ValueError("Agent and retrieval ground truth differ")
+    for i in ids:
+        for g in GRANULARITIES:
+            if not set(rankings["trace_vsm"][i][g]) <= set(rankings["static_vsm"][i][g]):
+                raise ValueError(f"Trace candidates are not a subset of Static VSM: {i}/{g}")
+    inference = dict(bootstrap_draws=bootstrap_draws, permutation_draws=permutation_draws,
+                     bootstrap_seed=bootstrap_seed, permutation_seed=permutation_seed)
+    def scope(left, right, key):
+        return compare_scope(left, right, key=key, draws=bootstrap_draws, seed_base=bootstrap_seed)
 
-    fixed = {
-        method: {k: retrieval_records(rankings[method], truth, k) for k in PAPER_CUTOFFS}
-        for method in (*STATIC_METHODS, "trace_bm25")
-    }
-    def effect(earlier, later, key):
-        return compare_scope(earlier, later, key=key, draws=bootstrap_draws, seed_base=bootstrap_seed)
-
+    fixed = {method: {k: retrieval_records(rankings[method], truth, k) for k in PAPER_CUTOFFS}
+             for method in (*STATIC_METHODS, "trace_vsm")}
     report = {
         "schema_version": SCHEMA_VERSION, "kind": "paper",
         "metadata": {
-            "scoring_version": SCORING_VERSION, "policy": scoring_policy(),
-            "models": models, "instance_ids": ids, "instances": len(ids),
-            "ranking_instances_by_granularity": {
-                g: sum(bool(truth[i]["total"][g]) for i in ids) for g in GRANULARITIES
-            },
-            "ranking_instances": sum(all(truth[i]["total"][g] for g in GRANULARITIES) for i in ids),
+            "scoring_version": SCORING_VERSION, "policy": scoring_policy(), "models": models,
+            "instance_ids": ids, "instances": len(ids), "ranking_instances_by_granularity": ranking_counts,
             **inference_metadata(bootstrap_draws, bootstrap_seed, permutation_draws, permutation_seed),
-            "rq1_rq2_tests": "none; paired estimates and pointwise confidence intervals only",
+            "units": "proportions; multiply by 100 for percentages or differences in percentage points",
             "cutoffs": list(PAPER_CUTOFFS), "primary_fixed_cutoff": 3,
-            "matched": "per-instance/granularity valid DALIC length; invalid DALIC uses IR k=3",
-            "short_ranking": "use available prefix; no padding; precision uses actual returned length",
-            "agent_output": "complete returned ranking, never truncated to IR cutoff",
-            "holm": {"families": ["completion", "f1", "map"], "members": models,
-                     "family_size": len(models), "alpha": 0.05,
-                     "scope": "All Instances; Common Success remains descriptive"},
+            "matched": "valid REAL-FL length per instance/granularity; invalid REAL-FL uses IR k=3",
+            "short_ranking": "available prefix, no padding; precision uses actual returned length",
+            "agent_output": "complete returned ranking, never truncated to the IR cutoff",
+            "retrieval_inference": "paired estimates and pointwise CIs; no hypothesis tests",
+            "common_success": "pairwise valid intersection, with CIs and no hypothesis tests",
+            "run_selection": {model: PAPER_RUNS[model] for model in models},
+            "historical_run_labels": {method + "/" + name: label
+                                      for (method, name), label in RUN_LABEL_ALIASES.items()},
+            "seed_policy": "published VSM analysis keys and historical run labels, independent of filesystem location",
+            "display_policy": "paper_estimate_pp uses rounded endpoint scores for Static vs Trace VSM, as in Table 2; estimate and CIs retain raw calculations",
+            "scope": "main evaluation and repeated-run inference; excludes trajectory-access audit and token usage",
         },
         "agent_runs": agents,
-        "retrieval_fixed": {
-            method: {str(k): summarize_records(records) for k, records in cutoffs.items()}
-            for method, cutoffs in fixed.items()
-        },
-        "rq1_static_trace": {}, "rq1_trace_dalic": {},
-        "rq2_static_dalic": {}, "rq3_baseline_dalic": {},
+        "retrieval_fixed": {method: {str(k): summarize_records(records) for k, records in cutoffs.items()}
+                            for method, cutoffs in fixed.items()},
+        "static_trace": {}, "trace_realfl": {}, "matched_static_ir": {},
+        "baseline": [], "ablation": [], "repeated_runs": [],
     }
     for k in PAPER_CUTOFFS:
-        report["rq1_static_trace"][str(k)] = effect(
-            fixed["static_bm25"][k], fixed["trace_bm25"][k], f"rq1:static_trace:{k}",
-        )
+        report["static_trace"][str(k)] = scope(
+            fixed["static_vsm"][k], fixed["trace_vsm"][k], f"static_vsm_trace_vsm:@{k}")
+    for number, model in enumerate(models, 1):
+        print(f"Paper comparisons: {model}", file=sys.stderr, flush=True)
+        candidate = agents["dalic_vsm"][model]
+        records = candidate["instances"]
+        name = PAPER_RUNS[model]["dalic_vsm"]
+        lengths = matched_cutoffs(records)
+        report["trace_realfl"][model] = {}
+        for cutoff, reference in (("top3", fixed["trace_vsm"][3]),
+                                  ("matched_length", retrieval_records(rankings["trace_vsm"], truth, lengths))):
+            key = "rq1_vsm_supplement:" + digest_json(["trace_vsm", cutoff, "dalic_vsm", name]) + ":all"
+            report["trace_realfl"][model][cutoff] = scope(reference, records, key)
+        report["matched_static_ir"][model] = {
+            method: scope(retrieval_records(rankings[method], truth, lengths), records,
+                          f"rq2:{name}:{method}:matched") for method in STATIC_METHODS}
+        for method, section, prefix in (("baseline", "baseline", "M"),
+                                         ("dalic_no_runtime", "ablation", "NRM")):
+            report[section].append({
+                "id": f"{prefix}{number:02d}", "model": model, "reference_method": method,
+                "reference_run": PAPER_RUNS[model][method], "candidate_run": name,
+                "report": compare_run_reports(agents[method][model], candidate, tests="paired", **inference),
+            })
     for model in models:
-        print(f"Paper statistics: {model}", file=sys.stderr, flush=True)
-        dalic = agents["dalic"][model]["instances"]
-        lengths = matched_cutoffs(dalic)
-        report["rq1_trace_dalic"][model] = {
-            "matched_cutoffs": lengths,
-            "fixed_k3": effect(fixed["trace_bm25"][3], dalic, f"rq1:trace_fixed_k3_all_dalic:{model}"),
-            "matched": effect(
-                retrieval_records(rankings["trace_bm25"], truth, lengths), dalic,
-                f"rq1:trace_matched_fail_k3_dalic:{model}",
-            ),
-        }
-        report["rq2_static_dalic"][model] = {"fixed": {}, "matched": {}}
-        rq2 = report["rq2_static_dalic"][model]
-        for method in STATIC_METHODS:
-            rq2["fixed"][method] = {
-                str(k): effect(fixed[method][k], dalic, f"rq2:{model}:{method}:{k}")
-                for k in PAPER_CUTOFFS
-            }
-            rq2["matched"][method] = effect(
-                retrieval_records(rankings[method], truth, lengths), dalic,
-                f"rq2:{model}:{method}:matched",
-            )
-        report["rq3_baseline_dalic"][model] = compare_run_reports(
-            agents["baseline"][model], agents["dalic"][model], tests="paired",
-            bootstrap_draws=bootstrap_draws, permutation_draws=permutation_draws,
-            bootstrap_seed=bootstrap_seed, permutation_seed=permutation_seed,
-        )
-    for family in ("completion", "f1", "map"):
-        adjusted = holm_adjust({
-            model: report["rq3_baseline_dalic"][model]["tests"][family]["raw_p"]
-            for model in models
-        })
-        for model, p in adjusted.items():
-            result = report["rq3_baseline_dalic"][model]["tests"][family]
-            result.update({"holm_p": p, "reject": p <= 0.05, "family": family, "family_size": len(models)})
-    for pair in report["rq3_baseline_dalic"].values():
-        pair["metadata"]["multiple_testing"] = f"paper: three separate {len(models)}-model Holm families"
+        for method in ("dalic_vsm", "baseline"):
+            for run in (repeated_runs or {}).get(model, {}).get(method, []):
+                baseline = run if method == "baseline" else agents["baseline"][model]
+                candidate = run if method == "dalic_vsm" else agents["dalic_vsm"][model]
+                report["repeated_runs"].append({
+                    "id": f"S{len(report['repeated_runs']) + 1:02d}", "model": model,
+                    "replacement": method, "reference_run": baseline["metadata"]["model"],
+                    "candidate_run": candidate["metadata"]["model"],
+                    "report": compare_run_reports(baseline, candidate, tests="paired", **inference),
+                })
+    report["holm"] = {section: adjust_paper_family(report[section], section)
+                      for section in ("baseline", "ablation", "repeated_runs")}
     return report
 
 
+def paper_csv_rows(report: dict) -> tuple[list[dict], list[dict]]:
+    """Export one long-form metric table and one difference/test table."""
+    metrics, effects = [], []
+    def add_summary(summary, **labels):
+        for g in FEATURES:
+            values = summary["metrics"][g]
+            metrics.append({**labels, "granularity": g, "n": values["n"],
+                            "ranking_n": values["ranking_n"], "valid_n": summary["valid_n"],
+                            "valid_rate": summary["valid_rate"],
+                            **{m: values[m] for m in ("precision", "recall", "f1", "map")},
+                            **{m + "_percent": f"{100*values[m]:.2f}" if values[m] is not None else ""
+                               for m in ("precision", "recall", "f1", "map")}})
+
+    def add_effect(effect, metric, granularity, labels, test=None, paper_display=None):
+        test = test or {}
+        ci = effect.get("ci_95") or [None, None]
+        effects.append({**labels, "granularity": granularity, "metric": metric,
+                        "n": effect["n"], "estimate": effect["estimate"],
+                        "paper_estimate_pp": (paper_display if paper_display is not None else
+                                              f"{100*effect['estimate']:+.2f}" if effect["estimate"] is not None else ""),
+                        "ci_low": ci[0], "ci_high": ci[1], "bootstrap_seed": effect.get("seed"),
+                        "raw_p": test.get("raw_p"), "holm_p": test.get("holm_p"),
+                        "family_size": test.get("family_size"), "family": test.get("family"),
+                        "reject": test.get("reject"), "test_seed": test.get("seed")})
+
+    def add_scope(comparison, labels, tests=None):
+        for side in ("baseline", "candidate"):
+            add_summary(comparison[side], **labels, side=side)
+        for metric in ("precision", "recall", "f1", "map"):
+            for g in FEATURES:
+                test = (tests or {}).get(metric) if g == "avg3" else None
+                display = None
+                if labels["section"] == "static_trace":
+                    left = float(f"{100*comparison['baseline']['metrics'][g][metric]:.2f}")
+                    right = float(f"{100*comparison['candidate']['metrics'][g][metric]:.2f}")
+                    display = f"{right-left:+.2f}"
+                add_effect(comparison["effects"][metric][g], metric, g, labels, test, display)
+
+    for method, runs in report["agent_runs"].items():
+        for model, run in runs.items():
+            for name, summary in run["scopes"].items():
+                add_summary(summary, section="agent_runs", model=model, comparator=method, condition="main", scope=name)
+    for method, cutoffs in report["retrieval_fixed"].items():
+        for cutoff, summary in cutoffs.items():
+            add_summary(summary, section="retrieval_fixed", model="", comparator=method, condition=cutoff, scope="all_instances")
+    for cutoff, comparison in report["static_trace"].items():
+        add_scope(comparison, dict(section="static_trace", model="", comparator="static_vsm", condition=cutoff, scope="all_instances"))
+    for section in ("trace_realfl", "matched_static_ir"):
+        for model, comparisons in report[section].items():
+            for condition, comparison in comparisons.items():
+                add_scope(comparison, dict(section=section, model=model,
+                          comparator="trace_vsm" if section == "trace_realfl" else condition,
+                          condition=condition, scope="all_instances"))
+    for section in ("baseline", "ablation", "repeated_runs"):
+        for pair in report[section]:
+            comparison = pair["report"]
+            labels = dict(section=section, model=pair["model"], comparator=pair.get("reference_method", "baseline"),
+                          condition=pair["id"], scope="all_instances")
+            add_effect(comparison["completion"]["effect"], "completion", "run", labels, comparison["tests"]["completion"])
+            for name, comparison_scope in comparison["scopes"].items():
+                add_scope(comparison_scope, {**labels, "scope": name},
+                          comparison["tests"] if name == "all_instances" else None)
+    return metrics, effects
+
+
 def render_paper_text(report: dict) -> str:
-    metadata = report["metadata"]
-    lines = [
-        f"Paper RQ1-RQ3: {metadata['instances']} instances, {len(metadata['models'])} models",
-        f"Ranking cohorts: {metadata['ranking_instances_by_granularity']}; Avg3={metadata['ranking_instances']}",
-        "P/R/F1/MAP are percentages. Differences and intervals are percentage points.",
-        "RQ1/RQ2: pointwise intervals only. RQ3: three separate Holm families.", "",
-    ]
-    for model in metadata["models"]:
-        for method in ("baseline", "dalic"):
-            scope = report["agent_runs"][method][model]["scopes"]["all_instances"]
-            lines.extend([f"[{method}/{model}]", *summary_lines(scope), ""])
-    for k, scope in report["rq1_static_trace"].items():
-        lines.extend(comparison_scope_lines(f"RQ1 Trace minus Static BM25 k={k}", scope))
-    for model, comparisons in report["rq1_trace_dalic"].items():
-        for name in ("fixed_k3", "matched"):
-            lines.extend(comparison_scope_lines(f"RQ1 DALIC minus Trace BM25 {model} {name}", comparisons[name]))
-    for model, comparisons in report["rq2_static_dalic"].items():
-        for method, cutoffs in comparisons["fixed"].items():
-            for k, scope in cutoffs.items():
-                lines.extend(comparison_scope_lines(f"RQ2 DALIC minus {method} {model} k={k}", scope))
-        for method, scope in comparisons["matched"].items():
-            lines.extend(comparison_scope_lines(f"RQ2 DALIC minus {method} {model} matched", scope))
-    for model, pair in report["rq3_baseline_dalic"].items():
-        lines.extend([f"[RQ3 {model}]", render_compare_text(pair)])
-        for metric, result in pair["tests"].items():
-            lines.append(f"{metric}: raw_p={result['raw_p']} Holm_p={result['holm_p']} reject={result['reject']}")
+    meta = report["metadata"]
+    lines = ["REAL-FL evaluation from released raw results", "",
+             f"Instances: {meta['instances']}; Avg3 MAP: {meta['ranking_instances_by_granularity']['avg3']}",
+             "Scores are percentages; differences are percentage points.",
+             "Confidence intervals are pointwise. Common Success has no hypothesis tests.",
+             "Holm families are separate for each metric and comparison set.", "",
+             "REAL-FL main results: valid %, Avg3 F1 %, Avg3 MAP %"]
+    for model in meta["models"]:
+        s = report["agent_runs"]["dalic_vsm"][model]["scopes"]["all_instances"]
+        lines.append(f"{model}: {100*s['valid_rate']:.2f}, {100*s['metrics']['avg3']['f1']:.2f}, {100*s['metrics']['avg3']['map']:.2f}")
+    for section in ("baseline", "ablation", "repeated_runs"):
+        lines.extend(["", section])
+        for pair in report[section]:
+            comparison = pair["report"]
+            cells = [pair["id"], pair["model"]]
+            for metric in ("completion", "f1", "map"):
+                effect = (comparison["completion"]["effect"] if metric == "completion"
+                          else comparison["scopes"]["all_instances"]["effects"][metric]["avg3"])
+                cells.append(f"{metric}: {effect_text(effect)}; Holm p={comparison['tests'][metric]['holm_p']:.6g}")
+            lines.append(" | ".join(cells))
+    lines.extend(["", "All granularities, retrieval comparisons and Common Success: paper_metrics.csv and paper_differences.csv.",
+                  "Full provenance, instance records and seeds: paper_evaluation.json."])
     return "\n".join(lines) + "\n"
 
 
 def paper_command(args: argparse.Namespace) -> None:
     if not args.models or len(args.models) != len(set(args.models)):
         raise ValueError("Paper model list must be nonempty without duplicates")
-    if any("/" in m or "\\" in m or m in (".", "..") for m in args.models):
-        raise ValueError("Use model directory names, not paths")
-    for name in ("input", "selected_instances", "agent_results_root", "rankings_root",
-                 "baseline_workbench", "dalic_workbench"):
+    for name in ("input", "selected_instances", "agent_results_root", "rankings_root", "workbench_path", "output_dir"):
         setattr(args, name, getattr(args, name).expanduser().resolve())
+    if (PACKAGED and args.output_dir.is_relative_to(DATA_ROOT.resolve())) or args.output_dir.is_relative_to(args.agent_results_root) or args.output_dir.is_relative_to(args.rankings_root):
+        raise ValueError("Choose an output directory outside the input archives")
     selected = load_selected_instance_ids(args.selected_instances)
     validate_benchmark_ids(selected)
+    if selected != load_selected_instance_ids(DEFAULT_SELECTED_INSTANCES_PATH):
+        raise ValueError("Paper mode requires all 226 instances; use run for a benchmark subset")
     truth = load_ground_truth_map(args.input, selected)
-    sources = {"manifest": source_file(args.selected_instances), "truth": source_file(args.input)}
-    agents = {"baseline": {}, "dalic": {}}
-    for method in agents:
-        workbench = getattr(args, method + "_workbench")
-        for model in args.models:
-            agents[method][model], _, _ = run_from_paths(
-                args.agent_results_root / method / model, workbench, truth,
-                method=method, model=model, sources=sources,
-            )
+    sources = {"manifest": source_file(args.selected_instances), "truth": source_file(args.input),
+               "evaluator": source_file(Path(__file__))}
+    agents = {method: {} for method in ("baseline", "dalic_vsm", "dalic_no_runtime")}
+    runs, repeated = {}, {}
+
+    def read_run(method, directory):
+        if (method, directory) not in runs:
+            label = RUN_LABEL_ALIASES.get((method, directory), directory)
+            folder = args.agent_results_root / method / directory
+            if not folder.is_dir() and label != directory:
+                folder = args.agent_results_root / method / label
+            run, _, _ = run_from_paths(folder,
+                                      args.workbench_path, truth, method=method, model=label, sources=sources)
+            runs[method, directory] = run
+            print(f"Scored {method}/{directory}: {run['scopes']['all_instances']['valid_n']}/226 valid", file=sys.stderr, flush=True)
+        return runs[method, directory]
+
+    for model in args.models:
+        config = PAPER_RUNS[model]
+        for method in agents:
+            agents[method][model] = read_run(method, config[method])
+        repeated[model] = {method: [read_run(method, name) for name in names]
+                           for method, names in config.get("repeats", {}).items()}
     rankings, ranking_sources = load_retrieval_rankings(args.rankings_root, sorted(selected))
-    report = build_paper_report(
-        agents, rankings, truth, models=args.models,
+    report = build_paper_report(agents, rankings, truth, models=args.models, repeated_runs=repeated,
         bootstrap_draws=args.bootstrap_draws, permutation_draws=args.permutation_draws,
-        bootstrap_seed=args.bootstrap_seed, permutation_seed=args.permutation_seed,
-    )
+        bootstrap_seed=args.bootstrap_seed, permutation_seed=args.permutation_seed)
     report["metadata"]["sources"] = {**sources, "retrieval": ranking_sources}
+    # Fail if any input changed while scores and statistics were computed.
+    for (method, directory), run in runs.items():
+        for record in run["instances"]:
+            path = Path(run["metadata"]["sources"]["result_folder"]) / record["instance_id"] / "results.txt"
+            actual = hashlib.sha256(path.read_bytes()).hexdigest() if path.is_file() else None
+            if actual != record["result_sha256"]:
+                raise ValueError(f"Raw input changed during evaluation: {path}")
+    for source in [*sources.values(), *(s for method in ranking_sources.values() for s in method.values())]:
+        if source_file(Path(source["path"]))["sha256"] != source["sha256"]:
+            raise ValueError(f"Source changed during evaluation: {source['path']}")
     write_report(report, render_paper_text(report), args.output_dir, "paper_evaluation")
+    for (method, directory), run in runs.items():
+        write_report(run, "\n".join(summary_lines(run["scopes"]["all_instances"])),
+                     args.output_dir / "runs" / method / directory, "evaluation")
+    for name, rows in zip(("paper_metrics.csv", "paper_differences.csv"), paper_csv_rows(report)):
+        with (args.output_dir / name).open("w", newline="", encoding="utf-8") as stream:
+            writer = csv.DictWriter(stream, fieldnames=list(dict.fromkeys(k for row in rows for k in row)))
+            writer.writeheader()
+            writer.writerows(rows)
+    print(f"Saved evaluation: {args.output_dir}")
 
 
 def main() -> None:
